@@ -1,0 +1,63 @@
+---
+/**
+ * Timeline Container Component
+ */
+---
+
+<div class="timeline-wrapper">
+    <div class="timeline-container">
+        <div class="timeline-gradient-line"></div>
+        <div class="timeline-content-area">
+            <slot />
+        </div>
+    </div>
+</div>
+
+<style>
+    .timeline-wrapper {
+        width: 100%;
+        max-width: 800px;
+        margin: 4rem auto;
+        padding: 0 1rem;
+    }
+
+    .timeline-container {
+        position: relative;
+        padding-left: 40px;
+    }
+
+    .timeline-gradient-line {
+        position: absolute;
+        left: 20px;
+        transform: translateX(-50%);
+        top: 5px;
+        bottom: -20px;
+        width: 4px;
+        background: linear-gradient(
+            to bottom,
+            var(--accent, #2337ff) 0%,
+            rgba(35, 55, 255, 0.4) 70%,
+            transparent 100%
+        );
+        border-radius: 4px;
+        opacity: 0.5;
+    }
+
+    .timeline-content-area {
+        display: flex;
+        flex-direction: column;
+        gap: 3.5rem;
+    }
+
+    @media (max-width: 640px) {
+        .timeline-container {
+            padding-left: 30px;
+        }
+        .timeline-gradient-line {
+            left: 15px;
+        }
+        .timeline-wrapper {
+            padding: 0 0.5rem;
+        }
+    }
+</style>

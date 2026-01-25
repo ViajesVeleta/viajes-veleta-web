@@ -1,0 +1,208 @@
+---
+/**
+ * Timeline Item Component
+ */
+interface Props {
+    date?: string;
+    title?: string;
+    image?: string;
+}
+
+const { date, title, image } = Astro.props;
+---
+
+<div class="timeline-item">
+    <!-- Marker -->
+    <div class="timeline-marker">
+        <div class="marker-inner"></div>
+        <div class="marker-pulse"></div>
+    </div>
+
+    <!-- Card -->
+    <div class="timeline-card">
+        <div class="card-header">
+            {date && <span class="card-date">{date}</span>}
+            {title && <h3 class="card-title">{title}</h3>}
+        </div>
+
+        <div class="card-content">
+            <slot />
+        </div>
+
+        {
+            image && (
+                <div class="card-image-wrapper">
+                    <img
+                        src={image}
+                        alt={title || "Itinerario"}
+                        loading="lazy"
+                        class="card-image"
+                    />
+                    <div class="image-overlay" />
+                </div>
+            )
+        }
+    </div>
+</div>
+
+<style>
+    .timeline-item {
+        position: relative;
+        width: 100%;
+        animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .timeline-marker {
+        position: absolute;
+        left: -20px; /* Aligned with the central axis */
+        transform: translateX(-50%);
+        top: 2.7rem; /* Better alignment with the card title area */
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+    }
+
+    .marker-inner {
+        width: 14px;
+        height: 14px;
+        background: #fff;
+        border: 3px solid var(--accent, #2337ff);
+        border-radius: 50%;
+        box-shadow: 0 0 12px rgba(35, 55, 255, 0.5);
+        z-index: 2;
+        flex-shrink: 0;
+    }
+
+    .marker-pulse {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: var(--accent, #2337ff);
+        border-radius: 50%;
+        opacity: 0.2;
+        animation: pulse 2.5s infinite;
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(0.6);
+            opacity: 0.4;
+        }
+        100% {
+            transform: scale(1.8);
+            opacity: 0;
+        }
+    }
+
+    .timeline-card {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        border-radius: 1.5rem;
+        padding: 2rem;
+        box-shadow:
+            0 10px 25px -5px rgba(0, 0, 0, 0.05),
+            0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .timeline-card:hover {
+        transform: translateX(8px);
+        border-color: var(--accent, #2337ff);
+        box-shadow: 0 20px 40px -12px rgba(35, 55, 255, 0.15);
+    }
+
+    .card-date {
+        display: inline-block;
+        padding: 0.3rem 0.9rem;
+        background: rgba(35, 55, 255, 0.08);
+        color: var(--accent, #2337ff);
+        border-radius: 99px;
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.75rem;
+    }
+
+    .card-title {
+        margin: 0 0 1.25rem 0;
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1.2;
+    }
+
+    .card-content {
+        font-size: 1rem;
+        color: #475569;
+        line-height: 1.8;
+    }
+
+    /* List and Text Styling inside cards */
+    .card-content :global(p) {
+        margin-bottom: 1rem;
+    }
+    .card-content :global(ul) {
+        list-style: none;
+        padding-left: 0;
+        margin: 0;
+    }
+    .card-content :global(li) {
+        position: relative;
+        padding-left: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    .card-content :global(li::before) {
+        content: "→";
+        position: absolute;
+        left: 0;
+        color: var(--accent, #2337ff);
+        font-weight: 900; /* Extra bold */
+        line-height: 1.6;
+        top: 0.05rem; /* Nudge down to center with text */
+    }
+
+    .card-image-wrapper {
+        margin-top: 2rem;
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-image {
+        width: 100%;
+        display: block;
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .timeline-card:hover .card-image {
+        transform: scale(1.04);
+    }
+
+    @media (max-width: 640px) {
+        .timeline-marker {
+            left: -15px; /* Half of parent's 30px padding on mobile */
+        }
+        .timeline-card {
+            padding: 1.5rem;
+        }
+        .card-title {
+            font-size: 1.25rem;
+        }
+    }
+</style>
