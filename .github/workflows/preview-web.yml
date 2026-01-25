@@ -9,6 +9,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     name: Deploy Preview
+    permissions:
+      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -23,7 +25,7 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npm run build
+        run: npx astro build --mode dev
 
       - name: Deploy to Cloudflare
         id: deploy
@@ -42,3 +44,29 @@ jobs:
           echo "**Environment:** PR #${{ github.event.number }} Preview" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "This preview will be updated every time you push to this Pull Request." >> $GITHUB_STEP_SUMMARY
+
+      - name: Comment PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEPLOY_URL: ${{ steps.deploy.outputs.deployment-url }}
+        run: |
+          PR_NUMBER=${{ github.event.number }}
+          BODY="## 🚀 Preview Deployment Successful!
+
+          **URL:** [$DEPLOY_URL]($DEPLOY_URL)
+          **Status:** ✅ Deployed
+          **Environment:** PR #$PR_NUMBER Preview
+
+          This preview will be updated every time you push to this Pull Request.
+          <!-- preview-deploy-comment-marker -->"
+
+          # Search for an existing comment with our unique marker using databaseId
+          COMMENT_ID=$(gh pr view $PR_NUMBER --json comments --jq '.comments[] | select(.body | contains("<!-- preview-deploy-comment-marker -->")) | .databaseId' | head -n 1)
+
+          if [ -n "$COMMENT_ID" ]; then
+            echo "Updating existing comment $COMMENT_ID"
+            gh api -X PATCH "/repos/${{ github.repository }}/issues/comments/$COMMENT_ID" -f body="$BODY"
+          else
+            echo "Creating new comment"
+            gh pr comment $PR_NUMBER -b "$BODY"
+          fi
