@@ -6,7 +6,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "deploy": "wrangler deploy"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.13",
@@ -14,5 +15,8 @@
     "@astrojs/sitemap": "^3.7.0",
     "astro": "^5.16.15",
     "sharp": "^0.34.3"
+  },
+  "devDependencies": {
+    "wrangler": "^4.60.0"
   }
 }
