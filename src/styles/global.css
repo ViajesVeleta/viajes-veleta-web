@@ -120,24 +120,9 @@ html.theme-transition line {
 		0 16px 32px color-mix(in srgb, #000000, transparent 40%);
 }
 
-@font-face {
-	font-family: "Atkinson";
-	src: url("/fonts/atkinson-regular.woff") format("woff");
-	font-weight: 400;
-	font-style: normal;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: "Atkinson";
-	src: url("/fonts/atkinson-bold.woff") format("woff");
-	font-weight: 700;
-	font-style: normal;
-	font-display: swap;
-}
 
 body {
-	font-family: "Atkinson", sans-serif;
+	font-family: "Lato", sans-serif;
 	margin: 0;
 	padding: 0;
 	text-align: left;
