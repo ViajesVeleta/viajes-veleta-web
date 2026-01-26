@@ -79,10 +79,10 @@ const { date, title, image } = Astro.props;
     .marker-inner {
         width: 14px;
         height: 14px;
-        background: #fff;
-        border: 3px solid var(--accent, #2337ff);
+        background: var(--surface);
+        border: 3px solid var(--primary);
         border-radius: 50%;
-        box-shadow: 0 0 12px rgba(35, 55, 255, 0.5);
+        box-shadow: 0 0 12px color-mix(in srgb, var(--primary), transparent 50%);
         z-index: 2;
         flex-shrink: 0;
     }
@@ -91,7 +91,7 @@ const { date, title, image } = Astro.props;
         position: absolute;
         width: 100%;
         height: 100%;
-        background: var(--accent, #2337ff);
+        background: var(--primary);
         border-radius: 50%;
         opacity: 0.2;
         animation: pulse 2.5s infinite;
@@ -109,28 +109,30 @@ const { date, title, image } = Astro.props;
     }
 
     .timeline-card {
-        background: rgba(255, 255, 255, 0.85);
+        background: color-mix(in srgb, var(--surface), transparent 15%);
         backdrop-filter: blur(12px);
-        border: 1px solid rgba(226, 232, 240, 0.8);
+        border: 1px solid
+            color-mix(in srgb, var(--outline-variant), transparent 20%);
         border-radius: 1.5rem;
         padding: 2rem;
         box-shadow:
-            0 10px 25px -5px rgba(0, 0, 0, 0.05),
-            0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            0 10px 25px -5px color-mix(in srgb, var(--shadow), transparent 95%),
+            0 8px 10px -6px color-mix(in srgb, var(--shadow), transparent 95%);
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .timeline-card:hover {
         transform: translateX(8px);
-        border-color: var(--accent, #2337ff);
-        box-shadow: 0 20px 40px -12px rgba(35, 55, 255, 0.15);
+        border-color: var(--primary);
+        box-shadow: 0 20px 40px -12px
+            color-mix(in srgb, var(--primary), transparent 85%);
     }
 
     .card-date {
         display: inline-block;
         padding: 0.3rem 0.9rem;
-        background: rgba(35, 55, 255, 0.08);
-        color: var(--accent, #2337ff);
+        background: var(--primary-container);
+        color: var(--on-primary-container);
         border-radius: 99px;
         font-size: 0.75rem;
         font-weight: 800;
@@ -143,13 +145,13 @@ const { date, title, image } = Astro.props;
         margin: 0 0 1.25rem 0;
         font-size: 1.6rem;
         font-weight: 800;
-        color: #0f172a;
+        color: var(--on-surface);
         line-height: 1.2;
     }
 
     .card-content {
         font-size: 1rem;
-        color: #475569;
+        color: var(--on-surface-variant);
         line-height: 1.8;
     }
 
@@ -171,7 +173,7 @@ const { date, title, image } = Astro.props;
         content: "→";
         position: absolute;
         left: 0;
-        color: var(--accent, #2337ff);
+        color: var(--primary);
         font-weight: 900; /* Extra bold */
         line-height: 1.6;
         top: 0.05rem; /* Nudge down to center with text */
@@ -181,7 +183,8 @@ const { date, title, image } = Astro.props;
         margin-top: 2rem;
         border-radius: 1rem;
         overflow: hidden;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 8px 20px
+            color-mix(in srgb, var(--shadow), transparent 90%);
     }
 
     .card-image {

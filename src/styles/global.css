@@ -5,20 +5,29 @@
  */
 
 :root {
-	--accent: #2337ff;
-	--accent-dark: #000d8a;
-	--black: 15, 18, 25;
-	--gray: 96, 115, 159;
-	--gray-light: 229, 233, 240;
-	--gray-dark: 34, 41, 57;
-	--gray-gradient: rgba(var(--gray-light), 50%), transparent;
-	--box-shadow: 0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%),
-		0 16px 32px rgba(var(--gray), 33%);
+	/* Primary */
+	--primary: #2337ff;
+	--primary-container: #dfe0ff;
+	--on-primary-container: #000d8a;
 
-	--bg-header: #ffffff;
-	--bg-body: #ffffff;
-	--header-shadow: 0 2px 8px rgba(15, 18, 25, 0.05);
-	/* manual calc of var(--black), 5% */
+	/* Surface */
+	--surface: #ffffff;
+	--on-surface: #0f1219;
+	--surface-variant: #e5e9f0;
+	--on-surface-variant: #222939;
+	--surface-container: #ffffff;
+	--surface-container-high: #ffffff;
+
+	/* Outline */
+	--outline: #60739f;
+	--outline-variant: #e2e8f0;
+
+	/* Utility */
+	--shadow: #000000;
+	--surface-gradient: color-mix(in srgb, var(--surface-variant), transparent 50%), transparent;
+	--header-shadow: 0 2px 8px color-mix(in srgb, var(--on-surface), transparent 95%);
+	--box-shadow: 0 2px 6px color-mix(in srgb, var(--outline), transparent 75%), 0 8px 24px color-mix(in srgb, var(--outline), transparent 67%),
+		0 16px 32px color-mix(in srgb, var(--outline), transparent 67%);
 }
 
 /* Smooth transition for theme switching */
@@ -54,23 +63,29 @@ html.theme-transition line {
 }
 
 [data-theme="dark"] {
-	--accent: #2ac3de;
-	--accent-dark: #73daca;
-	--black: 169, 177, 214;
-	/* Text Main */
-	--gray: 115, 122, 162;
-	--gray-light: 41, 46, 66;
-	/* Code background (Darker than body) */
-	--gray-dark: 192, 202, 245;
-	/* Text Muted */
-	--gray-gradient: #1a1b26, transparent;
-	/* Opaque gradient for dark mode */
-	--box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5), 0 8px 24px rgba(0, 0, 0, 0.5),
-		0 16px 32px rgba(0, 0, 0, 0.5);
+	/* Primary */
+	--primary: #2ac3de;
+	--primary-container: #004e5f;
+	--on-primary-container: #73daca;
 
-	--bg-header: #1a1b26;
-	--bg-body: #16161e;
-	--header-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+	/* Surface */
+	--surface: #16161e;
+	--on-surface: #a9b1d6;
+	--surface-variant: #292e42;
+	--on-surface-variant: #c0caf5;
+	--surface-container: #1a1b26;
+	--surface-container-high: #2a2b36;
+
+	/* Outline */
+	--outline: #737aa2;
+	--outline-variant: #41465a;
+
+	/* Utility */
+	--shadow: #000000;
+	--surface-gradient: #1a1b26, transparent;
+	--header-shadow: 0 2px 8px color-mix(in srgb, var(--shadow), transparent 40%);
+	--box-shadow: 0 2px 6px color-mix(in srgb, #000000, transparent 50%), 0 8px 24px color-mix(in srgb, #000000, transparent 50%),
+		0 16px 32px color-mix(in srgb, #000000, transparent 50%);
 }
 
 @font-face {
@@ -94,13 +109,13 @@ body {
 	margin: 0;
 	padding: 0;
 	text-align: left;
-	background-color: var(--bg-body);
-	background-image: linear-gradient(var(--gray-gradient));
+	background-color: var(--surface);
+	background-image: linear-gradient(var(--surface-gradient));
 	background-repeat: no-repeat;
 	background-size: 100% 600px;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
-	color: rgb(var(--gray-dark));
+	color: var(--on-surface-variant);
 	font-size: 20px;
 	line-height: 1.7;
 }
@@ -118,7 +133,7 @@ h3,
 h4,
 h6 {
 	margin: 0 0 0.5rem 0;
-	color: rgb(var(--black));
+	color: var(--on-surface);
 	line-height: 1.2;
 }
 
@@ -128,7 +143,7 @@ h6 {
 [data-theme="dark"] h4,
 [data-theme="dark"] h5,
 [data-theme="dark"] h6 {
-	color: #ffffff;
+	color: var(--on-surface);
 }
 
 h1 {
@@ -157,11 +172,11 @@ b {
 }
 
 a {
-	color: var(--accent);
+	color: var(--primary);
 }
 
 a:hover {
-	color: var(--accent);
+	color: var(--primary);
 }
 
 p {
@@ -193,13 +208,13 @@ img {
 
 code {
 	padding: 2px 5px;
-	background-color: rgb(var(--gray-light));
+	background-color: var(--surface-variant);
 	border-radius: 2px;
 }
 
 [data-theme="dark"] code {
-	background-color: var(--gray-light);
-	color: #c0caf5;
+	background-color: var(--surface-variant);
+	color: var(--on-surface-variant);
 }
 
 pre {
@@ -212,7 +227,7 @@ pre>code {
 }
 
 blockquote {
-	border-left: 4px solid var(--accent);
+	border-left: 4px solid var(--primary);
 	padding: 0 0 0 20px;
 	margin: 0;
 	font-size: 1.333em;
@@ -220,7 +235,7 @@ blockquote {
 
 hr {
 	border: none;
-	border-top: 1px solid rgb(var(--gray-light));
+	border-top: 1px solid var(--surface-variant);
 }
 
 @media (max-width: 720px) {

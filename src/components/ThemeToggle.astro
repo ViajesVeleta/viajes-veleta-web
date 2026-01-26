@@ -145,7 +145,7 @@
     .theme-toggle {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
-        background: rgba(var(--gray), 0.2);
+        background: color-mix(in srgb, var(--outline), transparent 80%);
         border-radius: 9999px;
         padding: 4px;
         gap: 2px;
@@ -163,8 +163,8 @@
         ); /* (Total - padding*2 - gap*2) / 3 */
         height: calc(100% - 8px);
         border-radius: 50%;
-        background: var(--bg-header);
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        background: var(--surface-container);
+        box-shadow: 0 1px 3px color-mix(in srgb, var(--shadow), transparent 90%);
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 1;
         pointer-events: none;
@@ -189,7 +189,7 @@
         cursor: pointer;
         padding: 6px;
         border-radius: 50%;
-        color: rgb(var(--gray));
+        color: var(--outline);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -201,26 +201,30 @@
     }
 
     button:hover {
-        color: var(--accent);
+        color: var(--primary);
     }
 
     button.active {
-        color: var(--accent);
+        color: var(--primary);
     }
 
     [data-theme="dark"] .theme-toggle {
-        background: rgba(255, 255, 255, 0.1);
+        background: color-mix(
+            in srgb,
+            var(--on-surface-variant),
+            transparent 90%
+        );
     }
 
     [data-theme="dark"] .theme-toggle-bg {
-        background: #2a2b36;
+        background: var(--surface-container-high);
     }
 
     [data-theme="dark"] button {
-        color: rgb(var(--gray-dark));
+        color: var(--on-surface-variant);
     }
 
     [data-theme="dark"] button.active {
-        color: var(--accent);
+        color: var(--primary);
     }
 </style>
