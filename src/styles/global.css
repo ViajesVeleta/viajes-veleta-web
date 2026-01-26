@@ -6,23 +6,39 @@
 
 :root {
 	/* Primary */
-	--primary: #2337ff;
-	--primary-container: #dfe0ff;
-	--on-primary-container: #000d8a;
+	--primary: #1976d2;
+	--primary-hover: #014365;
+	--primary-container: #d1e4ff;
+	--on-primary: #ffffff;
+	--on-primary-container: #001d36;
+
+	/* Secondary */
+	--secondary: #40c4ff;
+	--on-secondary: #000000;
+	--secondary-container: #b8ecff;
+	--on-secondary-container: #001f2a;
+
+	/* Tertiary */
+	--tertiary: #014365;
+	--on-tertiary: #ffffff;
+	--tertiary-container: #c9e6ff;
+	--on-tertiary-container: #001e30;
 
 	/* Surface */
 	--surface: #ffffff;
-	--on-surface: #0f1219;
-	--surface-variant: #e5e9f0;
-	--on-surface-variant: #222939;
+	--on-surface: #1a1c1e;
+	--surface-variant: #dee3eb;
+	--on-surface-variant: #42474e;
 	--surface-container: #ffffff;
 	--surface-container-high: #ffffff;
 
 	/* Outline */
-	--outline: #60739f;
-	--outline-variant: #e2e8f0;
+	--outline: #72777f;
+	--outline-variant: #c2c7cf;
 
 	/* Utility */
+	--bg-nav: var(--primary);
+	--on-bg-nav: var(--on-primary);
 	--shadow: #000000;
 	--surface-gradient: color-mix(in srgb, var(--surface-variant), transparent 50%), transparent;
 	--header-shadow: 0 2px 8px color-mix(in srgb, var(--on-surface), transparent 95%);
@@ -64,28 +80,44 @@ html.theme-transition line {
 
 [data-theme="dark"] {
 	/* Primary */
-	--primary: #2ac3de;
-	--primary-container: #004e5f;
-	--on-primary-container: #73daca;
+	--primary: #9fd0ff;
+	--primary-hover: #d1e4ff;
+	--primary-container: #00497d;
+	--on-primary: #003258;
+	--on-primary-container: #d1e4ff;
+
+	/* Secondary */
+	--secondary: #40c4ff;
+	--on-secondary: #003544;
+	--secondary-container: #004e63;
+	--on-secondary-container: #b8ecff;
+
+	/* Tertiary */
+	--tertiary: #afcae6;
+	--on-tertiary: #19334b;
+	--tertiary-container: #004a78;
+	--on-tertiary-container: #c9e6ff;
 
 	/* Surface */
-	--surface: #16161e;
-	--on-surface: #a9b1d6;
-	--surface-variant: #292e42;
-	--on-surface-variant: #c0caf5;
-	--surface-container: #1a1b26;
-	--surface-container-high: #2a2b36;
+	--surface: #0b0d0f;
+	--on-surface: #f0f1f5;
+	--surface-variant: #282a2d;
+	--on-surface-variant: #c1c7ce;
+	--surface-container: #14181f;
+	--surface-container-high: #1d2129;
 
 	/* Outline */
-	--outline: #737aa2;
-	--outline-variant: #41465a;
+	--outline: #8b9198;
+	--outline-variant: #43474e;
 
 	/* Utility */
+	--bg-nav: #001d36;
+	--on-bg-nav: #d1e4ff;
 	--shadow: #000000;
-	--surface-gradient: #1a1b26, transparent;
-	--header-shadow: 0 2px 8px color-mix(in srgb, var(--shadow), transparent 40%);
-	--box-shadow: 0 2px 6px color-mix(in srgb, #000000, transparent 50%), 0 8px 24px color-mix(in srgb, #000000, transparent 50%),
-		0 16px 32px color-mix(in srgb, #000000, transparent 50%);
+	--surface-gradient: #0b0d0f, transparent;
+	--header-shadow: 0 4px 12px color-mix(in srgb, var(--shadow), transparent 20%);
+	--box-shadow: 0 2px 6px color-mix(in srgb, #000000, transparent 40%), 0 8px 24px color-mix(in srgb, #000000, transparent 40%),
+		0 16px 32px color-mix(in srgb, #000000, transparent 40%);
 }
 
 @font-face {
@@ -173,10 +205,15 @@ b {
 
 a {
 	color: var(--primary);
+	text-decoration: none;
+	transition: all 0.2s ease;
 }
 
 a:hover {
-	color: var(--primary);
+	color: var(--primary-hover);
+	text-decoration: underline;
+	text-decoration-thickness: 2px;
+	text-underline-offset: 4px;
 }
 
 p {
