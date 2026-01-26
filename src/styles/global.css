@@ -14,7 +14,7 @@
 
 	/* Secondary */
 	--secondary: #40c4ff;
-	--on-secondary: #000000;
+	--on-secondary: #ffffff;
 	--secondary-container: #b8ecff;
 	--on-secondary-container: #001f2a;
 
@@ -88,7 +88,7 @@ html.theme-transition line {
 
 	/* Secondary */
 	--secondary: #40c4ff;
-	--on-secondary: #003544;
+	--on-secondary: #ffffff;
 	--secondary-container: #004e63;
 	--on-secondary-container: #b8ecff;
 
