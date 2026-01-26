@@ -11,11 +11,68 @@
 	--gray: 96, 115, 159;
 	--gray-light: 229, 233, 240;
 	--gray-dark: 34, 41, 57;
-	--gray-gradient: rgba(var(--gray-light), 50%), #fff;
-	--box-shadow:
-		0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px
-		rgba(var(--gray), 33%);
+	--gray-gradient: rgba(var(--gray-light), 50%), transparent;
+	--box-shadow: 0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%),
+		0 16px 32px rgba(var(--gray), 33%);
+
+	--bg-header: #ffffff;
+	--bg-body: #ffffff;
+	--header-shadow: 0 2px 8px rgba(15, 18, 25, 0.05);
+	/* manual calc of var(--black), 5% */
 }
+
+/* Smooth transition for theme switching */
+html.theme-transition body,
+html.theme-transition header,
+html.theme-transition button,
+html.theme-transition footer,
+html.theme-transition main,
+html.theme-transition nav,
+html.theme-transition div,
+html.theme-transition section,
+html.theme-transition article,
+html.theme-transition aside,
+html.theme-transition code,
+html.theme-transition pre,
+html.theme-transition a,
+html.theme-transition span,
+html.theme-transition p,
+html.theme-transition h1,
+html.theme-transition h2,
+html.theme-transition h3,
+html.theme-transition h4,
+html.theme-transition h5,
+html.theme-transition h6,
+html.theme-transition svg,
+html.theme-transition path,
+html.theme-transition rect,
+html.theme-transition circle,
+html.theme-transition line {
+	transition-property: background-color, color, border-color, fill, stroke, box-shadow;
+	transition-duration: 0.3s;
+	transition-timing-function: ease-out;
+}
+
+[data-theme="dark"] {
+	--accent: #2ac3de;
+	--accent-dark: #73daca;
+	--black: 169, 177, 214;
+	/* Text Main */
+	--gray: 115, 122, 162;
+	--gray-light: 41, 46, 66;
+	/* Code background (Darker than body) */
+	--gray-dark: 192, 202, 245;
+	/* Text Muted */
+	--gray-gradient: #1a1b26, transparent;
+	/* Opaque gradient for dark mode */
+	--box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5), 0 8px 24px rgba(0, 0, 0, 0.5),
+		0 16px 32px rgba(0, 0, 0, 0.5);
+
+	--bg-header: #1a1b26;
+	--bg-body: #16161e;
+	--header-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
 @font-face {
 	font-family: "Atkinson";
 	src: url("/fonts/atkinson-regular.woff") format("woff");
@@ -23,6 +80,7 @@
 	font-style: normal;
 	font-display: swap;
 }
+
 @font-face {
 	font-family: "Atkinson";
 	src: url("/fonts/atkinson-bold.woff") format("woff");
@@ -30,12 +88,15 @@
 	font-style: normal;
 	font-display: swap;
 }
+
 body {
 	font-family: "Atkinson", sans-serif;
 	margin: 0;
 	padding: 0;
 	text-align: left;
-	background: linear-gradient(var(--gray-gradient)) no-repeat;
+	background-color: var(--bg-body);
+	background-image: linear-gradient(var(--gray-gradient));
+	background-repeat: no-repeat;
 	background-size: 100% 600px;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
@@ -43,94 +104,130 @@ body {
 	font-size: 20px;
 	line-height: 1.7;
 }
+
 main {
 	width: 720px;
 	max-width: calc(100% - 2em);
 	margin: auto;
 	padding: 3em 1em;
 }
+
 h1,
 h2,
 h3,
 h4,
-h5,
 h6 {
 	margin: 0 0 0.5rem 0;
 	color: rgb(var(--black));
 	line-height: 1.2;
 }
+
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6 {
+	color: #ffffff;
+}
+
 h1 {
 	font-size: 3.052em;
 }
+
 h2 {
 	font-size: 2.441em;
 }
+
 h3 {
 	font-size: 1.953em;
 }
+
 h4 {
 	font-size: 1.563em;
 }
+
 h5 {
 	font-size: 1.25em;
 }
+
 strong,
 b {
 	font-weight: 700;
 }
+
 a {
 	color: var(--accent);
 }
+
 a:hover {
 	color: var(--accent);
 }
+
 p {
 	margin-bottom: 1em;
 }
+
 .prose p {
 	margin-bottom: 2em;
 }
+
 textarea {
 	width: 100%;
 	font-size: 16px;
 }
+
 input {
 	font-size: 16px;
 }
+
 table {
 	width: 100%;
 }
+
 img {
 	max-width: 100%;
 	height: auto;
 	border-radius: 8px;
 }
+
 code {
 	padding: 2px 5px;
 	background-color: rgb(var(--gray-light));
 	border-radius: 2px;
 }
+
+[data-theme="dark"] code {
+	background-color: var(--gray-light);
+	color: #c0caf5;
+}
+
 pre {
 	padding: 1.5em;
 	border-radius: 8px;
 }
-pre > code {
+
+pre>code {
 	all: unset;
 }
+
 blockquote {
 	border-left: 4px solid var(--accent);
 	padding: 0 0 0 20px;
 	margin: 0;
 	font-size: 1.333em;
 }
+
 hr {
 	border: none;
 	border-top: 1px solid rgb(var(--gray-light));
 }
+
 @media (max-width: 720px) {
 	body {
 		font-size: 18px;
 	}
+
 	main {
 		padding: 1em;
 	}

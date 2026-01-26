@@ -1,0 +1,226 @@
+---
+
+---
+
+<div class="theme-toggle" id="theme-toggle-container">
+    <div class="theme-toggle-bg"></div>
+    <button id="theme-light" title="Light Theme" aria-label="Light Theme">
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            ><circle cx="12" cy="12" r="5"></circle><line
+                x1="12"
+                y1="1"
+                x2="12"
+                y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line
+                x1="4.22"
+                y1="4.22"
+                x2="5.64"
+                y2="5.64"></line><line
+                x1="18.36"
+                y1="18.36"
+                x2="19.78"
+                y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"
+            ></line><line x1="21" y1="12" x2="23" y2="12"></line><line
+                x1="4.22"
+                y1="19.78"
+                x2="5.64"
+                y2="18.36"></line><line
+                x1="18.36"
+                y1="5.64"
+                x2="19.78"
+                y2="4.22"></line></svg
+        >
+    </button>
+    <button id="theme-system" title="System Theme" aria-label="System Theme">
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            ><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line
+                x1="8"
+                y1="21"
+                x2="16"
+                y2="21"></line><line x1="12" y1="17" x2="12" y2="21"
+            ></line></svg
+        >
+    </button>
+    <button id="theme-dark" title="Dark Theme" aria-label="Dark Theme">
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            ><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+            ></path></svg
+        >
+    </button>
+</div>
+
+<script is:inline>
+    const lightBtn = document.getElementById("theme-light");
+    const systemBtn = document.getElementById("theme-system");
+    const darkBtn = document.getElementById("theme-dark");
+    const toggleContainer = document.getElementById("theme-toggle-container");
+
+    function updateTheme(value) {
+        localStorage.setItem("theme", value);
+
+        // Enable transition only for the toggle action
+        document.documentElement.classList.add("theme-transition");
+
+        const systemDark = window.matchMedia(
+            "(prefers-color-scheme: dark)",
+        ).matches;
+
+        if (value === "dark" || (value === "system" && systemDark)) {
+            document.documentElement.setAttribute("data-theme", "dark");
+        } else {
+            document.documentElement.removeAttribute("data-theme");
+        }
+
+        updateActiveButton(value);
+
+        // Remove transition class after animation completes to avoid unwanted side-effects
+        setTimeout(() => {
+            document.documentElement.classList.remove("theme-transition");
+        }, 300);
+    }
+
+    function updateActiveButton(value) {
+        if (!toggleContainer) return;
+
+        // Remove active class from buttons to handle styling via container state
+        lightBtn?.classList.remove("active");
+        systemBtn?.classList.remove("active");
+        darkBtn?.classList.remove("active");
+
+        toggleContainer.setAttribute("data-active-theme", value);
+
+        // Add active class for specific icon coloring if needed (optional with new Csss)
+        if (value === "light") lightBtn?.classList.add("active");
+        if (value === "system") systemBtn?.classList.add("active");
+        if (value === "dark") darkBtn?.classList.add("active");
+    }
+
+    const currentTheme = localStorage.getItem("theme") || "system";
+    updateActiveButton(currentTheme);
+
+    lightBtn?.addEventListener("click", () => updateTheme("light"));
+    systemBtn?.addEventListener("click", () => updateTheme("system"));
+    darkBtn?.addEventListener("click", () => updateTheme("dark"));
+
+    window
+        .matchMedia("(prefers-color-scheme: dark)")
+        .addEventListener("change", (e) => {
+            if (localStorage.getItem("theme") === "system") {
+                if (e.matches) {
+                    document.documentElement.setAttribute("data-theme", "dark");
+                } else {
+                    document.documentElement.removeAttribute("data-theme");
+                }
+            }
+        });
+</script>
+
+<style>
+    .theme-toggle {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        background: rgba(var(--gray), 0.2);
+        border-radius: 9999px;
+        padding: 4px;
+        gap: 2px;
+        position: relative;
+        width: fit-content;
+        isolation: isolate; /* Create new stacking context */
+    }
+
+    .theme-toggle-bg {
+        position: absolute;
+        top: 4px;
+        left: 4px; /* Matches padding */
+        width: calc(
+            (100% - 8px - 4px) / 3
+        ); /* (Total - padding*2 - gap*2) / 3 */
+        height: calc(100% - 8px);
+        border-radius: 50%;
+        background: var(--bg-header);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    /* Transform positions based on data-active-theme */
+    .theme-toggle[data-active-theme="light"] .theme-toggle-bg {
+        transform: translateX(0%);
+    }
+
+    .theme-toggle[data-active-theme="system"] .theme-toggle-bg {
+        transform: translateX(calc(100% + 2px)); /* 100% width + 2px gap */
+    }
+
+    .theme-toggle[data-active-theme="dark"] .theme-toggle-bg {
+        transform: translateX(calc(200% + 4px)); /* 200% width + 4px gap */
+    }
+
+    button {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 6px;
+        border-radius: 50%;
+        color: rgb(var(--gray));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.2s ease;
+        position: relative;
+        z-index: 2; /* Above bg */
+        width: 32px; /* Fixed width for consistent calc */
+        height: 32px;
+    }
+
+    button:hover {
+        color: var(--accent);
+    }
+
+    button.active {
+        color: var(--accent);
+    }
+
+    [data-theme="dark"] .theme-toggle {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    [data-theme="dark"] .theme-toggle-bg {
+        background: #2a2b36;
+    }
+
+    [data-theme="dark"] button {
+        color: rgb(var(--gray-dark));
+    }
+
+    [data-theme="dark"] button.active {
+        color: var(--accent);
+    }
+</style>
