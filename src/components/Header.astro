@@ -2,11 +2,25 @@
 import { SITE_TITLE } from "../consts";
 import HeaderLink from "./HeaderLink.astro";
 import ThemeToggle from "./ThemeToggle.astro";
+import { Image } from "astro:assets";
+import logo from "../assets/logo.svg";
 ---
 
 <header>
 	<nav>
-		<h2><a href="/">{SITE_TITLE}</a></h2>
+		<h2>
+			<a href="/">
+				<Image
+					src={logo}
+					alt="Logo"
+					width={48}
+					height={48}
+					class="logo"
+					style="height: 48px; width: auto;"
+				/>
+				{SITE_TITLE}
+			</a>
+		</h2>
 		<div class="internal-links">
 			<HeaderLink href="/">Home</HeaderLink>
 			<HeaderLink href="/blog">Blog</HeaderLink>
@@ -77,6 +91,9 @@ import ThemeToggle from "./ThemeToggle.astro";
 	h2 a.active {
 		text-decoration: none;
 		color: var(--on-bg-nav);
+		display: flex;
+		align-items: center;
+		gap: 1.5rem;
 	}
 	nav {
 		display: flex;
@@ -84,20 +101,22 @@ import ThemeToggle from "./ThemeToggle.astro";
 		justify-content: space-between;
 	}
 	nav a {
-		padding: 1em 0.5em;
+		padding: 0.5em 0.5em;
 		color: var(--on-bg-nav);
-		border-bottom: 4px solid transparent;
 		text-decoration: none;
 		opacity: 0.9;
 		transition: opacity 0.2s ease;
+		border-radius: 0.5em;
 	}
 	nav a:hover {
 		opacity: 1;
 		background: rgba(255, 255, 255, 0.1);
 	}
 	nav a.active {
-		text-decoration: none;
-		border-bottom-color: var(--secondary);
+		text-decoration: underline;
+		text-decoration-thickness: 3px;
+		text-decoration-color: var(--secondary);
+		text-underline-offset: 10px;
 		opacity: 1;
 		font-weight: bold;
 	}
