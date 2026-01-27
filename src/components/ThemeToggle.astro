@@ -28,66 +28,81 @@
     const darkBtn = document.getElementById("theme-dark");
     const toggleContainer = document.getElementById("theme-toggle-container");
 
-    function updateTheme(value) {
-        localStorage.setItem("theme", value);
+    if (toggleContainer && !toggleContainer.dataset.initialized) {
+        function updateTheme(value) {
+            localStorage.setItem("theme", value);
 
-        // Enable transition only for the toggle action
-        document.documentElement.classList.add("theme-transition");
-        toggleContainer?.classList.add("animate");
+            // Enable transition only for the toggle action
+            document.documentElement.classList.add("theme-transition");
+            toggleContainer.classList.add("animate");
 
-        const systemDark = window.matchMedia(
-            "(prefers-color-scheme: dark)",
-        ).matches;
+            const systemDark = window.matchMedia(
+                "(prefers-color-scheme: dark)",
+            ).matches;
 
-        if (value === "dark" || (value === "system" && systemDark)) {
-            document.documentElement.setAttribute("data-theme", "dark");
-        } else {
-            document.documentElement.removeAttribute("data-theme");
+            if (value === "dark" || (value === "system" && systemDark)) {
+                document.documentElement.setAttribute("data-theme", "dark");
+            } else {
+                document.documentElement.removeAttribute("data-theme");
+            }
+
+            updateActiveButton(value);
+
+            // Remove transition class after animation completes to avoid unwanted side-effects
+            setTimeout(() => {
+                document.documentElement.classList.remove("theme-transition");
+                toggleContainer.classList.remove("animate");
+            }, 300);
         }
 
-        updateActiveButton(value);
+        function updateActiveButton(value) {
+            if (!toggleContainer) return;
 
-        // Remove transition class after animation completes to avoid unwanted side-effects
-        setTimeout(() => {
-            document.documentElement.classList.remove("theme-transition");
-            toggleContainer?.classList.remove("animate");
-        }, 300);
-    }
+            // Remove active class from buttons to handle styling via container state
+            lightBtn?.classList.remove("active");
+            systemBtn?.classList.remove("active");
+            darkBtn?.classList.remove("active");
 
-    function updateActiveButton(value) {
-        if (!toggleContainer) return;
+            toggleContainer.setAttribute("data-active-theme", value);
 
-        // Remove active class from buttons to handle styling via container state
-        lightBtn?.classList.remove("active");
-        systemBtn?.classList.remove("active");
-        darkBtn?.classList.remove("active");
+            // Add active class for specific icon coloring if needed (optional with new Csss)
+            if (value === "light") lightBtn?.classList.add("active");
+            if (value === "system") systemBtn?.classList.add("active");
+            if (value === "dark") darkBtn?.classList.add("active");
+        }
 
-        toggleContainer.setAttribute("data-active-theme", value);
+        const currentTheme = localStorage.getItem("theme") || "system";
+        updateActiveButton(currentTheme);
 
-        // Add active class for specific icon coloring if needed (optional with new Csss)
-        if (value === "light") lightBtn?.classList.add("active");
-        if (value === "system") systemBtn?.classList.add("active");
-        if (value === "dark") darkBtn?.classList.add("active");
-    }
+        lightBtn?.addEventListener("click", () => updateTheme("light"));
+        systemBtn?.addEventListener("click", () => updateTheme("system"));
+        darkBtn?.addEventListener("click", () => updateTheme("dark"));
 
-    const currentTheme = localStorage.getItem("theme") || "system";
-    updateActiveButton(currentTheme);
-
-    lightBtn?.addEventListener("click", () => updateTheme("light"));
-    systemBtn?.addEventListener("click", () => updateTheme("system"));
-    darkBtn?.addEventListener("click", () => updateTheme("dark"));
-
-    window
-        .matchMedia("(prefers-color-scheme: dark)")
-        .addEventListener("change", (e) => {
-            if (localStorage.getItem("theme") === "system") {
-                if (e.matches) {
-                    document.documentElement.setAttribute("data-theme", "dark");
-                } else {
-                    document.documentElement.removeAttribute("data-theme");
+        window
+            .matchMedia("(prefers-color-scheme: dark)")
+            .addEventListener("change", (e) => {
+                if (localStorage.getItem("theme") === "system") {
+                    if (e.matches) {
+                        document.documentElement.setAttribute(
+                            "data-theme",
+                            "dark",
+                        );
+                    } else {
+                        document.documentElement.removeAttribute("data-theme");
+                    }
                 }
-            }
-        });
+            });
+
+        toggleContainer.dataset.initialized = "true";
+    }
+
+    document.addEventListener("astro:after-swap", () => {
+        const currentTheme = localStorage.getItem("theme") || "system";
+        const container = document.getElementById("theme-toggle-container");
+        if (container) {
+            container.setAttribute("data-active-theme", currentTheme);
+        }
+    });
 </script>
 
 <style>

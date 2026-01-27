@@ -47,12 +47,13 @@
             "search-close-button",
         );
 
+        if (!searchButton || !searchOverlay || searchButton.dataset.initialized)
+            return;
+
         function openSearch() {
             searchOverlay?.classList.add("open");
             document.body.style.overflow = "hidden";
 
-            // Initialize Pagefind if not already done
-            // The autofocus option automatically focuses the search input when initialized
             if (!pagefindInstance) {
                 pagefindInstance = new PagefindUI({
                     element: "#search-container",
@@ -68,10 +69,9 @@
             document.body.style.overflow = "";
         }
 
-        searchButton?.addEventListener("click", openSearch);
+        searchButton.addEventListener("click", openSearch);
         searchCloseButton?.addEventListener("click", closeSearch);
 
-        // Close on escape key
         document.addEventListener("keydown", (e) => {
             if (
                 e.key === "Escape" &&
@@ -81,23 +81,17 @@
             }
         });
 
-        // Close when clicking on overlay background
         searchOverlay?.addEventListener("click", (e) => {
             if (e.target === searchOverlay) {
                 closeSearch();
             }
         });
+
+        searchButton.dataset.initialized = "true";
     }
 
-    // Initialize on load
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", initSearch);
-    } else {
-        initSearch();
-    }
-
-    // Re-initialize after Astro page transitions
-    document.addEventListener("astro:page-load", initSearch);
+    initSearch();
+    document.addEventListener("astro:after-swap", initSearch);
 </script>
 
 <style>

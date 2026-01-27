@@ -7,7 +7,7 @@ import logo from "../assets/logo.svg";
 import Search from "./Search.astro";
 ---
 
-<header id="main-header">
+<header id="main-header" transition:persist>
 	<div class="top-bar">
 		<div class="header-content">
 			<div class="contact-info">
@@ -106,7 +106,6 @@ import Search from "./Search.astro";
 	</div>
 
 	<script>
-		// Scroll behavior for double header
 		const header = document.getElementById("main-header");
 
 		function handleScroll() {
@@ -126,6 +125,9 @@ import Search from "./Search.astro";
 			const drawer = document.getElementById("mobile-menu-drawer");
 			const mobileLinks = document.querySelectorAll(".mobile-nav-link");
 
+			if (!menuButton || !drawer || menuButton.dataset.initialized)
+				return;
+
 			function openMenu() {
 				drawer?.classList.add("open");
 				document.body.style.overflow = "hidden";
@@ -136,33 +138,53 @@ import Search from "./Search.astro";
 				document.body.style.overflow = "";
 			}
 
-			menuButton?.addEventListener("click", openMenu);
+			menuButton.addEventListener("click", openMenu);
 			closeButton?.addEventListener("click", closeMenu);
 
-			// Close menu when clicking on a link
 			mobileLinks.forEach((link) => {
 				link.addEventListener("click", closeMenu);
 			});
 
-			// Close menu when clicking outside
 			drawer?.addEventListener("click", (e) => {
 				if (e.target === drawer) {
 					closeMenu();
 				}
 			});
 
-			// Note: Theme toggle functionality is handled by the ThemeToggle component itself
-			// No need for additional synchronization logic here
+			menuButton.dataset.initialized = "true";
 		}
 
-		// Initialize on load
+		function updateActiveLinks() {
+			const pathname = window.location.pathname.replace(/\/$/, "");
+			const links = document.querySelectorAll(
+				".internal-links a, .mobile-nav a",
+			);
 
+			links.forEach((link) => {
+				const href = (link.getAttribute("href") || "").replace(
+					/\/$/,
+					"",
+				);
+				if (
+					href === pathname ||
+					(href !== "" && pathname.startsWith(href))
+				) {
+					link.classList.add("active");
+				} else {
+					link.classList.remove("active");
+				}
+			});
+		}
+
+		// Initialize
 		initMobileMenu();
+		handleScroll();
+		updateActiveLinks();
 
-		// Re-check after navigation (for Astro view transitions)
-		document.addEventListener("astro:page-load", () => {
-			initMobileMenu();
-			window.addEventListener("scroll", handleScroll);
+		// Handle navigation
+		document.addEventListener("astro:after-swap", () => {
+			handleScroll();
+			updateActiveLinks();
 		});
 	</script>
 
