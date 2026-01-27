@@ -2,7 +2,7 @@
 
 ---
 
-<div class="theme-toggle" id="theme-toggle-container">
+<div class="theme-toggle" id="theme-toggle-container" data-main-instance="true">
     <script is:inline>
         (function () {
             const container = document.currentScript.parentElement;
@@ -11,98 +11,100 @@
         })();
     </script>
     <div class="theme-toggle-bg"></div>
-    <button id="theme-light" title="Light Theme" aria-label="Light Theme">
+    <button class="theme-light" title="Light Theme" aria-label="Light Theme">
         <i class="fa-solid fa-sun"></i>
     </button>
-    <button id="theme-system" title="System Theme" aria-label="System Theme">
+    <button class="theme-system" title="System Theme" aria-label="System Theme">
         <i class="fa-solid fa-desktop"></i>
     </button>
-    <button id="theme-dark" title="Dark Theme" aria-label="Dark Theme">
+    <button class="theme-dark" title="Dark Theme" aria-label="Dark Theme">
         <i class="fa-solid fa-moon"></i>
     </button>
 </div>
 
-<script is:inline>
-    const lightBtn = document.getElementById("theme-light");
-    const systemBtn = document.getElementById("theme-system");
-    const darkBtn = document.getElementById("theme-dark");
-    const toggleContainer = document.getElementById("theme-toggle-container");
+<script>
+    function initThemeToggles() {
+        // Collect all toggle instances
+        const containers = document.querySelectorAll(".theme-toggle");
 
-    if (toggleContainer && !toggleContainer.dataset.initialized) {
-        function updateTheme(value) {
-            localStorage.setItem("theme", value);
+        containers.forEach((container) => {
+            if (!(container instanceof HTMLElement)) return;
 
-            // Enable transition only for the toggle action
-            document.documentElement.classList.add("theme-transition");
-            toggleContainer.classList.add("animate");
+            const lightBtn = container.querySelector(".theme-light");
+            const systemBtn = container.querySelector(".theme-system");
+            const darkBtn = container.querySelector(".theme-dark");
 
-            const systemDark = window.matchMedia(
-                "(prefers-color-scheme: dark)",
-            ).matches;
+            function updateTheme(value: string) {
+                localStorage.setItem("theme", value);
 
-            if (value === "dark" || (value === "system" && systemDark)) {
-                document.documentElement.setAttribute("data-theme", "dark");
-            } else {
-                document.documentElement.removeAttribute("data-theme");
+                // Enable transition only for the toggle action
+                document.documentElement.classList.add("theme-transition");
+
+                // Set state on ALL containers to sync UI
+                document.querySelectorAll(".theme-toggle").forEach((c) => {
+                    c.setAttribute("data-active-theme", value);
+                    c.classList.add("animate");
+                });
+
+                const systemDark = window.matchMedia(
+                    "(prefers-color-scheme: dark)",
+                ).matches;
+                if (value === "dark" || (value === "system" && systemDark)) {
+                    document.documentElement.setAttribute("data-theme", "dark");
+                } else {
+                    document.documentElement.removeAttribute("data-theme");
+                }
+
+                // Remove transition class after animation
+                setTimeout(() => {
+                    document.documentElement.classList.remove(
+                        "theme-transition",
+                    );
+                    document.querySelectorAll(".theme-toggle").forEach((c) => {
+                        c.classList.remove("animate");
+                    });
+                }, 300);
             }
 
-            updateActiveButton(value);
+            // Only attach listeners once per element
+            if (!container.dataset.initialized) {
+                lightBtn?.addEventListener("click", () => updateTheme("light"));
+                systemBtn?.addEventListener("click", () =>
+                    updateTheme("system"),
+                );
+                darkBtn?.addEventListener("click", () => updateTheme("dark"));
 
-            // Remove transition class after animation completes to avoid unwanted side-effects
-            setTimeout(() => {
-                document.documentElement.classList.remove("theme-transition");
-                toggleContainer.classList.remove("animate");
-            }, 300);
-        }
-
-        function updateActiveButton(value) {
-            if (!toggleContainer) return;
-
-            // Remove active class from buttons to handle styling via container state
-            lightBtn?.classList.remove("active");
-            systemBtn?.classList.remove("active");
-            darkBtn?.classList.remove("active");
-
-            toggleContainer.setAttribute("data-active-theme", value);
-
-            // Add active class for specific icon coloring if needed (optional with new Csss)
-            if (value === "light") lightBtn?.classList.add("active");
-            if (value === "system") systemBtn?.classList.add("active");
-            if (value === "dark") darkBtn?.classList.add("active");
-        }
-
-        const currentTheme = localStorage.getItem("theme") || "system";
-        updateActiveButton(currentTheme);
-
-        lightBtn?.addEventListener("click", () => updateTheme("light"));
-        systemBtn?.addEventListener("click", () => updateTheme("system"));
-        darkBtn?.addEventListener("click", () => updateTheme("dark"));
-
-        window
-            .matchMedia("(prefers-color-scheme: dark)")
-            .addEventListener("change", (e) => {
-                if (localStorage.getItem("theme") === "system") {
-                    if (e.matches) {
-                        document.documentElement.setAttribute(
-                            "data-theme",
-                            "dark",
-                        );
-                    } else {
-                        document.documentElement.removeAttribute("data-theme");
-                    }
+                if (container.dataset.mainInstance === "true") {
+                    window
+                        .matchMedia("(prefers-color-scheme: dark)")
+                        .addEventListener("change", (e) => {
+                            if (localStorage.getItem("theme") === "system") {
+                                if (e.matches) {
+                                    document.documentElement.setAttribute(
+                                        "data-theme",
+                                        "dark",
+                                    );
+                                } else {
+                                    document.documentElement.removeAttribute(
+                                        "data-theme",
+                                    );
+                                }
+                            }
+                        });
                 }
-            });
 
-        toggleContainer.dataset.initialized = "true";
+                container.dataset.initialized = "true";
+            }
+
+            // Sync UI with current selection
+            const currentTheme = localStorage.getItem("theme") || "system";
+            container.setAttribute("data-active-theme", currentTheme);
+        });
     }
 
-    document.addEventListener("astro:after-swap", () => {
-        const currentTheme = localStorage.getItem("theme") || "system";
-        const container = document.getElementById("theme-toggle-container");
-        if (container) {
-            container.setAttribute("data-active-theme", currentTheme);
-        }
-    });
+    // Initialize (runs on script load and after view transitions)
+    initThemeToggles();
+    document.addEventListener("astro:after-swap", initThemeToggles);
 </script>
 
 <style>
@@ -171,7 +173,9 @@
         color: var(--primary);
     }
 
-    button.active {
+    .theme-toggle[data-active-theme="light"] .theme-light,
+    .theme-toggle[data-active-theme="system"] .theme-system,
+    .theme-toggle[data-active-theme="dark"] .theme-dark {
         color: var(--on-secondary);
     }
 
@@ -188,7 +192,9 @@
         color: var(--on-surface-variant);
     }
 
-    [data-theme="dark"] button.active {
+    [data-theme="dark"] .theme-toggle[data-active-theme="light"] .theme-light,
+    [data-theme="dark"] .theme-toggle[data-active-theme="system"] .theme-system,
+    [data-theme="dark"] .theme-toggle[data-active-theme="dark"] .theme-dark {
         color: var(--on-secondary);
     }
 </style>

@@ -63,7 +63,7 @@ import Search from "./Search.astro";
 
 			<div class="nav-actions">
 				<Search id="search" />
-				<div id="theme-toggle">
+				<div class="theme-toggle-wrapper">
 					<ThemeToggle />
 				</div>
 			</div>
@@ -98,7 +98,7 @@ import Search from "./Search.astro";
 				<a href="/ofertas" class="mobile-nav-link">Ofertas</a>
 				<a href="/blog" class="mobile-nav-link">Blog</a>
 				<a href="/contacto" class="mobile-nav-link">Contacto</a>
-				<div class="mobile-theme-toggle">
+				<div class="mobile-theme-toggle-wrapper">
 					<ThemeToggle />
 				</div>
 			</nav>
@@ -155,20 +155,17 @@ import Search from "./Search.astro";
 		}
 
 		function updateActiveLinks() {
-			const pathname = window.location.pathname.replace(/\/$/, "");
+			const pathname = window.location.pathname.replace(/\/$/, "") || "/";
 			const links = document.querySelectorAll(
 				".internal-links a, .mobile-nav a",
 			);
 
 			links.forEach((link) => {
-				const href = (link.getAttribute("href") || "").replace(
-					/\/$/,
-					"",
-				);
-				if (
-					href === pathname ||
-					(href !== "" && pathname.startsWith(href))
-				) {
+				const href =
+					link.getAttribute("href")?.replace(/\/$/, "") || "/";
+				// Exact match for home, startsWith for others
+				const isHome = href === "/";
+				if (isHome ? pathname === "/" : pathname.startsWith(href)) {
 					link.classList.add("active");
 				} else {
 					link.classList.remove("active");
@@ -367,11 +364,14 @@ import Search from "./Search.astro";
 		.mobile-menu-content {
 			background: var(--bg-nav);
 			width: 100%;
-			max-width: 100%;
+			height: 100vh;
 			padding: 2rem 1.5rem;
 			transform: translateY(-100%);
-			transition: transform 0.3s ease;
+			transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 			position: relative;
+			display: flex;
+			flex-direction: column;
+			overflow-y: auto;
 		}
 
 		.mobile-menu-drawer.open .mobile-menu-content {
@@ -426,7 +426,7 @@ import Search from "./Search.astro";
 			border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 		}
 
-		.mobile-theme-toggle {
+		.mobile-theme-toggle-wrapper {
 			padding: 1.5rem 0 1rem;
 			display: flex;
 			justify-content: center;

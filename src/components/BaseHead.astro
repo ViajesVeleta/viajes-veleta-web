@@ -22,16 +22,21 @@ const { title, description, image = FallbackImage } = Astro.props;
 
 <!-- Theme Initialization -->
 <script is:inline>
-	const theme = localStorage.getItem("theme") || "system";
-	const systemDark = window.matchMedia(
-		"(prefers-color-scheme: dark)",
-	).matches;
+	const applyTheme = () => {
+		const theme = localStorage.getItem("theme") || "system";
+		const systemDark = window.matchMedia(
+			"(prefers-color-scheme: dark)",
+		).matches;
 
-	if (theme === "dark" || (theme === "system" && systemDark)) {
-		document.documentElement.setAttribute("data-theme", "dark");
-	} else {
-		document.documentElement.removeAttribute("data-theme");
-	}
+		if (theme === "dark" || (theme === "system" && systemDark)) {
+			document.documentElement.setAttribute("data-theme", "dark");
+		} else {
+			document.documentElement.removeAttribute("data-theme");
+		}
+	};
+
+	applyTheme();
+	document.addEventListener("astro:after-swap", applyTheme);
 </script>
 
 <!-- Global Metadata -->
