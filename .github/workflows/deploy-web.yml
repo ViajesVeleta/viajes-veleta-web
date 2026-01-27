@@ -1,0 +1,72 @@
+name: Deploy Production
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  check-build-deploy:
+    runs-on: ubuntu-latest
+    name: Build & Deploy
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Checks
+        id: checks
+        run: |
+          npm run check
+          echo "checks_status=✅ Passed" >> $GITHUB_OUTPUT
+
+      - name: Run Tests
+        id: tests
+        run: |
+          # Currently no tests are defined in the project
+          # npm test 
+          echo "tests_status=⚠️ No tests defined" >> $GITHUB_OUTPUT
+
+      - name: Build
+        id: build
+        run: |
+          npm run build
+          echo "build_status=✅ Success" >> $GITHUB_OUTPUT
+
+      - name: Deploy to Cloudflare
+        id: deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          command: deploy
+
+      - name: Add Job Summary
+        if: always()
+        run: |
+          echo "## 🚀 Production Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Step | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "| :--- | :--- |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔍 Checks | ${{ steps.checks.outputs.checks_status || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🧪 Tests | ${{ steps.tests.outputs.tests_status || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🏗️ Build | ${{ steps.build.outputs.build_status || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.deploy.outcome }}" == "success" ]; then
+            echo "| 🌐 Deployment | ✅ Successful |" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Live URL:** [${{ steps.deploy.outputs.deployment-url }}](${{ steps.deploy.outputs.deployment-url }})" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| 🌐 Deployment | ❌ Failed |" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "Commit: \`${{ github.sha }}\` by @${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
