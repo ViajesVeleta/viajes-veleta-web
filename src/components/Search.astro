@@ -4,20 +4,7 @@
 
 <!-- Search Button (shows only icon in header) -->
 <button class="search-button" id="search-button" aria-label="Search">
-    <svg
-        width="20"
-        height="20"
-        viewBox="0 0 20 20"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-    >
-        <path
-            d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM19 19l-4.35-4.35"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"></path>
-    </svg>
+    <i class="fa-solid fa-magnifying-glass"></i>
 </button>
 
 <!-- Search Overlay Panel -->
@@ -29,17 +16,7 @@
                 id="search-close-button"
                 aria-label="Close search"
             >
-                <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                >
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
+                <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
 
@@ -138,6 +115,7 @@
         transition: background 0.2s ease;
         width: 40px;
         height: 40px;
+        font-size: 1.1rem;
     }
 
     .search-button:hover {
@@ -200,6 +178,7 @@
         height: 44px;
         border-radius: 50%;
         transition: background 0.2s ease;
+        font-size: 1.25rem;
     }
 
     .search-close-button:hover {
