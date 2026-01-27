@@ -3,6 +3,13 @@
 ---
 
 <div class="theme-toggle" id="theme-toggle-container">
+    <script is:inline>
+        (function () {
+            const container = document.currentScript.parentElement;
+            const theme = localStorage.getItem("theme") || "system";
+            container.setAttribute("data-active-theme", theme);
+        })();
+    </script>
     <div class="theme-toggle-bg"></div>
     <button id="theme-light" title="Light Theme" aria-label="Light Theme">
         <i class="fa-solid fa-sun"></i>
@@ -26,6 +33,7 @@
 
         // Enable transition only for the toggle action
         document.documentElement.classList.add("theme-transition");
+        toggleContainer?.classList.add("animate");
 
         const systemDark = window.matchMedia(
             "(prefers-color-scheme: dark)",
@@ -42,6 +50,7 @@
         // Remove transition class after animation completes to avoid unwanted side-effects
         setTimeout(() => {
             document.documentElement.classList.remove("theme-transition");
+            toggleContainer?.classList.remove("animate");
         }, 300);
     }
 
@@ -104,9 +113,12 @@
         border-radius: 9999px;
         background: var(--secondary);
         box-shadow: 0 2px 4px color-mix(in srgb, var(--shadow), transparent 80%);
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 1;
         pointer-events: none;
+    }
+
+    .theme-toggle.animate .theme-toggle-bg {
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     /* Transform positions based on data-active-theme */
