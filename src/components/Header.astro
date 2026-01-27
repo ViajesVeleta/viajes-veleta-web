@@ -8,7 +8,7 @@ import Search from "./Search.astro";
 ---
 
 <header>
-	<nav>
+	<nav id="main-nav">
 		<h2>
 			<a href="/">
 				<Image
@@ -23,15 +23,15 @@ import Search from "./Search.astro";
 				{SITE_TITLE}
 			</a>
 		</h2>
-		<div class="internal-links">
+		<div class="internal-links" id="internal-links">
 			<HeaderLink href="/">Home</HeaderLink>
 			<HeaderLink href="/viajes-en-grupo">Viajes en grupo</HeaderLink>
 			<HeaderLink href="/ofertas">Ofertas</HeaderLink>
 			<HeaderLink href="/blog">Blog</HeaderLink>
 			<HeaderLink href="/contacto">Contacto</HeaderLink>
 		</div>
-		<Search />
-		<div class="social-links">
+		<Search id="search" />
+		<div class="social-links" id="social-links">
 			<a href="https://m.webtoo.ls/@astro" target="_blank">
 				<span class="sr-only">Follow Astro on Mastodon</span>
 				<svg
@@ -72,20 +72,162 @@ import Search from "./Search.astro";
 				>
 			</a>
 		</div>
-		<ThemeToggle />
+		<ThemeToggle id="theme-toggle" />
+
+		<!-- Mobile Menu Button -->
+		<button
+			class="mobile-menu-button"
+			id="mobile-menu-button"
+			aria-label="Toggle menu"
+		>
+			<span></span>
+			<span></span>
+		</button>
 	</nav>
 </header>
+
+<!-- Mobile Menu Drawer -->
+<div class="mobile-menu-drawer" id="mobile-menu-drawer">
+	<div class="mobile-menu-content">
+		<button
+			class="close-button"
+			id="close-menu-button"
+			aria-label="Close menu"
+		>
+			<svg
+				width="24"
+				height="24"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+			>
+				<line x1="18" y1="6" x2="6" y2="18"></line>
+				<line x1="6" y1="6" x2="18" y2="18"></line>
+			</svg>
+		</button>
+		<nav class="mobile-nav">
+			<a href="/" class="mobile-nav-link">Home</a>
+			<a href="/viajes-en-grupo" class="mobile-nav-link"
+				>Viajes en grupo</a
+			>
+			<a href="/ofertas" class="mobile-nav-link">Ofertas</a>
+			<a href="/blog" class="mobile-nav-link">Blog</a>
+			<a href="/contacto" class="mobile-nav-link">Contacto</a>
+		</nav>
+	</div>
+</div>
+
+<script>
+	// Check if menu items overflow and toggle mobile menu visibility
+	function checkMenuOverflow() {
+		const nav = document.getElementById("main-nav");
+		const internalLinks = document.getElementById("internal-links");
+		const search = document.getElementById("search");
+		const socialLinks = document.getElementById("social-links");
+		const themeToggle = document.getElementById("theme-toggle");
+		const mobileButton = document.getElementById("mobile-menu-button");
+
+		if (!nav || !internalLinks || !mobileButton) return;
+
+		// Calculate available space
+		const navWidth = nav.offsetWidth;
+		const logoWidth = nav.querySelector("h2")?.offsetWidth || 0;
+
+		// Calculate combined width of all desktop menu items
+		let menuItemsWidth = 0;
+		if (internalLinks) menuItemsWidth += internalLinks.scrollWidth;
+		if (search) menuItemsWidth += search.offsetWidth || 0;
+		if (socialLinks) menuItemsWidth += socialLinks.offsetWidth || 0;
+		if (themeToggle) menuItemsWidth += themeToggle.offsetWidth || 0;
+
+		// Add some margin for safety (100px)
+		const requiredWidth = logoWidth + menuItemsWidth + 100;
+
+		// Toggle between desktop and mobile menu
+		if (requiredWidth > navWidth) {
+			// Hide desktop menu items and show mobile button
+			if (internalLinks) internalLinks.style.display = "none";
+			if (search) search.style.display = "none";
+			if (socialLinks) socialLinks.style.display = "none";
+			if (themeToggle) themeToggle.style.display = "none";
+			mobileButton.style.display = "flex";
+		} else {
+			// Show desktop menu items and hide mobile button
+			if (internalLinks) internalLinks.style.display = "flex";
+			if (search) search.style.display = "block";
+			if (socialLinks) socialLinks.style.display = "flex";
+			if (themeToggle) themeToggle.style.display = "block";
+			mobileButton.style.display = "none";
+		}
+	}
+
+	// Mobile menu toggle functionality
+	function initMobileMenu() {
+		const menuButton = document.getElementById("mobile-menu-button");
+		const closeButton = document.getElementById("close-menu-button");
+		const drawer = document.getElementById("mobile-menu-drawer");
+		const mobileLinks = document.querySelectorAll(".mobile-nav-link");
+
+		function openMenu() {
+			drawer?.classList.add("open");
+			document.body.style.overflow = "hidden";
+		}
+
+		function closeMenu() {
+			drawer?.classList.remove("open");
+			document.body.style.overflow = "";
+		}
+
+		menuButton?.addEventListener("click", openMenu);
+		closeButton?.addEventListener("click", closeMenu);
+
+		// Close menu when clicking on a link
+		mobileLinks.forEach((link) => {
+			link.addEventListener("click", closeMenu);
+		});
+
+		// Close menu when clicking outside
+		drawer?.addEventListener("click", (e) => {
+			if (e.target === drawer) {
+				closeMenu();
+			}
+		});
+	}
+
+	// Initialize on load
+	checkMenuOverflow();
+	initMobileMenu();
+
+	// Re-check on window resize
+	let resizeTimeout: number;
+	window.addEventListener("resize", () => {
+		clearTimeout(resizeTimeout);
+		resizeTimeout = window.setTimeout(checkMenuOverflow, 100);
+	});
+
+	// Re-check after navigation (for Astro view transitions)
+	document.addEventListener("astro:page-load", () => {
+		checkMenuOverflow();
+		initMobileMenu();
+	});
+</script>
+
 <style>
 	header {
 		margin: 0;
 		padding: 0 1em;
 		background: var(--bg-nav);
 		box-shadow: var(--header-shadow);
+		position: relative;
+		z-index: 100;
 	}
+
 	h2 {
 		margin: 0;
 		font-size: 1em;
 		font-weight: normal;
+		flex-shrink: 0;
 	}
 
 	h2 a,
@@ -96,11 +238,13 @@ import Search from "./Search.astro";
 		align-items: center;
 		gap: 1.5rem;
 	}
+
 	nav {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 	}
+
 	nav a {
 		padding: 0.5em 0.5em;
 		color: var(--on-bg-nav);
@@ -109,10 +253,12 @@ import Search from "./Search.astro";
 		transition: opacity 0.2s ease;
 		border-radius: 0.5em;
 	}
+
 	nav a:hover {
 		opacity: 1;
 		background: rgba(255, 255, 255, 0.1);
 	}
+
 	nav a.active {
 		text-decoration: underline;
 		text-decoration-thickness: 3px;
@@ -121,15 +267,130 @@ import Search from "./Search.astro";
 		opacity: 1;
 		font-weight: bold;
 	}
+
 	.internal-links {
 		display: flex;
 		gap: 0.5rem;
 	}
+
 	.social-links,
 	.social-links a {
 		display: flex;
 		color: var(--on-bg-nav);
 	}
+
+	/* Mobile Menu Button - Apple style (two horizontal lines) */
+	.mobile-menu-button {
+		display: none;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		width: 44px;
+		height: 44px;
+		background: none;
+		border: none;
+		cursor: pointer;
+		padding: 0;
+		gap: 6px;
+	}
+
+	.mobile-menu-button span {
+		display: block;
+		width: 18px;
+		height: 2px;
+		background-color: var(--on-bg-nav);
+		transition: all 0.3s ease;
+		border-radius: 2px;
+	}
+
+	.mobile-menu-button:hover span {
+		background-color: var(--on-bg-nav);
+		opacity: 0.7;
+	}
+
+	/* Mobile Menu Drawer */
+	.mobile-menu-drawer {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: rgba(0, 0, 0, 0.5);
+		backdrop-filter: blur(10px);
+		z-index: 999;
+		opacity: 0;
+		visibility: hidden;
+		transition:
+			opacity 0.3s ease,
+			visibility 0.3s ease;
+	}
+
+	.mobile-menu-drawer.open {
+		opacity: 1;
+		visibility: visible;
+	}
+
+	.mobile-menu-content {
+		background: var(--bg-nav);
+		width: 100%;
+		max-width: 100%;
+		padding: 2rem 1.5rem;
+		transform: translateY(-100%);
+		transition: transform 0.3s ease;
+		position: relative;
+	}
+
+	.mobile-menu-drawer.open .mobile-menu-content {
+		transform: translateY(0);
+	}
+
+	.close-button {
+		position: absolute;
+		top: 1rem;
+		right: 1rem;
+		background: none;
+		border: none;
+		cursor: pointer;
+		padding: 0.5rem;
+		color: var(--on-bg-nav);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 44px;
+		height: 44px;
+		border-radius: 50%;
+		transition: background 0.2s ease;
+	}
+
+	.close-button:hover {
+		background: rgba(255, 255, 255, 0.1);
+	}
+
+	.mobile-nav {
+		display: flex;
+		flex-direction: column;
+		gap: 0;
+		margin-top: 3rem;
+	}
+
+	.mobile-nav-link {
+		color: var(--on-bg-nav);
+		text-decoration: none;
+		font-size: 1.5rem;
+		padding: 1rem 0;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+		transition: opacity 0.2s ease;
+		opacity: 0.9;
+	}
+
+	.mobile-nav-link:hover {
+		opacity: 1;
+	}
+
+	.mobile-nav-link:last-child {
+		border-bottom: none;
+	}
+
 	@media (max-width: 720px) {
 		.social-links {
 			display: none;
