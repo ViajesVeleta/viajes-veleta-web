@@ -4,6 +4,7 @@ import HeaderLink from "./HeaderLink.astro";
 import ThemeToggle from "./ThemeToggle.astro";
 import { Image } from "astro:assets";
 import logo from "../assets/logo.svg";
+import Search from "./Search.astro";
 ---
 
 <header>
@@ -29,6 +30,7 @@ import logo from "../assets/logo.svg";
 			<HeaderLink href="/blog">Blog</HeaderLink>
 			<HeaderLink href="/contacto">Contacto</HeaderLink>
 		</div>
+		<Search />
 		<div class="social-links">
 			<a href="https://m.webtoo.ls/@astro" target="_blank">
 				<span class="sr-only">Follow Astro on Mastodon</span>
