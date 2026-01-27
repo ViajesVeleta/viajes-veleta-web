@@ -4,6 +4,12 @@
   License MIT: https://github.com/HermanMartinus/bearblog/blob/master/LICENSE.md
  */
 
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
 :root {
 	/* Primary */
 	--primary: #1976d2;
