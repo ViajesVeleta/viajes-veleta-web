@@ -72,7 +72,9 @@ import Search from "./Search.astro";
 				>
 			</a>
 		</div>
-		<ThemeToggle id="theme-toggle" />
+		<div id="theme-toggle">
+			<ThemeToggle />
+		</div>
 
 		<!-- Mobile Menu Button -->
 		<button
@@ -114,6 +116,9 @@ import Search from "./Search.astro";
 			<a href="/ofertas" class="mobile-nav-link">Ofertas</a>
 			<a href="/blog" class="mobile-nav-link">Blog</a>
 			<a href="/contacto" class="mobile-nav-link">Contacto</a>
+			<div class="mobile-theme-toggle">
+				<ThemeToggle />
+			</div>
 		</nav>
 	</div>
 </div>
@@ -193,6 +198,66 @@ import Search from "./Search.astro";
 				closeMenu();
 			}
 		});
+
+		// Fix mobile theme toggle buttons - attach event listeners
+		const mobileThemeButtons = drawer?.querySelectorAll(
+			".mobile-theme-toggle button",
+		);
+		if (mobileThemeButtons && mobileThemeButtons.length === 3) {
+			const [lightBtn, systemBtn, darkBtn] =
+				Array.from(mobileThemeButtons);
+
+			function updateMobileTheme(value: string) {
+				localStorage.setItem("theme", value);
+				const systemDark = window.matchMedia(
+					"(prefers-color-scheme: dark)",
+				).matches;
+
+				if (value === "dark" || (value === "system" && systemDark)) {
+					document.documentElement.setAttribute("data-theme", "dark");
+				} else {
+					document.documentElement.removeAttribute("data-theme");
+				}
+
+				// Update active state on both desktop and mobile toggles
+				if (mobileThemeButtons) {
+					mobileThemeButtons.forEach((btn) =>
+						btn.classList.remove("active"),
+					);
+				}
+				if (value === "light") lightBtn.classList.add("active");
+				if (value === "system") systemBtn.classList.add("active");
+				if (value === "dark") darkBtn.classList.add("active");
+
+				// Also update desktop theme toggle if it exists
+				const desktopToggle = document.getElementById(
+					"theme-toggle-container",
+				);
+				if (desktopToggle) {
+					desktopToggle.setAttribute("data-active-theme", value);
+				}
+
+				// Also update mobile theme toggle container
+				const mobileToggle = drawer?.querySelector(
+					".mobile-theme-toggle .theme-toggle",
+				);
+				if (mobileToggle) {
+					mobileToggle.setAttribute("data-active-theme", value);
+				}
+			}
+
+			lightBtn?.addEventListener("click", () =>
+				updateMobileTheme("light"),
+			);
+			systemBtn?.addEventListener("click", () =>
+				updateMobileTheme("system"),
+			);
+			darkBtn?.addEventListener("click", () => updateMobileTheme("dark"));
+
+			// Set initial active state
+			const currentTheme = localStorage.getItem("theme") || "system";
+			updateMobileTheme(currentTheme);
+		}
 	}
 
 	// Initialize on load
@@ -388,7 +453,13 @@ import Search from "./Search.astro";
 	}
 
 	.mobile-nav-link:last-child {
-		border-bottom: none;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	}
+
+	.mobile-theme-toggle {
+		padding: 1.5rem 0 1rem;
+		display: flex;
+		justify-content: center;
 	}
 
 	@media (max-width: 720px) {
