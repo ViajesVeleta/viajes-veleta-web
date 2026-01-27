@@ -27,11 +27,6 @@ import logo from "../assets/logo.svg";
 			<HeaderLink href="/viajes-en-grupo">Viajes en grupo</HeaderLink>
 			<HeaderLink href="/blog">Blog</HeaderLink>
 			<HeaderLink href="/about">About</HeaderLink>
-			{
-				(import.meta.env.DEV || import.meta.env.MODE === "dev") && (
-					<HeaderLink href="/style-guide">Style Guide</HeaderLink>
-				)
-			}
 		</div>
 		<div class="social-links">
 			<a href="https://m.webtoo.ls/@astro" target="_blank">
