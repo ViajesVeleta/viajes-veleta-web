@@ -1,62 +1,383 @@
 ---
-
+// Apple-style search with overlay panel
 ---
 
-<div id="search"></div>
+<!-- Search Button (shows only icon in header) -->
+<button class="search-button" id="search-button" aria-label="Search">
+    <svg
+        width="20"
+        height="20"
+        viewBox="0 0 20 20"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+    >
+        <path
+            d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM19 19l-4.35-4.35"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"></path>
+    </svg>
+</button>
+
+<!-- Search Overlay Panel -->
+<div class="search-overlay" id="search-overlay">
+    <div class="search-overlay-content">
+        <div class="search-overlay-header">
+            <button
+                class="search-close-button"
+                id="search-close-button"
+                aria-label="Close search"
+            >
+                <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
+        <div class="search-overlay-body">
+            <!-- Pagefind Search -->
+            <div id="search-container"></div>
+
+            <!-- Quick Links placeholder (for future) -->
+            <div class="quick-links" id="quick-links" style="display: none;">
+                <h3>Quick Links</h3>
+                <!-- Add your quick links here in the future -->
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     import { PagefindUI } from "@pagefind/default-ui";
     import "@pagefind/default-ui/css/ui.css";
 
-    window.addEventListener("DOMContentLoaded", () => {
-        new PagefindUI({
-            element: "#search",
-            showSubResults: true,
-            showImages: false,
+    let pagefindInstance: any = null;
+
+    function initSearch() {
+        const searchButton = document.getElementById("search-button");
+        const searchOverlay = document.getElementById("search-overlay");
+        const searchCloseButton = document.getElementById(
+            "search-close-button",
+        );
+
+        function openSearch() {
+            searchOverlay?.classList.add("open");
+            document.body.style.overflow = "hidden";
+
+            // Initialize Pagefind if not already done
+            if (!pagefindInstance) {
+                pagefindInstance = new PagefindUI({
+                    element: "#search-container",
+                    showSubResults: true,
+                    showImages: false,
+                    autofocus: true,
+                });
+            }
+
+            // Focus the search input after a short delay
+            setTimeout(() => {
+                const searchInput = document.querySelector<HTMLInputElement>(
+                    ".pagefind-ui__search-input",
+                );
+                searchInput?.focus();
+            }, 100);
+        }
+
+        function closeSearch() {
+            searchOverlay?.classList.remove("open");
+            document.body.style.overflow = "";
+        }
+
+        searchButton?.addEventListener("click", openSearch);
+        searchCloseButton?.addEventListener("click", closeSearch);
+
+        // Close on escape key
+        document.addEventListener("keydown", (e) => {
+            if (
+                e.key === "Escape" &&
+                searchOverlay?.classList.contains("open")
+            ) {
+                closeSearch();
+            }
         });
-    });
+
+        // Close when clicking on overlay background
+        searchOverlay?.addEventListener("click", (e) => {
+            if (e.target === searchOverlay) {
+                closeSearch();
+            }
+        });
+    }
+
+    // Initialize on load
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initSearch);
+    } else {
+        initSearch();
+    }
+
+    // Re-initialize after Astro page transitions
+    document.addEventListener("astro:page-load", initSearch);
 </script>
 
+<style>
+    /* Search Button in Header */
+    .search-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--on-bg-nav);
+        border-radius: 50%;
+        transition: background 0.2s ease;
+        width: 40px;
+        height: 40px;
+    }
+
+    .search-button:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Search Overlay */
+    .search-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.48);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        z-index: 9999;
+        opacity: 0;
+        visibility: hidden;
+        transition:
+            opacity 0.3s ease,
+            visibility 0.3s ease;
+    }
+
+    .search-overlay.open {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .search-overlay-content {
+        background: var(--surface);
+        width: 100%;
+        max-width: 100%;
+        min-height: 100vh;
+        transform: translateY(-20px);
+        transition: transform 0.3s ease;
+        position: relative;
+    }
+
+    .search-overlay.open .search-overlay-content {
+        transform: translateY(0);
+    }
+
+    .search-overlay-header {
+        display: flex;
+        justify-content: flex-end;
+        padding: 1rem 1.5rem;
+    }
+
+    .search-close-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.5rem;
+        color: var(--on-surface);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        transition: background 0.2s ease;
+    }
+
+    .search-close-button:hover {
+        background: var(--surface-variant);
+    }
+
+    .search-overlay-body {
+        padding: 0 1.5rem 2rem;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    /* Quick Links (for future use) */
+    .quick-links {
+        margin-top: 3rem;
+    }
+
+    .quick-links h3 {
+        font-size: 0.875rem;
+        color: var(--on-surface-variant);
+        margin-bottom: 1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+</style>
+
 <style is:global>
-    /* Styling to make it look nice in the header */
-    #search {
-        --pagefind-ui-scale: 0.8;
-        --pagefind-ui-primary: var(--accent);
-        --pagefind-ui-text: var(--gray-dark);
-        --pagefind-ui-background: #ffffff;
-        --pagefind-ui-border: var(--gray-light);
-        --pagefind-ui-tag: var(--gray-light);
-        --pagefind-ui-border-width: 1px;
-        --pagefind-ui-border-radius: 8px;
+    /* Pagefind UI Custom Styling for Apple-like appearance */
+    #search-container {
+        --pagefind-ui-scale: 1;
+        --pagefind-ui-primary: var(--primary);
+        --pagefind-ui-text: var(--on-surface);
+        --pagefind-ui-background: var(--surface);
+        --pagefind-ui-border: var(--outline-variant);
+        --pagefind-ui-tag: var(--surface-variant);
+        --pagefind-ui-border-width: 0;
+        --pagefind-ui-border-radius: 12px;
         --pagefind-ui-image-border-radius: 8px;
         --pagefind-ui-image-box-ratio: 3 / 2;
         --pagefind-ui-font: "Lato", sans-serif;
     }
 
-    #search .pagefind-ui__search-input {
-        font-weight: normal;
+    /* Search Input Styling */
+    #search-container .pagefind-ui__search-input {
+        font-size: 2rem;
+        font-weight: 500;
+        padding: 1rem 1rem 1rem 3rem;
+        border: none;
+        border-bottom: 1px solid var(--outline-variant);
+        border-radius: 0;
+        background: transparent;
+        color: var(--on-surface);
     }
 
-    #search .pagefind-ui__drawer {
-        position: absolute;
-        left: 0;
-        right: 0;
-        margin-top: 10px;
-        z-index: 9999;
-        background: white;
-        padding: 10px;
+    #search-container .pagefind-ui__search-input::placeholder {
+        color: var(--on-surface-variant);
+        opacity: 0.6;
+    }
+
+    #search-container .pagefind-ui__search-input:focus {
+        outline: none;
+        border-bottom-color: var(--primary);
+    }
+
+    /* Search Icon inside input */
+    #search-container .pagefind-ui__search-clear {
+        right: 1rem;
+        width: 32px;
+        height: 32px;
+        background: var(--surface-variant);
+        border-radius: 50%;
+    }
+
+    #search-container .pagefind-ui__search-clear:focus {
+        outline: 2px solid var(--primary);
+    }
+
+    /* Results Container */
+    #search-container .pagefind-ui__results-area {
+        margin-top: 2rem;
+    }
+
+    #search-container .pagefind-ui__message {
+        font-size: 0.875rem;
+        color: var(--on-surface-variant);
+        padding: 1rem 0;
+        font-weight: 600;
+    }
+
+    /* Individual Result */
+    #search-container .pagefind-ui__result {
+        border: none;
+        border-bottom: 1px solid var(--outline-variant);
+        padding: 1.5rem 0;
+        background: transparent;
+    }
+
+    #search-container .pagefind-ui__result:hover {
+        background: var(--surface-variant);
+        padding-left: 1rem;
+        padding-right: 1rem;
+        margin-left: -1rem;
+        margin-right: -1rem;
         border-radius: 8px;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        display: none; /* Hidden by default until search has value */
-        max-width: 600px;
-        margin-left: auto;
-        margin-right: auto;
+        border-bottom-color: transparent;
     }
 
-    /* Only show drawer when it has content */
-    #search
-        .pagefind-ui__search-input:not(:placeholder-shown)
-        ~ .pagefind-ui__drawer {
-        display: block;
+    #search-container .pagefind-ui__result-link {
+        text-decoration: none;
+        color: var(--on-surface);
+        font-weight: 500;
+        font-size: 1.125rem;
+    }
+
+    #search-container .pagefind-ui__result-link:hover {
+        color: var(--primary);
+    }
+
+    #search-container .pagefind-ui__result-excerpt {
+        color: var(--on-surface-variant);
+        font-size: 0.875rem;
+        line-height: 1.6;
+        margin-top: 0.5rem;
+    }
+
+    /* Result title/link arrow */
+    #search-container .pagefind-ui__result-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    #search-container .pagefind-ui__result-title::after {
+        content: "→";
+        opacity: 0;
+        transition:
+            opacity 0.2s ease,
+            transform 0.2s ease;
+        transform: translateX(-4px);
+    }
+
+    #search-container
+        .pagefind-ui__result:hover
+        .pagefind-ui__result-title::after {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    /* Dark mode support */
+    [data-theme="dark"] #search-container .pagefind-ui__search-input {
+        color: var(--on-surface);
+        border-bottom-color: var(--outline-variant);
+    }
+
+    [data-theme="dark"] #search-container .pagefind-ui__result {
+        border-bottom-color: var(--outline-variant);
+    }
+
+    [data-theme="dark"] #search-container .pagefind-ui__result:hover {
+        background: var(--surface-variant);
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        #search-container .pagefind-ui__search-input {
+            font-size: 1.5rem;
+            padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+        }
+
+        .search-overlay-body {
+            padding: 0 1rem 2rem;
+        }
     }
 </style>
