@@ -16,7 +16,7 @@ const blog = defineCollection({
 		}),
 });
 
-const viajes = defineCollection({
+const groups = defineCollection({
 	loader: glob({ base: './src/content/viajes-en-grupo', pattern: '**/*.{md,mdx}' }),
 	schema: ({ image }) =>
 		z.object({
@@ -28,4 +28,16 @@ const viajes = defineCollection({
 		}),
 });
 
-export const collections = { blog, viajes };
+const offers = defineCollection({
+	loader: glob({ base: './src/content/ofertas', pattern: '**/*.{md,mdx}' }),
+	schema: ({ image }) =>
+		z.object({
+			title: z.string(),
+			description: z.string(),
+			pubDate: z.coerce.date(),
+			updatedDate: z.coerce.date().optional(),
+			heroImage: image().optional(),
+		}),
+});
+
+export const collections = { blog, groups, offers };

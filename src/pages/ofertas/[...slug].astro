@@ -5,13 +5,13 @@ import Timeline from "../../components/Timeline.astro";
 import TimelineItem from "../../components/TimelineItem.astro";
 
 export async function getStaticPaths() {
-    const posts = await getCollection("groups");
+    const posts = await getCollection("offers");
     return posts.map((post) => ({
         params: { slug: post.id },
         props: post,
     }));
 }
-type Props = CollectionEntry<"groups">;
+type Props = CollectionEntry<"offers">;
 
 const post = Astro.props;
 const { Content } = await render(post);

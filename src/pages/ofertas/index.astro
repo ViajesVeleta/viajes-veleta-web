@@ -7,7 +7,7 @@ import FormattedDate from "../../components/FormattedDate.astro";
 import Header from "../../components/Header.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
 
-const posts = (await getCollection("groups")).sort(
+const posts = (await getCollection("offers")).sort(
     (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 ---
@@ -16,7 +16,7 @@ const posts = (await getCollection("groups")).sort(
 <html lang="es">
     <head>
         <BaseHead
-            title={`Viajes en grupo - ${SITE_TITLE}`}
+            title={`Ofertas - ${SITE_TITLE}`}
             description={SITE_DESCRIPTION}
         />
         <style>
@@ -97,7 +97,7 @@ const posts = (await getCollection("groups")).sort(
                     {
                         posts.map((post, index) => (
                             <li>
-                                <a href={`/viajes-en-grupo/${post.id}/`}>
+                                <a href={`/ofertas/${post.id}/`}>
                                     {post.data.heroImage && (
                                         <Image
                                             width={720}
