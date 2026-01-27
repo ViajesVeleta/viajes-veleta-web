@@ -156,76 +156,16 @@ import Search from "./Search.astro";
 			}
 		});
 
-		// Fix mobile theme toggle buttons - attach event listeners
-		const mobileThemeButtons = drawer?.querySelectorAll(
-			".mobile-theme-toggle button",
-		);
-		if (mobileThemeButtons && mobileThemeButtons.length === 3) {
-			const [lightBtn, systemBtn, darkBtn] =
-				Array.from(mobileThemeButtons);
-
-			function updateMobileTheme(value: string) {
-				localStorage.setItem("theme", value);
-				const systemDark = window.matchMedia(
-					"(prefers-color-scheme: dark)",
-				).matches;
-
-				if (value === "dark" || (value === "system" && systemDark)) {
-					document.documentElement.setAttribute("data-theme", "dark");
-				} else {
-					document.documentElement.removeAttribute("data-theme");
-				}
-
-				// Update active state on both desktop and mobile toggles
-				if (mobileThemeButtons) {
-					mobileThemeButtons.forEach((btn) =>
-						btn.classList.remove("active"),
-					);
-				}
-				if (value === "light") lightBtn.classList.add("active");
-				if (value === "system") systemBtn.classList.add("active");
-				if (value === "dark") darkBtn.classList.add("active");
-
-				// Also update desktop theme toggle if it exists
-				const desktopToggle = document.getElementById(
-					"theme-toggle-container",
-				);
-				if (desktopToggle) {
-					desktopToggle.setAttribute("data-active-theme", value);
-				}
-
-				// Also update mobile theme toggle container
-				const mobileToggle = drawer?.querySelector(
-					".mobile-theme-toggle .theme-toggle",
-				);
-				if (mobileToggle) {
-					mobileToggle.setAttribute("data-active-theme", value);
-				}
-			}
-
-			lightBtn?.addEventListener("click", () =>
-				updateMobileTheme("light"),
-			);
-			systemBtn?.addEventListener("click", () =>
-				updateMobileTheme("system"),
-			);
-			darkBtn?.addEventListener("click", () => updateMobileTheme("dark"));
-
-			// Set initial active state
-			const currentTheme = localStorage.getItem("theme") || "system";
-			updateMobileTheme(currentTheme);
-		}
+		// Note: Theme toggle functionality is handled by the ThemeToggle component itself
+		// No need for additional synchronization logic here
 	}
 
 	// Initialize on load
-	
+
 	initMobileMenu();
-
-
 
 	// Re-check after navigation (for Astro view transitions)
 	document.addEventListener("astro:page-load", () => {
-		
 		initMobileMenu();
 	});
 </script>
@@ -414,7 +354,6 @@ import Search from "./Search.astro";
 		justify-content: center;
 	}
 
-
 	/* Responsive breakpoint - switch to mobile menu */
 	@media (max-width: 1100px) {
 		/* Hide desktop menu items */
@@ -424,7 +363,7 @@ import Search from "./Search.astro";
 		#theme-toggle {
 			display: none !important;
 		}
-		
+
 		/* Show mobile menu button */
 		.mobile-menu-button {
 			display: flex !important;

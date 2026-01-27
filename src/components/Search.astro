@@ -57,10 +57,11 @@
 </div>
 
 <script>
+    // @ts-ignore - Pagefind doesn't have official type definitions
     import { PagefindUI } from "@pagefind/default-ui";
     import "@pagefind/default-ui/css/ui.css";
 
-    let pagefindInstance: any = null;
+    let pagefindInstance: PagefindUI | null = null;
 
     function initSearch() {
         const searchButton = document.getElementById("search-button");
@@ -74,6 +75,7 @@
             document.body.style.overflow = "hidden";
 
             // Initialize Pagefind if not already done
+            // The autofocus option automatically focuses the search input when initialized
             if (!pagefindInstance) {
                 pagefindInstance = new PagefindUI({
                     element: "#search-container",
@@ -82,14 +84,6 @@
                     autofocus: true,
                 });
             }
-
-            // Focus the search input after a short delay
-            setTimeout(() => {
-                const searchInput = document.querySelector<HTMLInputElement>(
-                    ".pagefind-ui__search-input",
-                );
-                searchInput?.focus();
-            }, 100);
         }
 
         function closeSearch() {
@@ -271,17 +265,43 @@
         border-bottom-color: var(--primary);
     }
 
-    /* Search Icon inside input */
+    /* Clear button (X icon) - polished design */
     #search-container .pagefind-ui__search-clear {
-        right: 1rem;
-        width: 32px;
-        height: 32px;
         background: var(--surface-variant);
         border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--on-surface-variant);
+        transition: all 0.2s ease;
+        font-size: 0; /* Hide any default text */
+        cursor: pointer;
+        flex-shrink: 0; /* Prevent squishing */
+    }
+
+    /* Add Font Awesome X icon */
+    #search-container .pagefind-ui__search-clear::before {
+        content: "\f00d"; /* Font Awesome X icon */
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        font-size: 14px;
+        line-height: 1;
+        color: inherit;
+        display: block;
+    }
+
+    #search-container .pagefind-ui__search-clear:hover {
+        background: var(--primary);
+        color: var(--on-primary);
+        transform: scale(1.1);
     }
 
     #search-container .pagefind-ui__search-clear:focus {
         outline: 2px solid var(--primary);
+        outline-offset: 2px;
     }
 
     /* Results Container */
