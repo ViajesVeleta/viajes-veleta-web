@@ -124,49 +124,6 @@ import Search from "./Search.astro";
 </div>
 
 <script>
-	// Check if menu items overflow and toggle mobile menu visibility
-	function checkMenuOverflow() {
-		const nav = document.getElementById("main-nav");
-		const internalLinks = document.getElementById("internal-links");
-		const search = document.getElementById("search");
-		const socialLinks = document.getElementById("social-links");
-		const themeToggle = document.getElementById("theme-toggle");
-		const mobileButton = document.getElementById("mobile-menu-button");
-
-		if (!nav || !internalLinks || !mobileButton) return;
-
-		// Calculate available space
-		const navWidth = nav.offsetWidth;
-		const logoWidth = nav.querySelector("h2")?.offsetWidth || 0;
-
-		// Calculate combined width of all desktop menu items
-		let menuItemsWidth = 0;
-		if (internalLinks) menuItemsWidth += internalLinks.scrollWidth;
-		if (search) menuItemsWidth += search.offsetWidth || 0;
-		if (socialLinks) menuItemsWidth += socialLinks.offsetWidth || 0;
-		if (themeToggle) menuItemsWidth += themeToggle.offsetWidth || 0;
-
-		// Add some margin for safety (100px)
-		const requiredWidth = logoWidth + menuItemsWidth + 100;
-
-		// Toggle between desktop and mobile menu
-		if (requiredWidth > navWidth) {
-			// Hide desktop menu items and show mobile button
-			if (internalLinks) internalLinks.style.display = "none";
-			if (search) search.style.display = "none";
-			if (socialLinks) socialLinks.style.display = "none";
-			if (themeToggle) themeToggle.style.display = "none";
-			mobileButton.style.display = "flex";
-		} else {
-			// Show desktop menu items and hide mobile button
-			if (internalLinks) internalLinks.style.display = "flex";
-			if (search) search.style.display = "block";
-			if (socialLinks) socialLinks.style.display = "flex";
-			if (themeToggle) themeToggle.style.display = "block";
-			mobileButton.style.display = "none";
-		}
-	}
-
 	// Mobile menu toggle functionality
 	function initMobileMenu() {
 		const menuButton = document.getElementById("mobile-menu-button");
@@ -261,19 +218,14 @@ import Search from "./Search.astro";
 	}
 
 	// Initialize on load
-	checkMenuOverflow();
+	
 	initMobileMenu();
 
-	// Re-check on window resize
-	let resizeTimeout: number;
-	window.addEventListener("resize", () => {
-		clearTimeout(resizeTimeout);
-		resizeTimeout = window.setTimeout(checkMenuOverflow, 100);
-	});
+
 
 	// Re-check after navigation (for Astro view transitions)
 	document.addEventListener("astro:page-load", () => {
-		checkMenuOverflow();
+		
 		initMobileMenu();
 	});
 </script>
@@ -462,9 +414,20 @@ import Search from "./Search.astro";
 		justify-content: center;
 	}
 
-	@media (max-width: 720px) {
-		.social-links {
-			display: none;
+
+	/* Responsive breakpoint - switch to mobile menu */
+	@media (max-width: 1100px) {
+		/* Hide desktop menu items */
+		.internal-links,
+		#search,
+		.social-links,
+		#theme-toggle {
+			display: none !important;
+		}
+		
+		/* Show mobile menu button */
+		.mobile-menu-button {
+			display: flex !important;
 		}
 	}
 </style>
