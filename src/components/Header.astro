@@ -5,9 +5,19 @@ import ThemeToggle from "./ThemeToggle.astro";
 import { Image } from "astro:assets";
 import logo from "../assets/logo.svg";
 import Search from "./Search.astro";
+
+interface Props {
+	isOverlay?: boolean;
+}
+
+const { isOverlay = false } = Astro.props;
 ---
 
-<header id="main-header" transition:persist>
+<header
+	id="main-header"
+	class:list={{ "is-overlay": isOverlay }}
+	transition:persist
+>
 	<div class="top-bar">
 		<div class="header-content">
 			<div class="contact-info">
@@ -196,6 +206,27 @@ import Search from "./Search.astro";
 			box-shadow: var(--header-shadow);
 		}
 
+		header.is-overlay {
+			position: fixed;
+			background: transparent;
+			box-shadow: none;
+			--bg-nav: #1a1a1a;
+			--on-bg-nav: #ffffff;
+		}
+
+		/* Specific overlay styles when NOT scrolled */
+		header.is-overlay:not(.scrolled) .top-bar {
+			background: rgba(0, 0, 0, 0.2);
+			color: rgba(255, 255, 255, 0.66);
+			backdrop-filter: none;
+			border-bottom: 1px solid transparent;
+		}
+
+		header.is-overlay:not(.scrolled) #main-nav {
+			background: transparent;
+			backdrop-filter: none;
+		}
+
 		header.scrolled {
 			top: -40px; /* Hide top bar (height 40px) */
 		}
@@ -218,6 +249,16 @@ import Search from "./Search.astro";
 			font-size: 0.85rem;
 			color: var(--on-bg-nav);
 			border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+			transition:
+				background-color 0.3s ease,
+				color 0.3s ease,
+				border-color 0.3s ease;
+		}
+
+		/* Scrolled styling for top bar */
+		header.scrolled .top-bar {
+			background-color: var(--primary-fixed-dim);
+			border-bottom-color: transparent;
 		}
 
 		.contact-info {
@@ -243,6 +284,12 @@ import Search from "./Search.astro";
 			height: 70px;
 			background: color-mix(in srgb, var(--bg-nav), transparent 15%);
 			backdrop-filter: blur(10px);
+			transition: background-color 0.3s ease;
+		}
+
+		/* Scrolled styling for main nav */
+		header.scrolled #main-nav {
+			background-color: var(--primary-fixed);
 		}
 
 		.nav-actions {
