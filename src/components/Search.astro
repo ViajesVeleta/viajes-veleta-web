@@ -34,11 +34,7 @@
 </div>
 
 <script>
-    // @ts-ignore - Pagefind doesn't have official type definitions
-    import { PagefindUI } from "@pagefind/default-ui";
-    import "@pagefind/default-ui/css/ui.css";
-
-    let pagefindInstance: PagefindUI | null = null;
+    let pagefindInstance = null;
 
     function initSearch() {
         const searchButton = document.getElementById("search-button");
@@ -50,17 +46,25 @@
         if (!searchButton || !searchOverlay || searchButton.dataset.initialized)
             return;
 
-        function openSearch() {
+        async function openSearch() {
             searchOverlay?.classList.add("open");
             document.body.style.overflow = "hidden";
 
             if (!pagefindInstance) {
-                pagefindInstance = new PagefindUI({
-                    element: "#search-container",
-                    showSubResults: true,
-                    showImages: false,
-                    autofocus: true,
-                });
+                try {
+                    // @ts-ignore
+                    const { PagefindUI } = await import("@pagefind/default-ui");
+                    await import("@pagefind/default-ui/css/ui.css");
+
+                    pagefindInstance = new PagefindUI({
+                        element: "#search-container",
+                        showSubResults: true,
+                        showImages: false,
+                        autofocus: true,
+                    });
+                } catch (e) {
+                    console.error("Failed to load search:", e);
+                }
             }
         }
 
