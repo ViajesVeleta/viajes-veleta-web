@@ -113,6 +113,7 @@ const { isOverlay = false } = Astro.props;
 
 	<script>
 		const header = document.getElementById("main-header");
+		let ticking = false;
 
 		function handleScroll() {
 			if (window.scrollY > 20) {
@@ -120,9 +121,17 @@ const { isOverlay = false } = Astro.props;
 			} else {
 				header?.classList.remove("scrolled");
 			}
+			ticking = false;
 		}
 
-		window.addEventListener("scroll", handleScroll);
+		function onScroll() {
+			if (!ticking) {
+				window.requestAnimationFrame(handleScroll);
+				ticking = true;
+			}
+		}
+
+		window.addEventListener("scroll", onScroll, { passive: true });
 
 		// Mobile menu toggle functionality
 		function initMobileMenu() {

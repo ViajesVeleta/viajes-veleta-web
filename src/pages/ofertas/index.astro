@@ -107,7 +107,13 @@ const posts = (await getCollection("offers")).sort(
                                             src={post.data.heroImage}
                                             alt=""
                                             loading={
-                                                index <= 5 ? "eager" : "lazy"
+                                                index === 0 ? "eager" : "lazy"
+                                            }
+                                            fetchpriority={
+                                                index === 0 ? "high" : "auto"
+                                            }
+                                            decoding={
+                                                index === 0 ? "sync" : "async"
                                             }
                                         />
                                     )}

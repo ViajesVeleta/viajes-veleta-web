@@ -26,6 +26,23 @@ function styleGuideToolbar() {
 
 export default defineConfig({
     site: 'https://example.com',
-    prefetch: true,
+    prefetch: {
+        prefetchAll: true,
+        defaultStrategy: 'viewport',
+    },
+    image: {
+        // Use Sharp for image optimization (already installed)
+        service: {
+            entrypoint: 'astro/assets/services/sharp',
+            config: {
+                limitInputPixels: false,
+            },
+        },
+    },
+    build: {
+        // Enable CSS inlining for critical CSS
+        inlineStylesheets: 'auto',
+    },
+    compressHTML: true,
     integrations: [mdx(), sitemap(), styleGuideToolbar(), pagefind()],
 });

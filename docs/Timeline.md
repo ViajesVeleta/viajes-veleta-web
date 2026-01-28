@@ -11,7 +11,7 @@ These components are available globally in the blog posts. You don't need to imp
   <TimelineItem 
     date="8 Feb" 
     title="Destination Name" 
-    image="/assets/blog-placeholder-2.jpg"
+    image="/assets/blog-placeholder-2.webp"
   >
     Detailed description of the day...
     

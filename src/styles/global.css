@@ -275,3 +275,29 @@ hr {
 	/* added line to stop words getting smushed together (as they go onto separate lines and some screen readers do not understand line feeds as a space */
 	white-space: nowrap;
 }
+
+/* Performance: Skip rendering of below-the-fold content until needed */
+footer,
+section:not(:first-of-type) {
+	content-visibility: auto;
+	contain-intrinsic-size: auto 500px;
+}
+
+/* Respect user's motion preferences for accessibility and performance */
+@media (prefers-reduced-motion: reduce) {
+
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+}
+
+/* Optimize touch interactions */
+a,
+button {
+	touch-action: manipulation;
+}

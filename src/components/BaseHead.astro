@@ -3,7 +3,7 @@
 // all pages through the use of the <BaseHead /> component.
 import "../styles/global.css";
 import type { ImageMetadata } from "astro";
-import FallbackImage from "../assets/blog-placeholder-1.jpg";
+import FallbackImage from "../assets/blog-placeholder-1.webp";
 import { SITE_TITLE } from "../consts";
 import { ClientRouter } from "astro:transitions";
 
@@ -52,17 +52,53 @@ const { title, description, image = FallbackImage } = Astro.props;
 />
 <meta name="generator" content={Astro.generator} />
 
-<!-- Lato Font -->
+<!-- DNS Prefetch & Preconnect for External Resources -->
+<link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+<link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+<link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+
+<!-- Lato Font - Non-blocking with display=swap -->
 <link
-	href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
-	rel="stylesheet"
+	rel="preload"
+	as="style"
+	href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap"
+	onload="this.onload=null;this.rel='stylesheet'"
+/>
+<noscript>
+	<link
+		href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap"
+		rel="stylesheet"
+	/>
+</noscript>
+
+<!-- Font Awesome - Load only essential icon styles (solid + brands) -->
+<link
+	rel="preload"
+	as="style"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/fontawesome.min.css"
+	onload="this.onload=null;this.rel='stylesheet'"
 />
 <link
-	rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+	rel="preload"
+	as="style"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/solid.min.css"
+	onload="this.onload=null;this.rel='stylesheet'"
 />
+<link
+	rel="preload"
+	as="style"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/brands.min.css"
+	onload="this.onload=null;this.rel='stylesheet'"
+/>
+<noscript>
+	<link
+		rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+	/>
+</noscript>
 
 <!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />

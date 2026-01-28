@@ -2,7 +2,7 @@
 title: 'Viaje a los Alpes'
 description: 'Únete a nosotros en esta increíble aventura por los Alpes suizos.'
 pubDate: 'Jul 08 2024'
-heroImage: '../../assets/blog-placeholder-1.jpg'
+heroImage: '../../assets/blog-placeholder-1.webp'
 ---
 
 ¡Bienvenidos a nuestro primer viaje en grupo organizado!
