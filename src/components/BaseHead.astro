@@ -6,6 +6,7 @@ import type { ImageMetadata } from "astro";
 import FallbackImage from "../assets/blog-placeholder-1.webp";
 import { SITE_TITLE } from "../consts";
 import { ClientRouter } from "astro:transitions";
+import "@fortawesome/fontawesome-free/css/all.min.css";
 
 interface Props {
 	title: string;
@@ -71,32 +72,6 @@ const { title, description, image = FallbackImage } = Astro.props;
 	<link
 		href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap"
 		rel="stylesheet"
-	/>
-</noscript>
-
-<!-- Font Awesome - Load only essential icon styles (solid + brands) -->
-<link
-	rel="preload"
-	as="style"
-	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/fontawesome.min.css"
-	onload="this.onload=null;this.rel='stylesheet'"
-/>
-<link
-	rel="preload"
-	as="style"
-	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/solid.min.css"
-	onload="this.onload=null;this.rel='stylesheet'"
-/>
-<link
-	rel="preload"
-	as="style"
-	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/brands.min.css"
-	onload="this.onload=null;this.rel='stylesheet'"
-/>
-<noscript>
-	<link
-		rel="stylesheet"
-		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 	/>
 </noscript>
 

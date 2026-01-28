@@ -112,26 +112,30 @@ const { isOverlay = false } = Astro.props;
 	</div>
 
 	<script>
-		const header = document.getElementById("main-header");
-		let ticking = false;
+		function initHeader() {
+			const header = document.getElementById("main-header");
 
-		function handleScroll() {
-			if (window.scrollY > 20) {
-				header?.classList.add("scrolled");
-			} else {
-				header?.classList.remove("scrolled");
+			function handleScroll() {
+				if (window.scrollY > 20) {
+					header?.classList.add("scrolled");
+				} else {
+					header?.classList.remove("scrolled");
+				}
 			}
-			ticking = false;
+
+			// clean up previous listener to avoid duplicates if any
+			window.removeEventListener("scroll", handleScroll);
+			window.addEventListener("scroll", handleScroll, { passive: true });
+
+			// Initial check
+			handleScroll();
 		}
 
-		function onScroll() {
-			if (!ticking) {
-				window.requestAnimationFrame(handleScroll);
-				ticking = true;
-			}
-		}
+		// Initialize on load
+		initHeader();
 
-		window.addEventListener("scroll", onScroll, { passive: true });
+		// Initialize on view transition
+		document.addEventListener("astro:after-swap", initHeader);
 
 		// Mobile menu toggle functionality
 		function initMobileMenu() {
@@ -190,12 +194,10 @@ const { isOverlay = false } = Astro.props;
 
 		// Initialize
 		initMobileMenu();
-		handleScroll();
 		updateActiveLinks();
 
-		// Handle navigation
+		// Handle navigation for links
 		document.addEventListener("astro:after-swap", () => {
-			handleScroll();
 			updateActiveLinks();
 		});
 	</script>
