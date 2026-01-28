@@ -239,7 +239,7 @@ import Search from "./Search.astro";
 			opacity: 1;
 		}
 
-		nav {
+		#main-nav {
 			height: 70px;
 			background: color-mix(in srgb, var(--bg-nav), transparent 15%);
 			backdrop-filter: blur(10px);
@@ -267,7 +267,7 @@ import Search from "./Search.astro";
 			gap: 1.5rem;
 		}
 
-		nav a {
+		#main-nav a {
 			padding: 0.5em 0.5em;
 			color: var(--on-bg-nav);
 			text-decoration: none;
@@ -276,12 +276,12 @@ import Search from "./Search.astro";
 			border-radius: 0.5em;
 		}
 
-		nav a:hover {
+		#main-nav a:hover {
 			opacity: 1;
 			background: rgba(255, 255, 255, 0.1);
 		}
 
-		nav a.active {
+		#main-nav a.active {
 			text-decoration: underline;
 			text-decoration-thickness: 3px;
 			text-decoration-color: var(--secondary);
@@ -424,6 +424,15 @@ import Search from "./Search.astro";
 
 		.mobile-nav-link:last-child {
 			border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+		}
+
+		.mobile-nav-link.active {
+			opacity: 1;
+			font-weight: bold;
+			text-decoration: underline;
+			text-decoration-thickness: 3px;
+			text-decoration-color: var(--secondary);
+			text-underline-offset: 8px;
 		}
 
 		.mobile-theme-toggle-wrapper {

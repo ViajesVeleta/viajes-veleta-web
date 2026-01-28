@@ -53,35 +53,11 @@
 }
 
 /* Smooth transition for theme switching */
-html.theme-transition body,
-html.theme-transition header,
-html.theme-transition button,
-html.theme-transition footer,
-html.theme-transition main,
-html.theme-transition nav,
-html.theme-transition div,
-html.theme-transition section,
-html.theme-transition article,
-html.theme-transition aside,
-html.theme-transition code,
-html.theme-transition pre,
-html.theme-transition a,
-html.theme-transition span,
-html.theme-transition p,
-html.theme-transition h1,
-html.theme-transition h2,
-html.theme-transition h3,
-html.theme-transition h4,
-html.theme-transition h5,
-html.theme-transition h6,
-html.theme-transition svg,
-html.theme-transition path,
-html.theme-transition rect,
-html.theme-transition circle,
-html.theme-transition line {
-	transition-property: background-color, color, border-color, fill, stroke, box-shadow;
-	transition-duration: 0.3s;
-	transition-timing-function: ease-out;
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+	transition: background-color 0.3s ease-out, color 0.3s ease-out, border-color 0.3s ease-out, fill 0.3s ease-out, stroke 0.3s ease-out, box-shadow 0.3s ease-out !important;
 }
 
 [data-theme="dark"] {
