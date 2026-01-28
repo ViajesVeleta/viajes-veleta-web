@@ -26,5 +26,6 @@ function styleGuideToolbar() {
 
 export default defineConfig({
     site: 'https://example.com',
+    prefetch: true,
     integrations: [mdx(), sitemap(), styleGuideToolbar(), pagefind()],
 });

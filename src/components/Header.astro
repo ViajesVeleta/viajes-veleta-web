@@ -13,11 +13,7 @@ interface Props {
 const { isOverlay = false } = Astro.props;
 ---
 
-<header
-	id="main-header"
-	class:list={{ "is-overlay": isOverlay }}
-	transition:persist
->
+<header id="main-header" class:list={{ "is-overlay": isOverlay }}>
 	<div class="top-bar">
 		<div class="header-content">
 			<div class="contact-info">
