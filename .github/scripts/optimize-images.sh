@@ -119,13 +119,23 @@ done
 # Clean up
 rm "$PROCESSED_LIST"
 
-# Set output for GitHub Actions
+# Set output for GitHub Actions based on whether summary file has content
+if [ -s "$SUMMARY_FILE" ]; then
+    HAS_CHANGES=true
+else
+    HAS_CHANGES=false
+fi
+
 if [ "$HAS_CHANGES" = true ]; then
     echo "has_changes=true" >> "$GITHUB_OUTPUT"
     
     echo "summary<<EOF" >> "$GITHUB_OUTPUT"
     cat "$SUMMARY_FILE" >> "$GITHUB_OUTPUT"
     echo "EOF" >> "$GITHUB_OUTPUT"
+    
+    # Also output to job summary for visibility in UI
+    echo "### Image Optimization Summary" >> $GITHUB_STEP_SUMMARY
+    cat "$SUMMARY_FILE" >> $GITHUB_STEP_SUMMARY
 else
     echo "has_changes=false" >> "$GITHUB_OUTPUT"
     echo "summary=No images optimized." >> "$GITHUB_OUTPUT"
