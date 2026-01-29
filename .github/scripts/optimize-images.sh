@@ -58,6 +58,14 @@ find . -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" \) \
     
     echo "$action_msg" >> "$SUMMARY_FILE"
     echo "$webp_file" >> "$PROCESSED_LIST"
+    
+    # Calculate size change if source file exists (it should)
+    if [ -f "$file" ] && [ -f "$webp_file" ]; then
+        src_size=$(stat -c%s "$file")
+        dest_size=$(stat -c%s "$webp_file")
+        echo "  ($src_size -> $dest_size bytes)" >> "$SUMMARY_FILE"
+    fi
+    
     HAS_CHANGES=true
 
 done
@@ -95,11 +103,12 @@ find . -type f -iname "*.webp" \
                 log_msg="- Resized and optimized $file"
             else
                 echo "Optimizing $file ($original_size -> $new_size bytes)..."
-                log_msg="- Optimized $file ($original_size -> $new_size bytes)"
+                log_msg="- Optimized $file"
             fi
             
             mv "${file}.tmp" "$file"
             echo "$log_msg" >> "$SUMMARY_FILE"
+            echo "  ($original_size -> $new_size bytes)" >> "$SUMMARY_FILE"
             HAS_CHANGES=true
         else
             rm "${file}.tmp"
