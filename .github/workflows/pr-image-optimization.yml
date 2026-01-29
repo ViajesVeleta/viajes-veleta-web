@@ -19,7 +19,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install webp
-        run: sudo apt-get update && sudo apt-get install -y webp
+        run: sudo apt-get update && sudo apt-get install -y webp imagemagick
 
       - name: Run Optimization Script
         id: optimize

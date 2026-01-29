@@ -12,8 +12,27 @@ HAS_CHANGES=false
 
 echo "Starting image optimization..."
 
+# Function to get max width resize args
+get_resize_args() {
+    local file="$1"
+    local width
+    # Use identify from ImageMagick
+    if ! command -v identify &> /dev/null; then
+        # Fallback if identify is not available (though it should be on GH Actions)
+        echo ""
+        return
+    fi
+    
+    width=$(identify -format "%w" "$file" 2>/dev/null || echo "0")
+    if [ "$width" -gt 2048 ]; then
+        # Resize to width 2048, preserve aspect ratio (height=0)
+        echo "-resize 2048 0"
+    else
+        echo ""
+    fi
+}
+
 # 1. Convert non-webp images to webp
-# Finding .png, .jpg, .jpeg
 find . -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" \) \
     -not -path "*/node_modules/*" \
     -not -path "*/dist/*" \
@@ -22,13 +41,22 @@ find . -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" \) \
 
     filename="${file%.*}"
     webp_file="${filename}.webp"
-
-    echo "Converting $file to $webp_file..."
+    
+    resize_args=$(get_resize_args "$file")
+    
+    if [ -n "$resize_args" ]; then
+        echo "Converting and resizing $file to $webp_file..."
+        action_msg="- Converted and resized $file"
+    else
+        echo "Converting $file to $webp_file..."
+        action_msg="- Converted $file"
+    fi
     
     # Convert to webp with quality 80
-    cwebp -q 80 "$file" -o "$webp_file" -quiet
+    # $resize_args is unquoted to allow arguments handling
+    cwebp -q 80 $resize_args "$file" -o "$webp_file" -quiet
     
-    echo "- Converted $file to $webp_file" >> "$SUMMARY_FILE"
+    echo "$action_msg" >> "$SUMMARY_FILE"
     echo "$webp_file" >> "$PROCESSED_LIST"
     HAS_CHANGES=true
 
@@ -47,18 +75,31 @@ find . -type f -iname "*.webp" \
     fi
     
     original_size=$(stat -c%s "$file")
+    resize_args=$(get_resize_args "$file")
+    is_resized=false
+    
+    if [ -n "$resize_args" ]; then
+        is_resized=true
+    fi
     
     # Try to compress to a temp file
-    cwebp -q 80 "$file" -o "${file}.tmp" -quiet
+    cwebp -q 80 $resize_args "$file" -o "${file}.tmp" -quiet
     
     if [ -f "${file}.tmp" ]; then
         new_size=$(stat -c%s "${file}.tmp")
         
-        # If new file is smaller, replace original
-        if [ "$new_size" -lt "$original_size" ]; then
-            echo "Optimizing $file ($original_size -> $new_size bytes)..."
+        # If resized OR smaller, replace
+        if [ "$is_resized" = true ] || [ "$new_size" -lt "$original_size" ]; then
+            if [ "$is_resized" = true ]; then
+                echo "Resizing and optimizing $file..."
+                log_msg="- Resized and optimized $file"
+            else
+                echo "Optimizing $file ($original_size -> $new_size bytes)..."
+                log_msg="- Optimized $file ($original_size -> $new_size bytes)"
+            fi
+            
             mv "${file}.tmp" "$file"
-            echo "- Optimized $file ($original_size -> $new_size bytes)" >> "$SUMMARY_FILE"
+            echo "$log_msg" >> "$SUMMARY_FILE"
             HAS_CHANGES=true
         else
             rm "${file}.tmp"
