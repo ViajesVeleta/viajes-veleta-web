@@ -106,8 +106,9 @@ const formatDate = (date: Date) => {
                 // Apply 3D rotation (Tilt)
                 // RotateY (horizontal move) affects X axis rotation
                 // RotateX (vertical move) affects Y axis rotation (inverted)
-                const rotateY = x * 15; // Max 15 degrees tilt
-                const rotateX = -y * 15;
+                // Adjusted tilt to 8deg for optimal 3D effect
+                const rotateY = x * 8;
+                const rotateX = -y * 8;
 
                 // Also add slight translation for depth
                 const translateX = x * 20;
@@ -280,15 +281,20 @@ const formatDate = (date: Date) => {
         color: white;
         padding: 0 20px;
         /* transition removed to allow instant JS parallax */
+
+        /* 3D Text Sharpness Fixes */
+        backface-visibility: hidden;
+        -webkit-font-smoothing: antialiased;
+        will-change: transform;
     }
 
     .date-separator {
-        width: 2px; /* Increased width */
-        height: 100px; /* Increased height */
-        background: #cdb083; /* Correct gold color */
-        margin-bottom: 20px;
+        width: 3px; /* Increased width */
+        height: 130px; /* Increased length */
+        background: #cdb083;
+        margin-bottom: 80px; /* Increased margin to compensate for 3D compression */
+        transform: translateZ(-200px); /* Depth Layer: Furthest */
     }
-
     .slide-date {
         font-family: "Lato", sans-serif;
         font-size: 1rem;
@@ -304,17 +310,19 @@ const formatDate = (date: Date) => {
         font-size: 3.5rem;
         line-height: 1.2;
         max-width: 900px;
-        margin: 0 0 2rem 0;
+        margin: 0 0 70px 0; /* Increased from 2rem to 80px to open space before bottom line */
         color: #ffffff !important;
         text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
         font-weight: 400;
+        transform: translateZ(200px); /* Depth Layer: Nearest */
     }
 
     .bottom-separator {
-        width: 2px; /* Increased width */
-        height: 100px; /* Increased height */
+        width: 3px; /* Increased width */
+        height: 130px; /* Increased height */
         background: #cdb083; /* Correct gold color */
-        margin-bottom: 30px;
+        margin-bottom: 16px; /* Increased margin for symmetry */
+        transform: translateZ(-200px); /* Depth Layer: Furthest */
     }
 
     .btn-view {
@@ -451,26 +459,49 @@ const formatDate = (date: Date) => {
         transition-delay: 0.1s;
     }
 
-    /* Animation Keyframes */
-    @keyframes lineGrow {
+    /* Animation Keyframes - specific to preserve Z-depth */
+    /* Animation Keyframes - specific to preserve Z-depth */
+    @keyframes lineGrowLine {
         from {
-            height: 0;
+            transform: translateZ(-200px) scaleY(0);
             opacity: 1;
         }
         to {
-            height: 100px;
+            transform: translateZ(-200px) scaleY(1);
             opacity: 1;
         }
     }
 
-    @keyframes fadeInUp {
+    @keyframes fadeInUpDate {
         from {
             opacity: 0;
-            transform: translateY(40px);
+            transform: translateZ(100px) translateY(40px);
         }
         to {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateZ(100px) translateY(0);
+        }
+    }
+
+    @keyframes fadeInUpTitle {
+        from {
+            opacity: 0;
+            transform: translateZ(200px) translateY(40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateZ(200px) translateY(0);
+        }
+    }
+
+    @keyframes fadeInBtn {
+        from {
+            opacity: 0;
+            transform: translateZ(0px);
+        }
+        to {
+            opacity: 1;
+            transform: translateZ(0px);
         }
     }
 
@@ -486,30 +517,32 @@ const formatDate = (date: Date) => {
     /* Apply animations with premium easing */
     .swiper-slide-active .date-separator {
         /* Top line: Grows down */
+        height: 130px; /* Reserved space matches new height */
         transform-origin: top;
-        animation: lineGrow 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+        animation: lineGrowLine 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) both;
         animation-delay: 0.3s;
     }
 
     .swiper-slide-active .slide-date {
-        animation: fadeInUp 1s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+        animation: fadeInUpDate 1s cubic-bezier(0.22, 0.61, 0.36, 1) both;
         animation-delay: 0.8s;
     }
 
     .swiper-slide-active .slide-title {
-        animation: fadeInUp 1s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+        animation: fadeInUpTitle 1s cubic-bezier(0.22, 0.61, 0.36, 1) both;
         animation-delay: 1s;
     }
 
     .swiper-slide-active .bottom-separator {
-        /* Bottom line: Grows down from its top (which is 'middle' of layout) */
+        /* Bottom line: Grows down from its top */
+        height: 130px; /* Reserve space */
         transform-origin: top;
-        animation: lineGrow 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+        animation: lineGrowLine 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) both;
         animation-delay: 1.5s;
     }
 
     .swiper-slide-active .btn-view {
-        animation: fadeIn 1.2s ease-out both;
+        animation: fadeInBtn 1.2s ease-out both;
         animation-delay: 2.1s;
     }
 
