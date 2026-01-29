@@ -2,6 +2,10 @@
 @import "./colors.css";
 @import "./reset.css";
 @import "./typography.css";
+@import "./layout.css";
+@import "./components.css";
+@import "./animations.css";
+@import "./utilities.css";
 
 /* Background & Main Layout */
 body {
@@ -9,19 +13,6 @@ body {
 	background-image: linear-gradient(var(--surface-gradient));
 	background-repeat: no-repeat;
 	background-size: 100% 600px;
-}
-
-main {
-	width: 720px;
-	max-width: calc(100% - 2em);
-	margin: auto;
-	padding: 3em 1em;
-}
-
-@media (max-width: 720px) {
-	main {
-		padding: 1em;
-	}
 }
 
 /* Utilities */
