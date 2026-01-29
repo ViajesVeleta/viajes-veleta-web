@@ -36,6 +36,16 @@
 	--tertiary-container: #c9e6ff;
 	--on-tertiary-container: #001e30;
 
+	/* Quaternary (Gold Accent) */
+	--quaternary: #cdb083;
+	--on-quaternary: #ffffff;
+	--quaternary-container: #ebdcb5;
+	--on-quaternary-container: #2b2312;
+
+	/* Neutral Palette */
+	--neutral-white: #ffffff;
+	--neutral-black: #000000;
+
 	/* Surface */
 	--surface: #ffffff;
 	--on-surface: #1a1c1e;
@@ -85,6 +95,12 @@ html.theme-transition *::after {
 	--on-tertiary: #19334b;
 	--tertiary-container: #004a78;
 	--on-tertiary-container: #c9e6ff;
+
+	/* Quaternary (Gold Accent) */
+	--quaternary: #cdb083;
+	--on-quaternary: #ffffff;
+	--quaternary-container: #463b23;
+	--on-quaternary-container: #ebdcb5;
 
 	/* Surface */
 	--surface: #0b0d0f;

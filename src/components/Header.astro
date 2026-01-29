@@ -217,14 +217,18 @@ const { isOverlay = false } = Astro.props;
 			position: fixed;
 			background: transparent;
 			box-shadow: none;
-			--bg-nav: #1a1a1a;
-			--on-bg-nav: #ffffff;
+			--bg-nav: color-mix(in srgb, var(--neutral-black), white 10%);
+			--on-bg-nav: var(--neutral-white);
 		}
 
 		/* Specific overlay styles when NOT scrolled */
 		header.is-overlay:not(.scrolled) .top-bar {
-			background: rgba(0, 0, 0, 0.2);
-			color: rgba(255, 255, 255, 0.66);
+			background: color-mix(
+				in srgb,
+				var(--neutral-black),
+				transparent 80%
+			);
+			color: color-mix(in srgb, var(--neutral-white), transparent 34%);
 			backdrop-filter: none;
 			border-bottom: 1px solid transparent;
 		}
@@ -255,7 +259,8 @@ const { isOverlay = false } = Astro.props;
 			backdrop-filter: blur(8px);
 			font-size: 0.85rem;
 			color: var(--on-bg-nav);
-			border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+			border-bottom: 1px solid
+				color-mix(in srgb, var(--neutral-white), transparent 95%);
 			transition:
 				background-color 0.3s ease,
 				color 0.3s ease,
@@ -332,7 +337,11 @@ const { isOverlay = false } = Astro.props;
 
 		#main-nav a:hover {
 			opacity: 1;
-			background: rgba(255, 255, 255, 0.1);
+			background: color-mix(
+				in srgb,
+				var(--neutral-white),
+				transparent 90%
+			);
 		}
 
 		#main-nav a.active {
@@ -383,7 +392,11 @@ const { isOverlay = false } = Astro.props;
 		}
 
 		.mobile-menu-button:active {
-			background: rgba(255, 255, 255, 0.15);
+			background: color-mix(
+				in srgb,
+				var(--neutral-white),
+				transparent 85%
+			);
 		}
 
 		.mobile-menu-button span {
@@ -407,7 +420,11 @@ const { isOverlay = false } = Astro.props;
 			left: 0;
 			right: 0;
 			bottom: 0;
-			background: rgba(0, 0, 0, 0.5);
+			background: color-mix(
+				in srgb,
+				var(--neutral-black),
+				transparent 50%
+			);
 			backdrop-filter: blur(10px);
 			z-index: 999;
 			opacity: 0;
@@ -464,7 +481,11 @@ const { isOverlay = false } = Astro.props;
 		}
 
 		.close-button:hover {
-			background: rgba(255, 255, 255, 0.1);
+			background: color-mix(
+				in srgb,
+				var(--neutral-white),
+				transparent 90%
+			);
 		}
 
 		.mobile-nav {
@@ -479,7 +500,8 @@ const { isOverlay = false } = Astro.props;
 			text-decoration: none;
 			font-size: 1.5rem;
 			padding: 1rem 0;
-			border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+			border-bottom: 1px solid
+				color-mix(in srgb, var(--neutral-white), transparent 90%);
 			transition: opacity 0.2s ease;
 			opacity: 0.9;
 		}
@@ -489,7 +511,8 @@ const { isOverlay = false } = Astro.props;
 		}
 
 		.mobile-nav-link:last-child {
-			border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+			border-bottom: 1px solid
+				color-mix(in srgb, var(--neutral-white), transparent 90%);
 		}
 
 		.mobile-nav-link.active {
