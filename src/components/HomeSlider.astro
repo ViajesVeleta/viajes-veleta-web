@@ -1,0 +1,537 @@
+---
+import { getCollection } from "astro:content";
+import { Image } from "astro:assets";
+import "swiper/css";
+import "swiper/css/effect-fade";
+
+// Fetch groups to display in slider
+const allGroups = await getCollection("groups");
+// Filter only future trips and sort by date
+// Filter only future trips and sort by date
+const slides = allGroups
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()) // Sort descending (newest first)
+    .slice(0, 5); // Limit to 5 for the slider to keep it performant and relevant
+
+// Format date helper
+const formatDate = (date: Date) => {
+    return date
+        .toLocaleDateString("es-ES", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+        })
+        .replace(/\//g, "-");
+};
+---
+
+<div class="hero-slider-container">
+    <!-- Progress Bar -->
+    <div class="autoplay-progress">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <!-- Swiper -->
+    <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
+            {
+                slides.map((slide) => (
+                    <div class="swiper-slide">
+                        <div class="slide-bg">
+                            {slide.data.heroImage && (
+                                <Image
+                                    src={slide.data.heroImage}
+                                    alt={slide.data.title}
+                                    width={1920}
+                                    height={1080}
+                                    class="bg-image"
+                                    loading="eager"
+                                />
+                            )}
+                            <div class="overlay" />
+                        </div>
+
+                        <div class="slide-content parallax-target">
+                            <div class="date-separator" />
+                            <div class="slide-date">
+                                {formatDate(slide.data.pubDate)}
+                            </div>
+                            <h2 class="slide-title">{slide.data.title}</h2>
+                            <div class="bottom-separator" />
+                            <a
+                                href={`/viajes-en-grupo/${slide.id}`}
+                                class="btn-view"
+                            >
+                                ¡VER VIAJE!
+                            </a>
+                        </div>
+                    </div>
+                ))
+            }
+        </div>
+    </div>
+
+    <!-- Side Menu Navigation -->
+    <div class="side-menu-container">
+        <div class="side-menu-trigger">
+            <div class="dots">
+                {
+                    slides.map((_, index) => (
+                        <span class="dot" data-index={index} />
+                    ))
+                }
+            </div>
+        </div>
+        <div class="side-menu-list">
+            {
+                slides.map((slide, index) => (
+                    <div class="menu-item" data-index={index}>
+                        <span class="menu-dot" />
+                        <span class="menu-text">{slide.data.title}</span>
+                    </div>
+                ))
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    import Swiper from "swiper";
+    import { Autoplay, EffectFade, Parallax } from "swiper/modules";
+
+    function initSlider() {
+        // Mouse Parallax Logic - 3D Tilt Effect
+        const container = document.querySelector(
+            ".hero-slider-container",
+        ) as HTMLElement;
+        const targets = document.querySelectorAll(".parallax-target");
+
+        if (container && targets.length > 0) {
+            document.addEventListener("mousemove", (e) => {
+                // Calculate mouse position relative to center of screen
+                const x = (e.clientX / window.innerWidth - 0.5) * 2; // Range -1 to 1
+                const y = (e.clientY / window.innerHeight - 0.5) * 2;
+
+                // Apply 3D rotation (Tilt)
+                // RotateY (horizontal move) affects X axis rotation
+                // RotateX (vertical move) affects Y axis rotation (inverted)
+                const rotateY = x * 15; // Max 15 degrees tilt
+                const rotateX = -y * 15;
+
+                // Also add slight translation for depth
+                const translateX = x * 20;
+                const translateY = y * 20;
+
+                targets.forEach((target) => {
+                    const el = target as HTMLElement;
+                    el.style.perspective = "1000px";
+                    el.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translate3d(${translateX}px, ${translateY}px, 0)`;
+                });
+            });
+
+            // Reset on mouse leave (optional, but good for UX)
+            // Using document mouseout to catch leaving the window
+            document.addEventListener("mouseout", (e) => {
+                if (!e.relatedTarget) {
+                    // User left the window
+                    targets.forEach((target) => {
+                        const el = target as HTMLElement;
+                        el.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) translate3d(0, 0, 0)`;
+                    });
+                }
+            });
+        }
+
+        // Swiper Initialization
+        const progressBar = document.getElementById("progress-bar");
+        const AUTOPLAY_DELAY = 8000;
+
+        // Check if swiper already exists on this element to avoid double init
+        // type casting to avoid TS error if property doesn't exist on Element
+        const swiperEl = document.querySelector(".mySwiper") as any;
+        if (!swiperEl || swiperEl.swiper) return;
+
+        const swiper = new Swiper(".mySwiper", {
+            modules: [Autoplay, EffectFade, Parallax],
+            effect: "fade",
+            speed: 1000,
+            parallax: true,
+            fadeEffect: {
+                crossFade: true,
+            },
+            autoplay: {
+                delay: AUTOPLAY_DELAY,
+                disableOnInteraction: false,
+            },
+            loop: true,
+            on: {
+                autoplayTimeLeft(s, time, progress) {
+                    if (progressBar) {
+                        progressBar.style.width = `${(1 - progress) * 100}%`;
+                    }
+                },
+                slideChange() {
+                    // Reset progress bar visually on manual change
+                    if (progressBar) {
+                        progressBar.style.width = "0%";
+                    }
+
+                    // Update active class in side menu
+                    updateActiveMenu((this as any).realIndex);
+                },
+            },
+        });
+
+        // Initialize active menu state
+        updateActiveMenu(0);
+
+        // Side Menu Logic
+        const menuItems = document.querySelectorAll(".menu-item");
+
+        menuItems.forEach((item) => {
+            item.addEventListener("mouseenter", () => {
+                const index = Number(item.getAttribute("data-index"));
+                swiper.slideToLoop(index);
+            });
+        });
+    }
+
+    const menuItems = document.querySelectorAll(".menu-item");
+    const dots = document.querySelectorAll(".dot");
+
+    function updateActiveMenu(index: number) {
+        menuItems.forEach((item) => item.classList.remove("active"));
+        dots.forEach((dot) => dot.classList.remove("active"));
+
+        // Handle loop index safely
+        // In loop mode, Swiper slides length might be different, but our menu matches the ORIGINAL slides count
+        // So simple modulo should be fine if realIndex is correct
+        const safeIndex = index % menuItems.length;
+
+        if (menuItems[safeIndex]) menuItems[safeIndex].classList.add("active");
+        if (dots[safeIndex]) dots[safeIndex].classList.add("active");
+    }
+
+    // Initialize on every page load (handles View Transitions)
+    document.addEventListener("astro:page-load", initSlider);
+    // Also run once immediately for the first load if event already fired (rare but safer)
+    initSlider();
+</script>
+
+<style>
+    @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap");
+
+    .hero-slider-container {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        overflow: hidden;
+        background: #000;
+    }
+
+    .swiper {
+        width: 100%;
+        height: 100%;
+    }
+
+    .swiper-slide {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        display: flex; /* Flexbox execution */
+    }
+
+    .slide-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+    }
+
+    .bg-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        animation: zoomEffect 20s infinite alternate; /* Subtle Ken Burns effect */
+    }
+
+    @keyframes zoomEffect {
+        from {
+            transform: scale(1);
+        }
+        to {
+            transform: scale(1.1);
+        }
+    }
+
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.3) 0%,
+            rgba(0, 0, 0, 0.5) 50%,
+            rgba(0, 0, 0, 0.7) 100%
+        );
+    }
+
+    /* Center Content */
+    .slide-content {
+        position: relative;
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        color: white;
+        padding: 0 20px;
+        /* transition removed to allow instant JS parallax */
+    }
+
+    .date-separator {
+        width: 2px; /* Increased width */
+        height: 100px; /* Increased height */
+        background: #cdb083; /* Correct gold color */
+        margin-bottom: 20px;
+    }
+
+    .slide-date {
+        font-family: "Lato", sans-serif;
+        font-size: 1rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 1.5rem;
+        color: #cdb083 !important; /* Correct gold color */
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .slide-title {
+        font-family: "Playfair Display", serif;
+        font-size: 3.5rem;
+        line-height: 1.2;
+        max-width: 900px;
+        margin: 0 0 2rem 0;
+        color: #ffffff !important;
+        text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        font-weight: 400;
+    }
+
+    .bottom-separator {
+        width: 2px; /* Increased width */
+        height: 100px; /* Increased height */
+        background: #cdb083; /* Correct gold color */
+        margin-bottom: 30px;
+    }
+
+    .btn-view {
+        padding: 12px 30px;
+        border: 1px solid #cdb083; /* Correct gold color */
+        color: #cdb083; /* Correct gold color */
+        text-decoration: none;
+        font-size: 0.8rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-view:hover {
+        background: #cdb083;
+        color: white;
+        border-color: #cdb083;
+    }
+
+    /* Progress Bar */
+    .autoplay-progress {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.1);
+        z-index: 20;
+    }
+
+    .progress-bar {
+        height: 100%;
+        background: #cdb083; /* Correct gold color */
+        width: 0%;
+        /* Transition is handled by JS frame update but we can add minor smoothing */
+    }
+
+    /* Side Menu */
+    .side-menu-container {
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 30;
+        display: flex;
+        align-items: center;
+        transition: all 0.3s ease;
+    }
+
+    .side-menu-trigger {
+        padding: 20px;
+        cursor: pointer;
+    }
+
+    .dots {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .dot {
+        width: 6px;
+        height: 6px;
+        background: rgba(255, 255, 255, 0.4);
+        border-radius: 50%;
+        transition: all 0.3s ease;
+    }
+
+    .dot.active {
+        background: #fff;
+        transform: scale(1.5);
+    }
+
+    .side-menu-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        opacity: 0;
+        transform: translateX(-20px);
+        visibility: hidden;
+        transition: all 0.4s ease;
+        background: rgba(0, 0, 0, 0.8);
+        padding: 20px 30px 20px 10px;
+        border-radius: 0 10px 10px 0;
+        backdrop-filter: blur(5px);
+    }
+
+    /* Expand on hover of the container */
+    .side-menu-container:hover .side-menu-list {
+        opacity: 1;
+        transform: translateX(0);
+        visibility: visible;
+    }
+
+    .menu-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        cursor: pointer;
+        color: rgba(255, 255, 255, 0.5);
+        transition: all 0.2s;
+    }
+
+    .menu-item:hover,
+    .menu-item.active {
+        color: white;
+    }
+
+    .menu-dot {
+        width: 6px;
+        height: 6px;
+        background: currentColor;
+        border-radius: 50%;
+    }
+
+    .menu-text {
+        font-family: "Lato", sans-serif;
+        font-size: 0.9rem;
+        white-space: nowrap;
+    }
+
+    /* Animation Keyframes */
+    @keyframes lineGrow {
+        from {
+            height: 0;
+            opacity: 1;
+        }
+        to {
+            height: 100px;
+            opacity: 1;
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    /* Apply animations with premium easing */
+    .swiper-slide-active .date-separator {
+        /* Top line: Grows down */
+        transform-origin: top;
+        animation: lineGrow 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+        animation-delay: 0.3s;
+    }
+
+    .swiper-slide-active .slide-date {
+        animation: fadeInUp 1s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+        animation-delay: 0.8s;
+    }
+
+    .swiper-slide-active .slide-title {
+        animation: fadeInUp 1s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+        animation-delay: 1s;
+    }
+
+    .swiper-slide-active .bottom-separator {
+        /* Bottom line: Grows down from its top (which is 'middle' of layout) */
+        transform-origin: top;
+        animation: lineGrow 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+        animation-delay: 1.5s;
+    }
+
+    .swiper-slide-active .btn-view {
+        animation: fadeIn 1.2s ease-out both;
+        animation-delay: 2.1s;
+    }
+
+    /* Ensure specific elements are hidden when NOT active to prevent ghosting during transitions */
+    .swiper-slide:not(.swiper-slide-active) .date-separator,
+    .swiper-slide:not(.swiper-slide-active) .slide-date,
+    .swiper-slide:not(.swiper-slide-active) .slide-title,
+    .swiper-slide:not(.swiper-slide-active) .bottom-separator,
+    .swiper-slide:not(.swiper-slide-active) .btn-view {
+        opacity: 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .slide-title {
+            font-size: 2rem;
+        }
+        .side-menu-container {
+            display: none; /* Often hidden on mobile to avoid clutter */
+        }
+        .hero-slider-container {
+            height: 80vh; /* A bit smaller on mobile */
+        }
+    }
+</style>
