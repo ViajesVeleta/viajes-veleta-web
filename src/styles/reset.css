@@ -1,0 +1,64 @@
+/* Modern CSS Reset & Core Defaults */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+/* Form Elements */
+textarea,
+input {
+    font-size: 16px;
+    /* Prevents auto-zoom on mobile */
+    width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+    font-family: inherit;
+}
+
+/* Media */
+img,
+video,
+canvas,
+svg {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    display: block;
+    /* Removes bottom space */
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Optimize touch interactions */
+a,
+button {
+    touch-action: manipulation;
+}
