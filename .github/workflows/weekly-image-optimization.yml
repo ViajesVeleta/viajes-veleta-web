@@ -1,0 +1,39 @@
+name: Weekly Image Optimization
+
+on:
+  schedule:
+    - cron: '0 0 * * 0' # Every Sunday at midnight
+  workflow_dispatch:
+
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install webp
+        run: sudo apt-get update && sudo apt-get install -y webp
+
+      - name: Run Optimization Script
+        id: optimize
+        run: |
+          chmod +x .github/scripts/optimize-images.sh
+          .github/scripts/optimize-images.sh
+
+      - name: Create Pull Request
+        if: steps.optimize.outputs.has_changes == 'true'
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: optimize images"
+          title: "Optimize Images (Weekly)"
+          body: |
+            Weekly image optimization run.
+            
+            Summary:
+            ${{ steps.optimize.outputs.summary }}
+          branch: auto-image-optimization
+          delete-branch: true
