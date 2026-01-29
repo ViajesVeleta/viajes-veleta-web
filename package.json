@@ -17,6 +17,7 @@
     "@fortawesome/fontawesome-free": "^7.1.0",
     "astro": "^5.16.15",
     "astro-pagefind": "^1.8.5",
+    "fast-average-color": "^9.5.0",
     "sharp": "^0.34.3",
     "swiper": "^12.1.0"
   },

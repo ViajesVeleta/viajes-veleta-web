@@ -20,72 +20,168 @@ const posts = (await getCollection("offers")).sort(
             title={`Ofertas - ${SITE_TITLE}`}
             description={SITE_DESCRIPTION}
         />
+        <script>
+            import { FastAverageColor } from "fast-average-color";
+            const fac = new FastAverageColor();
+
+            // wait for DOM to be ready
+            document.addEventListener("astro:page-load", () => {
+                runColorExtraction();
+            });
+
+            // Also run on initial load if view transitions aren't used or just in case
+            document.addEventListener("DOMContentLoaded", () => {
+                runColorExtraction();
+            });
+
+            function runColorExtraction() {
+                const items = document.querySelectorAll(".post-item");
+                items.forEach((item) => {
+                    const img = item.querySelector("img");
+                    const overlay = item.querySelector(
+                        ".overlay",
+                    ) as HTMLElement;
+
+                    if (img && overlay) {
+                        img.crossOrigin = "Anonymous";
+
+                        // Use 'dominant' algorithm
+                        fac.getColorAsync(img, { algorithm: "dominant" })
+                            .then((color) => {
+                                const [r, g, b] = color.value;
+                                overlay.style.backgroundColor = `rgba(${r}, ${g}, ${b}, 0.6)`;
+                            })
+                            .catch((e) => {
+                                console.error("Color extraction failed:", e);
+                                overlay.style.backgroundColor =
+                                    "rgba(0,0,0,0.6)";
+                            });
+                    }
+                });
+            }
+        </script>
         <style>
             main {
-                width: 960px;
+                width: 100%;
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 1rem;
             }
             ul {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 2rem;
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+                gap: 4px; /* Tight grid as usually seen in premium designs */
                 list-style-type: none;
-                margin: 0;
+                margin: 2rem 0;
                 padding: 0;
             }
-            ul li {
-                width: calc(50% - 1rem);
-            }
-            ul li * {
-                text-decoration: none;
-                transition: 0.2s ease;
-            }
-            ul li:first-child {
-                width: 100%;
-                margin-bottom: 1rem;
-                text-align: center;
-            }
-            ul li:first-child img {
-                width: 100%;
-            }
-            ul li:first-child .title {
-                font-size: 2.369rem;
-            }
-            ul li img {
-                margin-bottom: 0.5rem;
+            li {
+                position: relative;
+                overflow: hidden;
+                aspect-ratio: 4/3;
                 border-radius: 12px;
+                isolation: isolate;
             }
-            ul li a {
+            li a {
                 display: block;
+                width: 100%;
+                height: 100%;
+                color: inherit;
+                text-decoration: none;
             }
+
+            .image-container {
+                width: 100%;
+                height: 100%;
+                position: relative;
+            }
+            .image-container::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(
+                    to top,
+                    rgba(0, 0, 0, 0.8) 0%,
+                    transparent 60%
+                );
+                z-index: 1;
+                transition: opacity 0.4s ease;
+                pointer-events: none;
+            }
+
+            li img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            }
+
+            .overlay {
+                position: absolute;
+                inset: 0;
+                background-color: rgba(0, 0, 0, 0.4); /* Default dark overlay */
+                opacity: 0;
+                transition:
+                    opacity 0.4s ease,
+                    background-color 0.4s ease;
+                z-index: 1;
+            }
+
+            .content {
+                position: absolute;
+                inset: 0;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                padding: 2rem;
+                text-align: center;
+                z-index: 2;
+                color: white;
+                transform: translateY(35%);
+                transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+                pointer-events: none; /* Let clicks pass to link */
+            }
+
+            /* Initial state styling */
             .title {
-                margin: 0;
-                color: var(--on-surface);
-                line-height: 1;
+                font-size: 1.5rem;
+                font-weight: 700;
+                margin: 0 0 0.5rem 0;
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+                line-height: 1.2;
+                color: #fff;
             }
             .date {
+                font-size: 0.9rem;
                 margin: 0;
-                color: var(--on-surface-variant);
+                color: rgba(255, 255, 255, 0.9);
+                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
             }
-            ul li a:hover h4,
-            ul li a:hover .date {
-                color: var(--primary-hover);
+
+            /* Hover Effects */
+            li:hover img {
+                transform: scale(1.05); /* Zoom effect */
             }
-            ul a:hover img {
-                box-shadow: var(--box-shadow);
+            li:hover .image-container::after {
+                opacity: 0;
             }
-            @media (max-width: 720px) {
+
+            li:hover .overlay {
+                opacity: 1; /* Show the extracted color overlay */
+            }
+
+            li:hover .content {
+                transform: translateY(0);
+            }
+
+            @media (max-width: 768px) {
                 ul {
-                    gap: 0.5em;
+                    grid-template-columns: 1fr;
+                    gap: 1rem;
                 }
-                ul li {
-                    width: 100%;
-                    text-align: center;
-                }
-                ul li:first-child {
-                    margin-bottom: 0;
-                }
-                ul li:first-child .title {
-                    font-size: 1.563em;
+                .content {
+                    justify-content: flex-end;
                 }
             }
         </style>
@@ -98,31 +194,32 @@ const posts = (await getCollection("offers")).sort(
                 <ul>
                     {
                         posts.map((post, index) => (
-                            <li>
+                            <li class="post-item">
                                 <a href={`/ofertas/${post.id}/`}>
-                                    {post.data.heroImage && (
-                                        <Image
-                                            width={720}
-                                            height={360}
-                                            src={post.data.heroImage}
-                                            alt=""
-                                            loading={
-                                                index === 0 ? "eager" : "lazy"
-                                            }
-                                            fetchpriority={
-                                                index === 0 ? "high" : "auto"
-                                            }
-                                            decoding={
-                                                index === 0 ? "sync" : "async"
-                                            }
-                                        />
-                                    )}
-                                    <h4 class="title">{post.data.title}</h4>
-                                    <p class="date">
-                                        <FormattedDate
-                                            date={post.data.pubDate}
-                                        />
-                                    </p>
+                                    <div class="image-container">
+                                        {post.data.heroImage && (
+                                            <Image
+                                                width={720}
+                                                height={480}
+                                                src={post.data.heroImage}
+                                                alt=""
+                                                loading={
+                                                    index === 0
+                                                        ? "eager"
+                                                        : "lazy"
+                                                }
+                                            />
+                                        )}
+                                        <div class="overlay" />
+                                    </div>
+                                    <div class="content">
+                                        <h4 class="title">{post.data.title}</h4>
+                                        <p class="date">
+                                            <FormattedDate
+                                                date={post.data.pubDate}
+                                            />
+                                        </p>
+                                    </div>
                                 </a>
                             </li>
                         ))
