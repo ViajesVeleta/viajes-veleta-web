@@ -65,7 +65,6 @@ const translatePath = useTranslatedPath(currentLang);
 	setupLanguagePreference();
 	document.addEventListener("astro:page-load", setupLanguagePreference);
 </script>
----
 
 <header id="main-header" class:list={{ "is-overlay": isOverlay }}>
 	<div class="top-bar">
@@ -117,8 +116,7 @@ const translatePath = useTranslatedPath(currentLang);
 				<HeaderLink href={translatePath("/")}
 					>{t("nav.home")}</HeaderLink
 				>
-				<HeaderLink
-					href={translatePath("/viajes-en-grupo")}
+				<HeaderLink href={translatePath("/viajes-en-grupo")}
 					>{t("nav.trips")}</HeaderLink
 				>
 				<HeaderLink href={translatePath("/ofertas")}
@@ -163,25 +161,21 @@ const translatePath = useTranslatedPath(currentLang);
 				<i class="fa-solid fa-xmark"></i>
 			</button>
 			<nav class="mobile-nav">
-				<a
-					href={translatePath("/")}
-					class="mobile-nav-link">{t("nav.home")}</a
+				<a href={translatePath("/")} class="mobile-nav-link"
+					>{t("nav.home")}</a
 				>
 				<a
 					href={translatePath("/viajes-en-grupo")}
 					class="mobile-nav-link">{t("nav.trips")}</a
 				>
-				<a
-					href={translatePath("/ofertas")}
-					class="mobile-nav-link">{t("nav.offers")}</a
+				<a href={translatePath("/ofertas")} class="mobile-nav-link"
+					>{t("nav.offers")}</a
 				>
-				<a
-					href={translatePath("/blog")}
-					class="mobile-nav-link">{t("nav.blog")}</a
+				<a href={translatePath("/blog")} class="mobile-nav-link"
+					>{t("nav.blog")}</a
 				>
-				<a
-					href={translatePath("/contacto")}
-					class="mobile-nav-link">{t("nav.contact")}</a
+				<a href={translatePath("/contacto")} class="mobile-nav-link"
+					>{t("nav.contact")}</a
 				>
 
 				<div class="mobile-actions" style="margin-top: 2rem;">

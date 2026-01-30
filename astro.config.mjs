@@ -4,6 +4,9 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import node from '@astrojs/node';
 import { defineConfig } from 'astro/config';
+import path from 'path';
+
+import { remarkResolveAssets } from './src/plugins/remark-resolve-assets.mjs';
 
 import pagefind from 'astro-pagefind';
 
@@ -33,6 +36,16 @@ export default defineConfig({
     prefetch: {
         prefetchAll: true,
         defaultStrategy: 'viewport',
+    },
+    markdown: {
+        remarkPlugins: [remarkResolveAssets],
+    },
+    vite: {
+        resolve: {
+            alias: {
+                assets: path.resolve('./src/assets'),
+            },
+        },
     },
     image: {
         // Use Sharp for image optimization (already installed)
