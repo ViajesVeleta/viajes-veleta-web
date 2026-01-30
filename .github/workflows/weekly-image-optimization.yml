@@ -25,11 +25,13 @@ jobs:
 
       - name: Create Pull Request
         if: steps.optimize.outputs.has_changes == 'true'
+        id: pr
         uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "chore: optimize images"
           title: "Optimize Images (Weekly)"
+          assignees: JavierSegoviaCordoba
           body: |
             Weekly image optimization run.
             
@@ -37,3 +39,9 @@ jobs:
             ${{ steps.optimize.outputs.summary }}
           branch: auto-image-optimization
           delete-branch: true
+
+      - name: Output PR Summary
+        if: steps.pr.outputs.pull-request-number
+        run: |
+          echo "### Pull Request Created" >> $GITHUB_STEP_SUMMARY
+          echo "Access it here: ${{ steps.pr.outputs.pull-request-url }}" >> $GITHUB_STEP_SUMMARY
