@@ -12,6 +12,9 @@ interface Props {
 	title: string;
 	description: string;
 	image?: ImageMetadata;
+	// Language-specific images for social media sharing
+	imageEs?: ImageMetadata;
+	imageEn?: ImageMetadata;
 	translatedPaths?: Record<string, string>;
 }
 
@@ -21,8 +24,18 @@ const {
 	title,
 	description,
 	image = FallbackImage,
+	imageEs,
+	imageEn,
 	translatedPaths,
 } = Astro.props;
+
+// Get current language from URL
+import { getLangFromUrl } from "../i18n/utils";
+const lang = getLangFromUrl(Astro.url);
+
+// Select language-specific image if available, otherwise use default
+const ogImage =
+	lang === "es" ? imageEs || image : lang === "en" ? imageEn || image : image;
 ---
 
 <ClientRouter />
@@ -46,6 +59,45 @@ const {
 	document.addEventListener("astro:after-swap", applyTheme);
 </script>
 
+<!-- Automatic Language Detection -->
+<script is:inline>
+	// Only run on first visit to the site (root page without language prefix)
+	(function () {
+		const currentPath = window.location.pathname;
+		const hasLanguagePrefix = /^\/(en|es)(\/|$)/.test(currentPath);
+
+		// Only redirect if we're on the root Spanish site (no language prefix)
+		// and user hasn't been redirected before
+		if (!hasLanguagePrefix && currentPath === "/") {
+			const hasVisited = localStorage.getItem("language-detected");
+
+			if (!hasVisited) {
+				// Get browser language
+				const browserLang =
+					navigator.language || navigator.userLanguage;
+				const langCode = browserLang.split("-")[0].toLowerCase();
+
+				// Supported languages
+				const supportedLangs = ["es", "en"];
+				const defaultLang = "es";
+
+				// Determine target language
+				let targetLang = supportedLangs.includes(langCode)
+					? langCode
+					: defaultLang;
+
+				// Mark that we've detected language
+				localStorage.setItem("language-detected", "true");
+
+				// Only redirect if browser language is different from default (Spanish)
+				if (targetLang !== defaultLang) {
+					window.location.href = `/${targetLang}/`;
+				}
+			}
+		}
+	})();
+</script>
+
 <!-- Global Metadata -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -54,8 +106,8 @@ const {
 <link
 	rel="alternate"
 	type="application/rss+xml"
-	title={SITE_TITLE}
-	href={new URL("rss.xml", Astro.site)}
+	title={`${SITE_TITLE}${lang === "en" ? " - English" : ""}`}
+	href={new URL(lang === "en" ? "en/rss.xml" : "rss.xml", Astro.site)}
 />
 <meta name="generator" content={Astro.generator} />
 
@@ -82,19 +134,32 @@ const {
 </noscript>
 
 <!-- Canonical URL -->
-<!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />
 
 <!-- Alternate URLs -->
 {
-	translatedPaths &&
-		Object.entries(translatedPaths).map(([lang, path]) => (
+	translatedPaths && (
+		<>
+			{Object.entries(translatedPaths).map(([lang, path]) => (
+				<link
+					rel="alternate"
+					hreflang={lang}
+					href={new URL(path, Astro.site)}
+				/>
+			))}
 			<link
 				rel="alternate"
-				hreflang={lang}
-				href={new URL(path, Astro.site)}
+				hreflang="x-default"
+				href={
+					new URL(
+						translatedPaths.es ||
+							translatedPaths[Object.keys(translatedPaths)[0]],
+						Astro.site,
+					)
+				}
 			/>
-		))
+		</>
+	)
 }
 
 <!-- Primary Meta Tags -->
@@ -107,11 +172,23 @@ const {
 <meta property="og:url" content={Astro.url} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
-<meta property="og:image" content={new URL(image.src, Astro.url)} />
+<meta property="og:image" content={new URL(ogImage.src, Astro.url)} />
+<meta property="og:locale" content={lang === "es" ? "es_ES" : "en_US"} />
+{
+	translatedPaths &&
+		Object.keys(translatedPaths)
+			.filter((l) => l !== lang)
+			.map((l) => (
+				<meta
+					property="og:locale:alternate"
+					content={l === "es" ? "es_ES" : "en_US"}
+				/>
+			))
+}
 
 <!-- Twitter -->
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:url" content={Astro.url} />
 <meta property="twitter:title" content={title} />
 <meta property="twitter:description" content={description} />
-<meta property="twitter:image" content={new URL(image.src, Astro.url)} />
+<meta property="twitter:image" content={new URL(ogImage.src, Astro.url)} />

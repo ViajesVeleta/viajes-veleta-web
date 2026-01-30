@@ -1,10 +1,13 @@
 ---
+import { getLangFromUrl } from "../i18n/utils";
+
 interface Props {
 	date: Date;
 	locale?: string;
 }
 
-const { date, locale = "es" } = Astro.props;
+const currentLang = getLangFromUrl(Astro.url);
+const { date, locale = currentLang } = Astro.props;
 ---
 
 <time datetime={date.toISOString()}>

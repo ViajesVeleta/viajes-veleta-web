@@ -18,9 +18,53 @@ interface Props {
 }
 
 const { isOverlay = false, translatedPaths } = Astro.props;
-const lang = getLangFromUrl(Astro.url);
-const t = useTranslations(lang);
-const translatePath = useTranslatedPath(lang);
+
+const currentLang = getLangFromUrl(Astro.url);
+const lang = currentLang;
+const t = useTranslations(currentLang);
+const translatePath = useTranslatedPath(currentLang);
+---
+
+<script>
+	// Check if user prefers English but is on a Spanish page (fallback mode)
+	function setupLanguagePreference() {
+		const urlParams = new URLSearchParams(window.location.search);
+		const preferredLang = urlParams.get("lang");
+
+		// If URL has lang=en, store the preference
+		if (preferredLang === "en") {
+			sessionStorage.setItem("preferredLang", "en");
+		}
+
+		// Clean up URL (remove lang parameter)
+		if (preferredLang) {
+			const url = new URL(window.location.href);
+			url.searchParams.delete("lang");
+			url.searchParams.delete("fallback");
+			window.history.replaceState({}, "", url.pathname + url.search);
+		}
+
+		const stored = sessionStorage.getItem("preferredLang");
+		const currentPath = window.location.pathname;
+		const isEnglishPath = currentPath.startsWith("/en/");
+		const isSpanishPath = !isEnglishPath;
+
+		// If user prefers English but is on Spanish page, redirect to English equivalent
+		if (stored === "en" && isSpanishPath && currentPath !== "/contacto") {
+			// Try to go to English version
+			const englishPath = "/en" + currentPath;
+			window.location.href = englishPath;
+		}
+
+		// Clear preference when on English pages
+		if (isEnglishPath) {
+			sessionStorage.removeItem("preferredLang");
+		}
+	}
+
+	setupLanguagePreference();
+	document.addEventListener("astro:page-load", setupLanguagePreference);
+</script>
 ---
 
 <header id="main-header" class:list={{ "is-overlay": isOverlay }}>
@@ -73,7 +117,8 @@ const translatePath = useTranslatedPath(lang);
 				<HeaderLink href={translatePath("/")}
 					>{t("nav.home")}</HeaderLink
 				>
-				<HeaderLink href={translatePath("/viajes-en-grupo")}
+				<HeaderLink
+					href={translatePath("/viajes-en-grupo")}
 					>{t("nav.trips")}</HeaderLink
 				>
 				<HeaderLink href={translatePath("/ofertas")}
@@ -118,21 +163,25 @@ const translatePath = useTranslatedPath(lang);
 				<i class="fa-solid fa-xmark"></i>
 			</button>
 			<nav class="mobile-nav">
-				<a href={translatePath("/")} class="mobile-nav-link"
-					>{t("nav.home")}</a
+				<a
+					href={translatePath("/")}
+					class="mobile-nav-link">{t("nav.home")}</a
 				>
 				<a
 					href={translatePath("/viajes-en-grupo")}
 					class="mobile-nav-link">{t("nav.trips")}</a
 				>
-				<a href={translatePath("/ofertas")} class="mobile-nav-link"
-					>{t("nav.offers")}</a
+				<a
+					href={translatePath("/ofertas")}
+					class="mobile-nav-link">{t("nav.offers")}</a
 				>
-				<a href={translatePath("/blog")} class="mobile-nav-link"
-					>{t("nav.blog")}</a
+				<a
+					href={translatePath("/blog")}
+					class="mobile-nav-link">{t("nav.blog")}</a
 				>
-				<a href={translatePath("/contacto")} class="mobile-nav-link"
-					>{t("nav.contact")}</a
+				<a
+					href={translatePath("/contacto")}
+					class="mobile-nav-link">{t("nav.contact")}</a
 				>
 
 				<div class="mobile-actions" style="margin-top: 2rem;">
@@ -217,8 +266,7 @@ const translatePath = useTranslatedPath(lang);
 				const href =
 					link.getAttribute("href")?.replace(/\/$/, "") || "/";
 				// Exact match for home, startsWith for others
-				const isHome = href === "/";
-				if (isHome ? pathname === "/" : pathname.startsWith(href)) {
+				if (pathname === href) {
 					link.classList.add("active");
 				} else {
 					link.classList.remove("active");

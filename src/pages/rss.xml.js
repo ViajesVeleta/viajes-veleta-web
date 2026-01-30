@@ -3,14 +3,21 @@ import rss from '@astrojs/rss';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 
 export async function GET(context) {
-	const posts = await getCollection('blog');
+	// Get only Spanish blog posts
+	const posts = await getCollection('blog', ({ id }) => id.startsWith('es/'));
+
 	return rss({
 		title: SITE_TITLE,
 		description: SITE_DESCRIPTION,
 		site: context.site,
-		items: posts.map((post) => ({
-			...post.data,
-			link: `/blog/${post.id}/`,
-		})),
+		items: posts.map((post) => {
+			const [lang, ...slugParts] = post.id.split('/');
+			const slug = slugParts.join('/');
+			return {
+				...post.data,
+				link: `/blog/${slug}/`,
+			};
+		}),
+		customData: `<language>es</language>`,
 	});
 }

@@ -1,0 +1,35 @@
+---
+// Custom 404 page for English routes
+// This redirects to the Spanish version when English page doesn't exist
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Redirecting...</title>
+        <script is:inline>
+            // Get the requested path
+            const pathname = window.location.pathname;
+
+            // If it's an English path that doesn't exist, redirect to Spanish version
+            if (pathname.startsWith("/en/")) {
+                // Remove /en/ prefix to get Spanish path
+                const spanishPath = pathname.replace("/en/", "/");
+
+                // Add a query parameter to indicate this was a fallback
+                const redirectUrl = spanishPath + "?lang=en&fallback=true";
+
+                // Redirect to Spanish version
+                window.location.replace(redirectUrl);
+            } else {
+                // For other 404s, redirect to home
+                window.location.replace("/");
+            }
+        </script>
+    </head>
+    <body>
+        <p>Redirecting...</p>
+    </body>
+</html>

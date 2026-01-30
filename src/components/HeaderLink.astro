@@ -1,12 +1,21 @@
 ---
-import type { HTMLAttributes } from 'astro/types';
+import type { HTMLAttributes } from "astro/types";
 
-type Props = HTMLAttributes<'a'>;
+type Props = HTMLAttributes<"a">;
 
 const { href, class: className, ...props } = Astro.props;
-const pathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, '');
-const subpath = pathname.match(/[^\/]+/g);
-const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
+const pathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, "");
+
+// Normalize paths by removing trailing slashes for comparison
+const normalizedPathname =
+	pathname.endsWith("/") && pathname !== "/"
+		? pathname.slice(0, -1)
+		: pathname;
+const normalizedHref =
+	href.endsWith("/") && href !== "/" ? href.slice(0, -1) : href;
+
+// Check if current page matches the link
+const isActive = normalizedPathname === normalizedHref;
 ---
 
 <a href={href} class:list={[className, { active: isActive }]} {...props}>

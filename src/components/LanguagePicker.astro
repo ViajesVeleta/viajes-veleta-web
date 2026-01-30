@@ -5,40 +5,52 @@ import { getLangFromUrl } from "../i18n/utils";
 const lang = getLangFromUrl(Astro.url);
 const { translatedPaths } = Astro.props;
 
-// Filter out the current language so we only show the switcher for other languages
-const otherLanguages = Object.entries(languages).filter(([l]) => l !== lang);
+// Get all languages
+const allLanguages = Object.entries(languages);
+
+// Find the OTHER language (the one to switch to)
+const otherLanguage = allLanguages.find(([l]) => l !== lang);
 ---
 
 <div class="language-picker">
     {
-        otherLanguages.map(([l, label]) => {
-            let newPath;
+        otherLanguage &&
+            (() => {
+                const [otherLang, otherLabel] = otherLanguage;
+                let newPath;
 
-            if (translatedPaths && translatedPaths[l]) {
-                newPath = translatedPaths[l];
-            } else {
-                // Determine the new path (very basic: just prepend the lang or swap it)
-                const pathname = Astro.url.pathname;
-                newPath = pathname;
-
-                // If we are on a localized path, replace the first segment
-                const parts = pathname.split("/");
-                if (Object.keys(languages).includes(parts[1])) {
-                    parts[1] = l === "es" ? "" : l; // 'es' is default, no prefix
-                    newPath = parts.join("/").replace("//", "/");
+                if (translatedPaths && translatedPaths[otherLang]) {
+                    newPath = translatedPaths[otherLang];
                 } else {
-                    // We are on the default language (no prefix)
-                    newPath = l === "es" ? pathname : `/${l}${pathname}`;
-                }
-            }
+                    // Determine the new path
+                    const pathname = Astro.url.pathname;
+                    newPath = pathname;
 
-            return (
-                <a href={newPath} title={label} class="lang-link">
-                    <i class="fa-solid fa-globe" />
-                    <span>{l.toUpperCase()}</span>
-                </a>
-            );
-        })
+                    // If we are on a localized path, replace the first segment
+                    const parts = pathname.split("/");
+                    if (Object.keys(languages).includes(parts[1])) {
+                        parts[1] = otherLang === "es" ? "" : otherLang;
+                        newPath = parts.join("/").replace("//", "/");
+                    } else {
+                        // We are on the default language (no prefix)
+                        newPath =
+                            otherLang === "es"
+                                ? pathname
+                                : `/${otherLang}${pathname}`;
+                    }
+                }
+
+                return (
+                    <a
+                        href={newPath}
+                        title={`Switch to ${otherLabel}`}
+                        class="lang-link"
+                    >
+                        <i class="fa-solid fa-globe" />
+                        <span>{lang.toUpperCase()}</span>
+                    </a>
+                );
+            })()
     }
 </div>
 

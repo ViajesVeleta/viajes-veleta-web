@@ -2,6 +2,7 @@
 
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
+import node from '@astrojs/node';
 import { defineConfig } from 'astro/config';
 
 import pagefind from 'astro-pagefind';
@@ -25,6 +26,9 @@ function styleGuideToolbar() {
 }
 
 export default defineConfig({
+    adapter: node({
+        mode: 'standalone',
+    }),
     site: 'https://example.com',
     prefetch: {
         prefetchAll: true,
@@ -51,5 +55,18 @@ export default defineConfig({
             prefixDefaultLocale: false,
         },
     },
-    integrations: [mdx(), sitemap(), styleGuideToolbar(), pagefind()],
+    integrations: [
+        mdx(),
+        sitemap({
+            i18n: {
+                defaultLocale: 'es',
+                locales: {
+                    es: 'es-ES',
+                    en: 'en-US',
+                },
+            },
+        }),
+        styleGuideToolbar(),
+        pagefind(),
+    ],
 });

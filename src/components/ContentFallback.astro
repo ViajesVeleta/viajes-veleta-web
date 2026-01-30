@@ -1,0 +1,96 @@
+---
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+
+interface Props {
+    availableIn: string; // Language code where content is available
+    fallbackPath: string; // Path to the content in the available language
+}
+
+const { availableIn, fallbackPath } = Astro.props;
+const currentLang = getLangFromUrl(Astro.url);
+const t = useTranslations(currentLang);
+
+// Compute translation strings
+const notAvailableMessage = t("content.notAvailable");
+const linkText =
+    availableIn === "es"
+        ? t("content.viewInSpanish")
+        : t("content.viewInEnglish");
+---
+
+<div class="content-fallback-notice">
+    <div class="notice-icon">
+        <i class="fa-solid fa-language"></i>
+    </div>
+    <div class="notice-content">
+        <p class="notice-message">{notAvailableMessage}</p>
+        <a href={fallbackPath} class="fallback-link">
+            {linkText}
+            <i class="fa-solid fa-arrow-right"></i>
+        </a>
+    </div>
+</div>
+
+<style>
+    .content-fallback-notice {
+        background: var(--surface-variant);
+        border-left: 4px solid var(--primary);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+        display: flex;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    .notice-icon {
+        font-size: 2rem;
+        color: var(--primary);
+        flex-shrink: 0;
+    }
+
+    .notice-content {
+        flex: 1;
+    }
+
+    .notice-message {
+        margin: 0 0 0.75rem 0;
+        color: var(--on-surface);
+        font-size: 1rem;
+    }
+
+    .fallback-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+
+    .fallback-link:hover {
+        color: var(--primary-fixed-dim);
+        gap: 0.75rem;
+    }
+
+    .fallback-link i {
+        font-size: 0.875rem;
+        transition: transform 0.2s ease;
+    }
+
+    .fallback-link:hover i {
+        transform: translateX(4px);
+    }
+
+    @media (max-width: 768px) {
+        .content-fallback-notice {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .notice-icon {
+            font-size: 1.5rem;
+        }
+    }
+</style>

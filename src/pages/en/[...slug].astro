@@ -1,0 +1,91 @@
+---
+// Enable server-side rendering for this catch-all route
+export const prerender = false;
+
+// Catch-all route for missing English pages
+// This handles fallback to Spanish version if it exists, otherwise shows 404
+
+const pathname = Astro.url.pathname;
+const spanishPath = pathname.replace("/en/", "/");
+
+// Try to check if Spanish version exists by making a fetch
+let spanishExists = false;
+try {
+    // In dev mode, we can try to fetch the Spanish path
+    const response = await fetch(new URL(spanishPath, Astro.url.origin));
+    spanishExists = response.ok;
+} catch (e) {
+    spanishExists = false;
+}
+
+// If Spanish version exists, redirect with fallback parameter
+if (spanishExists) {
+    return Astro.redirect(`${spanishPath}?lang=en&fallback=true`, 307);
+}
+
+// Otherwise, show a 404 page
+---
+
+<!doctype html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Page Not Found - Viajes Veleta</title>
+        <style>
+            body {
+                font-family:
+                    system-ui,
+                    -apple-system,
+                    sans-serif;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+                margin: 0;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+            }
+            .container {
+                text-align: center;
+                padding: 2rem;
+            }
+            h1 {
+                font-size: 6rem;
+                margin: 0;
+                font-weight: 700;
+            }
+            h2 {
+                font-size: 2rem;
+                margin: 1rem 0;
+                font-weight: 400;
+            }
+            p {
+                font-size: 1.1rem;
+                opacity: 0.9;
+                margin: 1rem 0 2rem;
+            }
+            a {
+                display: inline-block;
+                padding: 0.75rem 2rem;
+                background: white;
+                color: #667eea;
+                text-decoration: none;
+                border-radius: 0.5rem;
+                font-weight: 600;
+                transition: transform 0.2s;
+            }
+            a:hover {
+                transform: translateY(-2px);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>404</h1>
+            <h2>Page Not Found</h2>
+            <p>The page you're looking for doesn't exist.</p>
+            <a href="/en/">Go to Home</a>
+        </div>
+    </body>
+</html>
