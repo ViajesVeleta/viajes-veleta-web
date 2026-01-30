@@ -7,14 +7,10 @@ import FormattedDate from "../../../components/FormattedDate.astro";
 import Header from "../../../components/Header.astro";
 import PageHero from "../../../components/PageHero.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../../../consts";
-import {
-	getLangFromUrl,
-	useTranslations,
-	useTranslatedPath,
-} from "../../../i18n/utils";
+import { getLangFromUrl, useTranslatedPath } from "../../../i18n/utils";
 
 const lang = getLangFromUrl(Astro.url);
-const t = useTranslations(lang);
+
 const translatePath = useTranslatedPath(lang);
 
 const posts = (
@@ -232,4 +228,3 @@ const posts = (
 		<Footer />
 	</body>
 </html>
-

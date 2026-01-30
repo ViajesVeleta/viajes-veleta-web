@@ -158,7 +158,7 @@ const formatDate = (date: Date) => {
             },
             loop: true,
             on: {
-                autoplayTimeLeft(s, time, progress) {
+                autoplayTimeLeft(_s, _time, progress) {
                     if (progressBar) {
                         progressBar.style.width = `${(1 - progress) * 100}%`;
                     }

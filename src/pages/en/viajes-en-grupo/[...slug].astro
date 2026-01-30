@@ -9,7 +9,7 @@ export async function getStaticPaths() {
         id.startsWith("en/"),
     );
     return posts.map((post) => {
-        const [lang, ...idParts] = post.id.split("/");
+        const [_, ...idParts] = post.id.split("/");
         const slug = idParts.join("/");
         return {
             params: { slug },

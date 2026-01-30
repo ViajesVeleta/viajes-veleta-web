@@ -11,8 +11,11 @@ const normalizedPathname =
 	pathname.endsWith("/") && pathname !== "/"
 		? pathname.slice(0, -1)
 		: pathname;
+const hrefString = href?.toString() ?? "";
 const normalizedHref =
-	href.endsWith("/") && href !== "/" ? href.slice(0, -1) : href;
+	hrefString.endsWith("/") && hrefString !== "/"
+		? hrefString.slice(0, -1)
+		: hrefString;
 
 // Check if current page matches the link
 const isActive = normalizedPathname === normalizedHref;

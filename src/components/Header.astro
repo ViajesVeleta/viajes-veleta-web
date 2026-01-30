@@ -20,7 +20,7 @@ interface Props {
 const { isOverlay = false, translatedPaths } = Astro.props;
 
 const currentLang = getLangFromUrl(Astro.url);
-const lang = currentLang;
+
 const t = useTranslations(currentLang);
 const translatePath = useTranslatedPath(currentLang);
 ---

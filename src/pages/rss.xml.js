@@ -11,7 +11,7 @@ export async function GET(context) {
 		description: SITE_DESCRIPTION,
 		site: context.site,
 		items: posts.map((post) => {
-			const [lang, ...slugParts] = post.id.split('/');
+			const [_, ...slugParts] = post.id.split('/');
 			const slug = slugParts.join('/');
 			return {
 				...post.data,
