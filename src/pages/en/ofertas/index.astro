@@ -1,105 +1,46 @@
 ---
-import { getCollection } from "astro:content";
 import { Image } from "astro:assets";
-import BaseHead from "../../components/BaseHead.astro";
-import Header from "../../components/Header.astro";
-import Footer from "../../components/Footer.astro";
-import PageHero from "../../components/PageHero.astro";
-import FormattedDate from "../../components/FormattedDate.astro";
-import { SITE_TITLE, SITE_DESCRIPTION } from "../../consts";
+import { getCollection } from "astro:content";
+import BaseHead from "../../../components/BaseHead.astro";
+import Footer from "../../../components/Footer.astro";
+import FormattedDate from "../../../components/FormattedDate.astro";
+import Header from "../../../components/Header.astro";
+import PageHero from "../../../components/PageHero.astro";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../../../consts";
 import {
     getLangFromUrl,
     useTranslations,
     useTranslatedPath,
-} from "../../i18n/utils";
-import { languages } from "../../i18n/ui";
+} from "../../../i18n/utils";
 
-export async function getStaticPaths() {
-    const blogPosts = await getCollection("blog");
-    const groupTrips = await getCollection("groups");
-    const offers = await getCollection("offers");
-
-    const allContent = [...blogPosts, ...groupTrips, ...offers];
-
-    // Create paths for each tag in each language
-    const paths: Array<{
-        params: { lang: string | undefined; tag: string };
-        props: { tag: string; lang: string };
-    }> = [];
-    Object.keys(languages).forEach((lang) => {
-        const langContent = allContent.filter((item) =>
-            item.id.startsWith(`${lang}/`),
-        );
-        const tags = [
-            ...new Set(langContent.map((item) => item.data.tags || []).flat()),
-        ];
-
-        tags.forEach((tag) => {
-            paths.push({
-                params: { lang: lang === "es" ? undefined : lang, tag },
-                props: { tag, lang },
-            });
-        });
-    });
-
-    return paths;
-}
-
-const { tag, lang: propLang } = Astro.props;
-const lang = (propLang || getLangFromUrl(Astro.url)) as keyof typeof languages;
+const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const translatePath = useTranslatedPath(lang);
 
-const blogPosts = await getCollection(
-    "blog",
-    ({ id, data }) => id.startsWith(`${lang}/`) && data.tags?.includes(tag),
-);
-const groupTrips = await getCollection(
-    "groups",
-    ({ id, data }) => id.startsWith(`${lang}/`) && data.tags?.includes(tag),
-);
-const offers = await getCollection(
-    "offers",
-    ({ id, data }) => id.startsWith(`${lang}/`) && data.tags?.includes(tag),
-);
-
-// Map all content to a common format for display
-const allTaggedContent = [
-    ...blogPosts.map((p) => ({
-        ...p,
-        type: "blog",
-        url: translatePath(`/blog/${p.id.split("/").slice(1).join("/")}/`),
-    })),
-    ...groupTrips.map((p) => ({
-        ...p,
-        type: "groups",
-        url: translatePath(
-            `/viajes-en-grupo/${p.id.split("/").slice(1).join("/")}/`,
-        ),
-    })),
-    ...offers.map((p) => ({
-        ...p,
-        type: "offers",
-        url: translatePath(`/ofertas/${p.id.split("/").slice(1).join("/")}/`),
-    })),
-].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const posts = (
+    await getCollection("offers", ({ id }) => {
+        return id.startsWith(`${lang}/`);
+    })
+).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
 
 <!doctype html>
 <html lang={lang}>
     <head>
         <BaseHead
-            title={`${t("tags.intro")} "${tag}" | ${SITE_TITLE}`}
+            title={`Ofertas - ${SITE_TITLE}`}
             description={SITE_DESCRIPTION}
         />
         <script>
             import { FastAverageColor } from "fast-average-color";
             const fac = new FastAverageColor();
 
+            // wait for DOM to be ready
             document.addEventListener("astro:page-load", () => {
                 runColorExtraction();
             });
 
+            // Also run on initial load if view transitions aren't used or just in case
             document.addEventListener("DOMContentLoaded", () => {
                 runColorExtraction();
             });
@@ -114,6 +55,8 @@ const allTaggedContent = [
 
                     if (img && overlay) {
                         img.crossOrigin = "Anonymous";
+
+                        // Use 'dominant' algorithm
                         fac.getColorAsync(img, { algorithm: "dominant" })
                             .then((color) => {
                                 const [r, g, b] = color.value;
@@ -135,24 +78,10 @@ const allTaggedContent = [
                 margin: 0 auto;
                 padding: 0 1rem;
             }
-            .tag-info {
-                text-align: center;
-                margin: 2rem 0;
-            }
-            .tag-badge {
-                display: inline-block;
-                padding: 0.5rem 1.5rem;
-                background: var(--primary);
-                color: var(--on-primary);
-                border-radius: 50px;
-                font-weight: 600;
-                font-size: 1.2rem;
-                margin-bottom: 1rem;
-            }
             ul {
                 display: grid;
                 grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-                gap: 4px;
+                gap: 4px; /* Tight grid as usually seen in premium designs */
                 list-style-type: none;
                 margin: 2rem 0;
                 padding: 0;
@@ -171,6 +100,7 @@ const allTaggedContent = [
                 color: inherit;
                 text-decoration: none;
             }
+
             .image-container {
                 width: 100%;
                 height: 100%;
@@ -189,22 +119,25 @@ const allTaggedContent = [
                 transition: opacity 0.4s ease;
                 pointer-events: none;
             }
+
             li img {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
                 transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
             }
+
             .overlay {
                 position: absolute;
                 inset: 0;
-                background-color: rgba(0, 0, 0, 0.4);
+                background-color: rgba(0, 0, 0, 0.4); /* Default dark overlay */
                 opacity: 0;
                 transition:
                     opacity 0.4s ease,
                     background-color 0.4s ease;
                 z-index: 1;
             }
+
             .content {
                 position: absolute;
                 inset: 0;
@@ -218,18 +151,10 @@ const allTaggedContent = [
                 color: white;
                 transform: translateY(35%);
                 transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-                pointer-events: none;
+                pointer-events: none; /* Let clicks pass to link */
             }
-            .item-type {
-                font-size: 0.75rem;
-                text-transform: uppercase;
-                letter-spacing: 0.1em;
-                margin-bottom: 0.5rem;
-                background: rgba(255, 255, 255, 0.2);
-                padding: 2px 8px;
-                border-radius: 4px;
-                backdrop-filter: blur(4px);
-            }
+
+            /* Initial state styling */
             .title {
                 font-size: 1.5rem;
                 font-weight: 700;
@@ -247,14 +172,16 @@ const allTaggedContent = [
 
             /* Hover Effects */
             li:hover img {
-                transform: scale(1.05);
+                transform: scale(1.05); /* Zoom effect */
             }
             li:hover .image-container::after {
                 opacity: 0;
             }
+
             li:hover .overlay {
-                opacity: 1;
+                opacity: 1; /* Show the extracted color overlay */
             }
+
             li:hover .content {
                 transform: translateY(0);
             }
@@ -272,24 +199,24 @@ const allTaggedContent = [
     </head>
     <body>
         <Header isOverlay={true} />
-        <PageHero title={`${t("tags.tag")}: ${tag}`} />
+        <PageHero title="Ofertas" />
         <main>
-            <div class="tag-info">
-                <span class="tag-badge">#{tag}</span>
-                <p>{allTaggedContent.length} {t("tags.results")}</p>
-            </div>
             <section>
                 <ul>
                     {
-                        allTaggedContent.map((item, index) => (
+                        posts.map((post, index) => (
                             <li class="post-item">
-                                <a href={item.url}>
+                                <a
+                                    href={translatePath(
+                                        `/ofertas/${post.id.split("/").slice(1).join("/")}/`,
+                                    )}
+                                >
                                     <div class="image-container">
-                                        {item.data.heroImage && (
+                                        {post.data.heroImage && (
                                             <Image
                                                 width={720}
                                                 height={480}
-                                                src={item.data.heroImage}
+                                                src={post.data.heroImage}
                                                 alt=""
                                                 loading={
                                                     index === 0
@@ -301,17 +228,10 @@ const allTaggedContent = [
                                         <div class="overlay" />
                                     </div>
                                     <div class="content">
-                                        <span class="item-type">
-                                            {item.type === "blog"
-                                                ? t("nav.blog")
-                                                : item.type === "groups"
-                                                  ? t("nav.trips")
-                                                  : t("nav.offers")}
-                                        </span>
-                                        <h4 class="title">{item.data.title}</h4>
+                                        <h4 class="title">{post.data.title}</h4>
                                         <p class="date">
                                             <FormattedDate
-                                                date={item.data.pubDate}
+                                                date={post.data.pubDate}
                                             />
                                         </p>
                                     </div>

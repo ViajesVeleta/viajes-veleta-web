@@ -1,24 +1,24 @@
 ---
 import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
-import BaseHead from "../../components/BaseHead.astro";
-import Footer from "../../components/Footer.astro";
-import FormattedDate from "../../components/FormattedDate.astro";
-import Header from "../../components/Header.astro";
-import PageHero from "../../components/PageHero.astro";
-import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
+import BaseHead from "../../../components/BaseHead.astro";
+import Footer from "../../../components/Footer.astro";
+import FormattedDate from "../../../components/FormattedDate.astro";
+import Header from "../../../components/Header.astro";
+import PageHero from "../../../components/PageHero.astro";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../../../consts";
 import {
 	getLangFromUrl,
 	useTranslations,
 	useTranslatedPath,
-} from "../../i18n/utils";
+} from "../../../i18n/utils";
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const translatePath = useTranslatedPath(lang);
 
 const posts = (
-	await getCollection("groups", ({ id }) => {
+	await getCollection("blog", ({ id }) => {
 		return id.startsWith(`${lang}/`);
 	})
 ).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
@@ -27,20 +27,15 @@ const posts = (
 <!doctype html>
 <html lang={lang}>
 	<head>
-		<BaseHead
-			title={`Viajes en grupo - ${SITE_TITLE}`}
-			description={SITE_DESCRIPTION}
-		/>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 		<script>
 			import { FastAverageColor } from "fast-average-color";
 			const fac = new FastAverageColor();
 
-			// wait for DOM to be ready
 			document.addEventListener("astro:page-load", () => {
 				runColorExtraction();
 			});
 
-			// Also run on initial load if view transitions aren't used or just in case
 			document.addEventListener("DOMContentLoaded", () => {
 				runColorExtraction();
 			});
@@ -56,17 +51,14 @@ const posts = (
 					if (img && overlay) {
 						img.crossOrigin = "Anonymous";
 
-						// Use 'dominant' algorithm for better color extraction from photos
+						// Use 'dominant' algorithm
 						fac.getColorAsync(img, { algorithm: "dominant" })
 							.then((color) => {
-								// Manually construct rgba string to ensure correct opacity
-								// color.value is [r, g, b, a]
 								const [r, g, b] = color.value;
 								overlay.style.backgroundColor = `rgba(${r}, ${g}, ${b}, 0.6)`;
 							})
 							.catch((e) => {
 								console.error("Color extraction failed:", e);
-								// Fallback but with correct translucency
 								overlay.style.backgroundColor =
 									"rgba(0,0,0,0.6)";
 							});
@@ -150,7 +142,7 @@ const posts = (
 				color: white;
 				transform: translateY(35%);
 				transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-				pointer-events: none; /* Let clicks pass to link */
+				pointer-events: none;
 			}
 			.title {
 				font-size: 1.5rem;
@@ -188,15 +180,13 @@ const posts = (
 				}
 				.content {
 					justify-content: flex-end;
-					/* On mobile maybe keep title visible at bottom? 
-					   Or follow same pattern? Let's keep same pattern for now. */
 				}
 			}
 		</style>
 	</head>
 	<body>
 		<Header isOverlay={true} />
-		<PageHero title="Viajes en grupo" />
+		<PageHero title="Blog" />
 		<main>
 			<section>
 				<ul>
@@ -205,7 +195,7 @@ const posts = (
 							<li class="post-item">
 								<a
 									href={translatePath(
-										`/viajes-en-grupo/${post.id.split("/").slice(1).join("/")}/`,
+										`/blog/${post.id.split("/").slice(1).join("/")}/`,
 									)}
 								>
 									<div class="image-container">

@@ -44,5 +44,12 @@ export default defineConfig({
         inlineStylesheets: 'auto',
     },
     compressHTML: true,
+    i18n: {
+        defaultLocale: 'es',
+        locales: ['es', 'en'],
+        routing: {
+            prefixDefaultLocale: false,
+        },
+    },
     integrations: [mdx(), sitemap(), styleGuideToolbar(), pagefind()],
 });

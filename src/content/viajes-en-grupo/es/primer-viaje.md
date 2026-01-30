@@ -1,8 +1,9 @@
 ---
+id: 'alps'
 title: 'Viaje a los Alpes'
 description: 'Únete a nosotros en esta increíble aventura por los Alpes suizos.'
 pubDate: 'Jul 08 2024'
-heroImage: '../../assets/blog-placeholder-1.webp'
+heroImage: '../../../assets/blog-placeholder-1.webp'
 ---
 
 ¡Bienvenidos a nuestro primer viaje en grupo organizado!
@@ -14,3 +15,4 @@ heroImage: '../../assets/blog-placeholder-1.webp'
 - **Día 3**: Subida al Monte Pilatus.
 
 Más detalles próximamente.
+

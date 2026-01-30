@@ -1,11 +1,11 @@
 ---
 import { type CollectionEntry, getCollection, render } from "astro:content";
-import BlogPost from "../../layouts/BlogPost.astro";
-import Timeline from "../../components/Timeline.astro";
-import TimelineItem from "../../components/TimelineItem.astro";
+import BlogPost from "../../../layouts/BlogPost.astro";
+import Timeline from "../../../components/Timeline.astro";
+import TimelineItem from "../../../components/TimelineItem.astro";
 
 export async function getStaticPaths() {
-	const posts = await getCollection("blog", ({ id }) => id.startsWith("es/"));
+	const posts = await getCollection("blog", ({ id }) => id.startsWith("en/"));
 	return posts.map((post) => {
 		const [lang, ...idParts] = post.id.split("/");
 		const slug = idParts.join("/");

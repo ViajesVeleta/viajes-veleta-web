@@ -5,66 +5,94 @@ import BaseHead from "../components/BaseHead.astro";
 import Footer from "../components/Footer.astro";
 import FormattedDate from "../components/FormattedDate.astro";
 import Header from "../components/Header.astro";
+import { getLangFromUrl } from "../i18n/utils";
 
-type Props = CollectionEntry<"blog">["data"];
+type Props = (
+	| CollectionEntry<"blog">["data"]
+	| CollectionEntry<"groups">["data"]
+	| CollectionEntry<"offers">["data"]
+) & { translatedPaths?: Record<string, string> };
 
-const { title, description, pubDate, updatedDate, heroImage, tags } =
-	Astro.props;
+const {
+	title,
+	description,
+	pubDate,
+	updatedDate,
+	heroImage,
+	tags,
+	translatedPaths,
+} = Astro.props;
+const lang = getLangFromUrl(Astro.url);
 ---
 
-<html lang="es">
+<html lang={lang}>
 	<head>
 		<BaseHead title={title} description={description} />
 		<style>
 			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
+				width: 100%;
+				max-width: none;
 				margin: 0;
+				padding: 0;
 			}
 			.hero-image {
 				width: 100%;
+				height: 60vh;
+				position: relative;
+				margin-bottom: 2rem;
+			}
+			.hero-image::after {
+				content: "";
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				height: 15rem;
+				background: linear-gradient(
+					to top,
+					var(--bg-primary),
+					transparent
+				);
+				z-index: 1;
 			}
 			.hero-image img {
 				display: block;
-				margin: 0 auto;
-				border-radius: 12px;
-				box-shadow: var(--box-shadow);
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				border-radius: 0;
+				box-shadow: none;
 			}
 			.prose {
-				width: 800px;
+				width: 720px;
 				max-width: calc(100% - 2em);
 				margin: auto;
 				padding: 1em;
 				color: var(--on-surface);
 			}
 			.title {
-				margin-bottom: 2rem;
-				padding: 1rem 0;
+				margin-bottom: 1em;
+				padding: 1em 0;
 				text-align: center;
-				line-height: 1.2;
+				line-height: 1;
 			}
 			.title h1 {
 				margin: 0 0 0.5em 0;
-				font-size: 2.5rem;
-				font-family: "Playfair Display", serif;
+				font-size: 3rem;
+				font-weight: 800;
 			}
 			.date {
-				margin-bottom: 1rem;
+				margin-bottom: 0.5em;
 				color: var(--on-surface-variant);
-				font-size: 0.9rem;
-				text-transform: uppercase;
-				letter-spacing: 0.05em;
 			}
 			.last-updated-on {
 				font-style: italic;
-				margin-top: 0.5rem;
 			}
 			.tags {
 				display: flex;
-				flex-wrap: wrap;
 				gap: 0.5rem;
 				justify-content: center;
-				margin-bottom: 1.5rem;
+				margin-bottom: 2rem;
 			}
 			.tag {
 				background: var(--surface-variant);
@@ -74,31 +102,24 @@ const { title, description, pubDate, updatedDate, heroImage, tags } =
 				font-size: 0.85rem;
 				text-decoration: none;
 				transition: all 0.2s ease;
-				border: 1px solid var(--outline-variant);
 			}
 			.tag:hover {
 				background: var(--primary);
 				color: var(--on-primary);
-				border-color: var(--primary);
-			}
-			hr {
-				border: none;
-				border-top: 1px solid var(--outline-variant);
-				margin: 2rem 0;
 			}
 		</style>
 	</head>
 
 	<body>
-		<Header />
+		<Header isOverlay={true} translatedPaths={translatedPaths} />
 		<main>
 			<article>
 				<div class="hero-image">
 					{
 						heroImage && (
 							<Image
-								width={1020}
-								height={510}
+								width={1920}
+								height={1080}
 								src={heroImage}
 								alt=""
 								loading="eager"
@@ -114,7 +135,7 @@ const { title, description, pubDate, updatedDate, heroImage, tags } =
 							{
 								updatedDate && (
 									<div class="last-updated-on">
-										Última actualización el{" "}
+										Last updated on{" "}
 										<FormattedDate date={updatedDate} />
 									</div>
 								)

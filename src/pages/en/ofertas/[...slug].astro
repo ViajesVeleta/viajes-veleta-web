@@ -1,12 +1,12 @@
 ---
 import { type CollectionEntry, getCollection, render } from "astro:content";
-import BlogPost from "../../layouts/BlogPost.astro";
-import Timeline from "../../components/Timeline.astro";
-import TimelineItem from "../../components/TimelineItem.astro";
+import BlogPost from "../../../layouts/BlogPost.astro";
+import Timeline from "../../../components/Timeline.astro";
+import TimelineItem from "../../../components/TimelineItem.astro";
 
 export async function getStaticPaths() {
-    const posts = await getCollection("groups", ({ id }) =>
-        id.startsWith("es/"),
+    const posts = await getCollection("offers", ({ id }) =>
+        id.startsWith("en/"),
     );
     return posts.map((post) => {
         const [lang, ...idParts] = post.id.split("/");
@@ -17,14 +17,14 @@ export async function getStaticPaths() {
         };
     });
 }
-type Props = CollectionEntry<"groups">;
+type Props = CollectionEntry<"offers">;
 
 const post = Astro.props;
 const { Content } = await render(post);
 const components = { Timeline, TimelineItem };
 
 // Find translations
-const allPosts = await getCollection("groups");
+const allPosts = await getCollection("offers");
 const translations = allPosts.filter(
     (p) => p.data.id === post.data.id && post.data.id !== undefined,
 );
@@ -33,9 +33,7 @@ translations.forEach((p) => {
     const [pLang, ...idParts] = p.id.split("/");
     const pSlug = idParts.join("/");
     translatedPaths[pLang] =
-        pLang === "es"
-            ? `/viajes-en-grupo/${pSlug}/`
-            : `/en/viajes-en-grupo/${pSlug}/`;
+        pLang === "es" ? `/ofertas/${pSlug}/` : `/en/ofertas/${pSlug}/`;
 });
 ---
 

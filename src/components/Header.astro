@@ -5,12 +5,22 @@ import ThemeToggle from "./ThemeToggle.astro";
 import { Image } from "astro:assets";
 import logo from "../assets/logo.svg";
 import Search from "./Search.astro";
+import LanguagePicker from "./LanguagePicker.astro";
+import {
+	getLangFromUrl,
+	useTranslations,
+	useTranslatedPath,
+} from "../i18n/utils";
 
 interface Props {
 	isOverlay?: boolean;
+	translatedPaths?: Record<string, string>;
 }
 
-const { isOverlay = false } = Astro.props;
+const { isOverlay = false, translatedPaths } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const translatePath = useTranslatedPath(lang);
 ---
 
 <header id="main-header" class:list={{ "is-overlay": isOverlay }}>
@@ -60,11 +70,21 @@ const { isOverlay = false } = Astro.props;
 				</a>
 			</h2>
 			<div class="internal-links" id="internal-links">
-				<HeaderLink href="/">Home</HeaderLink>
-				<HeaderLink href="/viajes-en-grupo">Viajes en grupo</HeaderLink>
-				<HeaderLink href="/ofertas">Ofertas</HeaderLink>
-				<HeaderLink href="/blog">Blog</HeaderLink>
-				<HeaderLink href="/contacto">Contacto</HeaderLink>
+				<HeaderLink href={translatePath("/")}
+					>{t("nav.home")}</HeaderLink
+				>
+				<HeaderLink href={translatePath("/viajes-en-grupo")}
+					>{t("nav.trips")}</HeaderLink
+				>
+				<HeaderLink href={translatePath("/ofertas")}
+					>{t("nav.offers")}</HeaderLink
+				>
+				<HeaderLink href={translatePath("/blog")}
+					>{t("nav.blog")}</HeaderLink
+				>
+				<HeaderLink href={translatePath("/contacto")}
+					>{t("nav.contact")}</HeaderLink
+				>
 			</div>
 
 			<div class="nav-actions">
@@ -72,6 +92,7 @@ const { isOverlay = false } = Astro.props;
 				<div class="theme-toggle-wrapper">
 					<ThemeToggle />
 				</div>
+				<LanguagePicker translatedPaths={translatedPaths} />
 			</div>
 
 			<!-- Mobile Menu Button -->
@@ -97,15 +118,28 @@ const { isOverlay = false } = Astro.props;
 				<i class="fa-solid fa-xmark"></i>
 			</button>
 			<nav class="mobile-nav">
-				<a href="/" class="mobile-nav-link">Home</a>
-				<a href="/viajes-en-grupo" class="mobile-nav-link"
-					>Viajes en grupo</a
+				<a href={translatePath("/")} class="mobile-nav-link"
+					>{t("nav.home")}</a
 				>
-				<a href="/ofertas" class="mobile-nav-link">Ofertas</a>
-				<a href="/blog" class="mobile-nav-link">Blog</a>
-				<a href="/contacto" class="mobile-nav-link">Contacto</a>
-				<div class="mobile-theme-toggle-wrapper">
-					<ThemeToggle />
+				<a
+					href={translatePath("/viajes-en-grupo")}
+					class="mobile-nav-link">{t("nav.trips")}</a
+				>
+				<a href={translatePath("/ofertas")} class="mobile-nav-link"
+					>{t("nav.offers")}</a
+				>
+				<a href={translatePath("/blog")} class="mobile-nav-link"
+					>{t("nav.blog")}</a
+				>
+				<a href={translatePath("/contacto")} class="mobile-nav-link"
+					>{t("nav.contact")}</a
+				>
+
+				<div class="mobile-actions" style="margin-top: 2rem;">
+					<div class="mobile-theme-toggle-wrapper">
+						<ThemeToggle />
+					</div>
+					<LanguagePicker translatedPaths={translatedPaths} />
 				</div>
 			</nav>
 		</div>

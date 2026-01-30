@@ -5,8 +5,9 @@ import "swiper/css";
 import "swiper/css/effect-fade";
 
 // Fetch groups to display in slider
-const allGroups = await getCollection("groups");
-// Filter only future trips and sort by date
+const allGroups = await getCollection("groups", ({ id }) =>
+    id.startsWith("es/"),
+);
 // Filter only future trips and sort by date
 const slides = allGroups
     .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()) // Sort descending (newest first)
@@ -58,7 +59,7 @@ const formatDate = (date: Date) => {
                             <h2 class="slide-title">{slide.data.title}</h2>
                             <div class="bottom-separator" />
                             <a
-                                href={`/viajes-en-grupo/${slide.id}`}
+                                href={`/viajes-en-grupo/${slide.id.split("/").slice(1).join("/")}/`}
                                 class="btn-view"
                             >
                                 ¡VER VIAJE!

@@ -1,0 +1,34 @@
+---
+import BaseHead from "../../components/BaseHead.astro";
+import Footer from "../../components/Footer.astro";
+import Header from "../../components/Header.astro";
+import HomeSlider from "../../components/HomeSlider.astro";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+    </head>
+    <body>
+        <Header isOverlay={true} />
+
+        <HomeSlider />
+
+        <main
+            style="padding: 2rem; max-width: 800px; margin: 0 auto; text-align: center;"
+        >
+            <h1>🌍 Discover the World with Viajes Veleta</h1>
+            <p>
+                Welcome to our English portal. We are working hard to bring you
+                the best travel experiences in your language.
+            </p>
+            <p>
+                Feel free to explore our blog, check our special offers, and
+                join our group trips.
+            </p>
+        </main>
+        <Footer />
+    </body>
+</html>

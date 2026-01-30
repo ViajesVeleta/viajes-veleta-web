@@ -5,19 +5,38 @@ import Timeline from "../../components/Timeline.astro";
 import TimelineItem from "../../components/TimelineItem.astro";
 
 export async function getStaticPaths() {
-    const posts = await getCollection("offers");
-    return posts.map((post) => ({
-        params: { slug: post.id },
-        props: post,
-    }));
+    const posts = await getCollection("offers", ({ id }) =>
+        id.startsWith("es/"),
+    );
+    return posts.map((post) => {
+        const [lang, ...idParts] = post.id.split("/");
+        const slug = idParts.join("/");
+        return {
+            params: { slug },
+            props: post,
+        };
+    });
 }
 type Props = CollectionEntry<"offers">;
 
 const post = Astro.props;
 const { Content } = await render(post);
 const components = { Timeline, TimelineItem };
+
+// Find translations
+const allPosts = await getCollection("offers");
+const translations = allPosts.filter(
+    (p) => p.data.id === post.data.id && post.data.id !== undefined,
+);
+const translatedPaths: Record<string, string> = {};
+translations.forEach((p) => {
+    const [pLang, ...idParts] = p.id.split("/");
+    const pSlug = idParts.join("/");
+    translatedPaths[pLang] =
+        pLang === "es" ? `/ofertas/${pSlug}/` : `/en/ofertas/${pSlug}/`;
+});
 ---
 
-<BlogPost {...post.data}>
+<BlogPost {...post.data} translatedPaths={translatedPaths}>
     <Content components={components} />
 </BlogPost>

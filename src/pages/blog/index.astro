@@ -7,14 +7,25 @@ import FormattedDate from "../../components/FormattedDate.astro";
 import Header from "../../components/Header.astro";
 import PageHero from "../../components/PageHero.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
+import {
+	getLangFromUrl,
+	useTranslations,
+	useTranslatedPath,
+} from "../../i18n/utils";
 
-const posts = (await getCollection("blog")).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const translatePath = useTranslatedPath(lang);
+
+const posts = (
+	await getCollection("blog", ({ id }) => {
+		return id.startsWith(`${lang}/`);
+	})
+).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 		<script>
@@ -182,7 +193,11 @@ const posts = (await getCollection("blog")).sort(
 					{
 						posts.map((post, index) => (
 							<li class="post-item">
-								<a href={`/blog/${post.id}/`}>
+								<a
+									href={translatePath(
+										`/blog/${post.id.split("/").slice(1).join("/")}/`,
+									)}
+								>
 									<div class="image-container">
 										{post.data.heroImage && (
 											<Image
