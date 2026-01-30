@@ -31,6 +31,18 @@ get_resize_args() {
     fi
 }
 
+# Function to format bytes to KB
+format_size() {
+    local size=$1
+    if [ "$size" -lt 1024 ]; then
+        echo "${size} B"
+    else
+        # Calculate KB with simple integer division, or use bc for decimals if available
+        # Using integer math for simplicity: (size + 512) / 1024 rounds to nearest
+        echo "$(( (size + 512) / 1024 )) KB"
+    fi
+}
+
 # 1. Convert non-webp images to webp
 find . -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" \) \
     -not -path "*/node_modules/*" \
@@ -48,12 +60,8 @@ find . -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" \) \
     if [ ! -f "$webp_file" ]; then
         needs_update=true
     elif [ "$file" -nt "$webp_file" ]; then
-        # Source is newer than dest
         needs_update=true
     elif [ -n "$resize_args" ]; then
-        # Destination exists, but source is too big. 
-        # We need to check if DEST is also too big.
-        # If dest is already resized, we don't need to do anything (unless source is newer, caught above)
         dest_width=$(identify -format "%w" "$webp_file" 2>/dev/null || echo "0")
         if [ "$dest_width" -gt 2048 ]; then
             needs_update=true
@@ -61,30 +69,29 @@ find . -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" \) \
     fi
     
     if [ "$needs_update" = true ]; then
-        if [ -n "$resize_args" ]; then
-            echo "Converting and resizing $file to $webp_file..."
-            action_msg="- Converted and resized $file"
-        else
-            echo "Converting $file to $webp_file..."
-            action_msg="- Converted $file"
-        fi
         
         # Convert to webp with quality 80
         cwebp -q 80 $resize_args "$file" -o "$webp_file" -quiet
         
-        echo "$action_msg" >> "$SUMMARY_FILE"
-        
         if [ -f "$file" ] && [ -f "$webp_file" ]; then
             src_size=$(stat -c%s "$file")
             dest_size=$(stat -c%s "$webp_file")
-            echo "  ($src_size -> $dest_size bytes)" >> "$SUMMARY_FILE"
+            
+            # Format sizes
+            src_fmt=$(format_size "$src_size")
+            dest_fmt=$(format_size "$dest_size")
+            
+            # Determine verb
+            if [ -n "$resize_args" ]; then
+                 echo "- \`$file\` converted & resized, \`$src_fmt -> $dest_fmt\`" >> "$SUMMARY_FILE"
+            else
+                 echo "- \`$file\` converted, \`$src_fmt -> $dest_fmt\`" >> "$SUMMARY_FILE"
+            fi
         fi
         
-        # Mark as changed
         echo "changed" >> "$PROCESSED_LIST"
     fi
     
-    # Add to list of files we visited so we don't process again in step 2
     echo "$webp_file" >> "$PROCESSED_LIST"
 
 done
@@ -96,23 +103,18 @@ find . -type f -iname "*.webp" \
     -not -path "*/.git/*" \
     -print0 | while IFS= read -r -d '' file; do
     
-    # Skip files processed in Step 1
     if grep -Fxq "$file" "$PROCESSED_LIST"; then
         continue
     fi
     
     resize_args=$(get_resize_args "$file")
     
-    # If resize is needed, we MUST process it regardless of savings
     if [ -n "$resize_args" ]; then
-        echo "Resizing large image $file..."
-        action_msg="- Resized $file"
+        # Force resize
         should_process=true
+        force_action="resized"
     else
-        # If no resize needed, we only want to optimize if it saves significant space
-        # Attempt compression to temp
         should_process=false
-        # We'll run cwebp optimization trial next
     fi
      
     # Trial run
@@ -122,34 +124,31 @@ find . -type f -iname "*.webp" \
         original_size=$(stat -c%s "$file")
         new_size=$(stat -c%s "${file}.tmp")
         
-        # Calculate percentage saved: (orig - new) * 100 / orig
         if [ "$original_size" -gt 0 ]; then
             saved_percent=$(( (original_size - new_size) * 100 / original_size ))
         else
             saved_percent=0
         fi
         
-        # DECISION LOGIC:
-        # 1. If we resized, we accept the new file (even if size grows, though unlikely)
-        # 2. If we didn't resize, we only accept if savings > 5% to avoid generation loss loop
-        
         accept_changes=false
         
-        if [ -n "$resize_args" ]; then
+        if [ "$should_process" = true ]; then
             accept_changes=true
-            log_msg="- Resized $file"
-        elif [ "$saved_percent" -ge 5 ]; then
+            verb="resized"
+        elif [ "$saved_percent" -ge 15 ]; then
             accept_changes=true
-            log_msg="- Optimized $file (saved ${saved_percent}%)"
+            verb="optimized by ${saved_percent}%"
         fi
         
         if [ "$accept_changes" = true ]; then
             mv "${file}.tmp" "$file"
-            echo "$log_msg" >> "$SUMMARY_FILE"
-            echo "  ($original_size -> $new_size bytes)" >> "$SUMMARY_FILE"
+            
+            src_fmt=$(format_size "$original_size")
+            dest_fmt=$(format_size "$new_size")
+            
+            echo "- \`$file\` $verb, \`$src_fmt -> $dest_fmt\`" >> "$SUMMARY_FILE"
             echo "changed" >> "$PROCESSED_LIST"
         else
-            # Discard temp file if savings are trivial
             rm "${file}.tmp"
         fi
     fi
