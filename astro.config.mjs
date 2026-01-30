@@ -2,7 +2,7 @@
 
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
-import node from '@astrojs/node';
+import cloudflare from '@astrojs/cloudflare';
 import { defineConfig } from 'astro/config';
 import path from 'path';
 
@@ -29,8 +29,8 @@ function styleGuideToolbar() {
 }
 
 export default defineConfig({
-    adapter: node({
-        mode: 'standalone',
+    adapter: cloudflare({
+        imageService: 'compile',
     }),
     site: 'https://example.com',
     prefetch: {
@@ -47,15 +47,7 @@ export default defineConfig({
             },
         },
     },
-    image: {
-        // Use Sharp for image optimization (already installed)
-        service: {
-            entrypoint: 'astro/assets/services/sharp',
-            config: {
-                limitInputPixels: false,
-            },
-        },
-    },
+
     build: {
         // Enable CSS inlining for critical CSS
         inlineStylesheets: 'auto',
