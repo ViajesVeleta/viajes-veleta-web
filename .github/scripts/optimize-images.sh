@@ -18,7 +18,6 @@ get_resize_args() {
     local width
     # Use identify from ImageMagick
     if ! command -v identify &> /dev/null; then
-        # Fallback if identify is not available (though it should be on GH Actions)
         echo ""
         return
     fi
@@ -43,83 +42,122 @@ find . -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" \) \
     webp_file="${filename}.webp"
     
     resize_args=$(get_resize_args "$file")
+    needs_update=false
     
-    if [ -n "$resize_args" ]; then
-        echo "Converting and resizing $file to $webp_file..."
-        action_msg="- Converted and resized $file"
-    else
-        echo "Converting $file to $webp_file..."
-        action_msg="- Converted $file"
+    # Check if we need to update
+    if [ ! -f "$webp_file" ]; then
+        needs_update=true
+    elif [ "$file" -nt "$webp_file" ]; then
+        # Source is newer than dest
+        needs_update=true
+    elif [ -n "$resize_args" ]; then
+        # Destination exists, but source is too big. 
+        # We need to check if DEST is also too big.
+        # If dest is already resized, we don't need to do anything (unless source is newer, caught above)
+        dest_width=$(identify -format "%w" "$webp_file" 2>/dev/null || echo "0")
+        if [ "$dest_width" -gt 2048 ]; then
+            needs_update=true
+        fi
     fi
     
-    # Convert to webp with quality 80
-    # $resize_args is unquoted to allow arguments handling
-    cwebp -q 80 $resize_args "$file" -o "$webp_file" -quiet
+    if [ "$needs_update" = true ]; then
+        if [ -n "$resize_args" ]; then
+            echo "Converting and resizing $file to $webp_file..."
+            action_msg="- Converted and resized $file"
+        else
+            echo "Converting $file to $webp_file..."
+            action_msg="- Converted $file"
+        fi
+        
+        # Convert to webp with quality 80
+        cwebp -q 80 $resize_args "$file" -o "$webp_file" -quiet
+        
+        echo "$action_msg" >> "$SUMMARY_FILE"
+        
+        if [ -f "$file" ] && [ -f "$webp_file" ]; then
+            src_size=$(stat -c%s "$file")
+            dest_size=$(stat -c%s "$webp_file")
+            echo "  ($src_size -> $dest_size bytes)" >> "$SUMMARY_FILE"
+        fi
+        
+        # Mark as changed
+        echo "changed" >> "$PROCESSED_LIST"
+    fi
     
-    echo "$action_msg" >> "$SUMMARY_FILE"
+    # Add to list of files we visited so we don't process again in step 2
     echo "$webp_file" >> "$PROCESSED_LIST"
-    
-    # Calculate size change if source file exists (it should)
-    if [ -f "$file" ] && [ -f "$webp_file" ]; then
-        src_size=$(stat -c%s "$file")
-        dest_size=$(stat -c%s "$webp_file")
-        echo "  ($src_size -> $dest_size bytes)" >> "$SUMMARY_FILE"
-    fi
-    
-    HAS_CHANGES=true
 
 done
 
-# 2. Optimize existing values (compress more if possible)
+# 2. Resize existing large WebP files (ONLY if they are too large)
 find . -type f -iname "*.webp" \
     -not -path "*/node_modules/*" \
     -not -path "*/dist/*" \
     -not -path "*/.git/*" \
     -print0 | while IFS= read -r -d '' file; do
     
-    # Skip files we just created
+    # Skip files processed in Step 1
     if grep -Fxq "$file" "$PROCESSED_LIST"; then
         continue
     fi
     
-    original_size=$(stat -c%s "$file")
     resize_args=$(get_resize_args "$file")
-    is_resized=false
     
+    # If resize is needed, we MUST process it regardless of savings
     if [ -n "$resize_args" ]; then
-        is_resized=true
+        echo "Resizing large image $file..."
+        action_msg="- Resized $file"
+        should_process=true
+    else
+        # If no resize needed, we only want to optimize if it saves significant space
+        # Attempt compression to temp
+        should_process=false
+        # We'll run cwebp optimization trial next
     fi
-    
-    # Try to compress to a temp file
+     
+    # Trial run
     cwebp -q 80 $resize_args "$file" -o "${file}.tmp" -quiet
     
     if [ -f "${file}.tmp" ]; then
+        original_size=$(stat -c%s "$file")
         new_size=$(stat -c%s "${file}.tmp")
         
-        # If resized OR smaller, replace
-        if [ "$is_resized" = true ] || [ "$new_size" -lt "$original_size" ]; then
-            if [ "$is_resized" = true ]; then
-                echo "Resizing and optimizing $file..."
-                log_msg="- Resized and optimized $file"
-            else
-                echo "Optimizing $file ($original_size -> $new_size bytes)..."
-                log_msg="- Optimized $file"
-            fi
-            
+        # Calculate percentage saved: (orig - new) * 100 / orig
+        if [ "$original_size" -gt 0 ]; then
+            saved_percent=$(( (original_size - new_size) * 100 / original_size ))
+        else
+            saved_percent=0
+        fi
+        
+        # DECISION LOGIC:
+        # 1. If we resized, we accept the new file (even if size grows, though unlikely)
+        # 2. If we didn't resize, we only accept if savings > 5% to avoid generation loss loop
+        
+        accept_changes=false
+        
+        if [ -n "$resize_args" ]; then
+            accept_changes=true
+            log_msg="- Resized $file"
+        elif [ "$saved_percent" -ge 5 ]; then
+            accept_changes=true
+            log_msg="- Optimized $file (saved ${saved_percent}%)"
+        fi
+        
+        if [ "$accept_changes" = true ]; then
             mv "${file}.tmp" "$file"
             echo "$log_msg" >> "$SUMMARY_FILE"
             echo "  ($original_size -> $new_size bytes)" >> "$SUMMARY_FILE"
-            HAS_CHANGES=true
+            echo "changed" >> "$PROCESSED_LIST"
         else
+            # Discard temp file if savings are trivial
             rm "${file}.tmp"
         fi
     fi
 done
 
-# Clean up
-rm "$PROCESSED_LIST"
+# Check if any "changed" marker exists in the processed list logic
+# (Actually, simpler to check if summary file is non-empty)
 
-# Set output for GitHub Actions based on whether summary file has content
 if [ -s "$SUMMARY_FILE" ]; then
     HAS_CHANGES=true
 else
@@ -142,3 +180,4 @@ else
 fi
 
 rm "$SUMMARY_FILE"
+rm "$PROCESSED_LIST"
