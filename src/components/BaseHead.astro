@@ -12,11 +12,17 @@ interface Props {
 	title: string;
 	description: string;
 	image?: ImageMetadata;
+	translatedPaths?: Record<string, string>;
 }
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
-const { title, description, image = FallbackImage } = Astro.props;
+const {
+	title,
+	description,
+	image = FallbackImage,
+	translatedPaths,
+} = Astro.props;
 ---
 
 <ClientRouter />
@@ -76,7 +82,20 @@ const { title, description, image = FallbackImage } = Astro.props;
 </noscript>
 
 <!-- Canonical URL -->
+<!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />
+
+<!-- Alternate URLs -->
+{
+	translatedPaths &&
+		Object.entries(translatedPaths).map(([lang, path]) => (
+			<link
+				rel="alternate"
+				hreflang={lang}
+				href={new URL(path, Astro.site)}
+			/>
+		))
+}
 
 <!-- Primary Meta Tags -->
 <title>{title}</title>

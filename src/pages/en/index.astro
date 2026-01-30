@@ -4,15 +4,26 @@ import Footer from "../../components/Footer.astro";
 import Header from "../../components/Header.astro";
 import HomeSlider from "../../components/HomeSlider.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
+import { getLangFromUrl } from "../../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const translatedPaths = {
+    es: "/",
+    en: "/en",
+};
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
     <head>
-        <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+        <BaseHead
+            title={SITE_TITLE}
+            description={SITE_DESCRIPTION}
+            translatedPaths={translatedPaths}
+        />
     </head>
     <body>
-        <Header isOverlay={true} />
+        <Header isOverlay={true} translatedPaths={translatedPaths} />
 
         <HomeSlider />
 

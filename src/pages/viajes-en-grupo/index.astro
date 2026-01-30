@@ -17,6 +17,11 @@ const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const translatePath = useTranslatedPath(lang);
 
+const translatedPaths = {
+	es: "/viajes-en-grupo",
+	en: "/en/viajes-en-grupo",
+};
+
 const posts = (
 	await getCollection("groups", ({ id }) => {
 		return id.startsWith(`${lang}/`);
@@ -30,6 +35,7 @@ const posts = (
 		<BaseHead
 			title={`Viajes en grupo - ${SITE_TITLE}`}
 			description={SITE_DESCRIPTION}
+			translatedPaths={translatedPaths}
 		/>
 		<script>
 			import { FastAverageColor } from "fast-average-color";
@@ -195,8 +201,8 @@ const posts = (
 		</style>
 	</head>
 	<body>
-		<Header isOverlay={true} />
-		<PageHero title="Viajes en grupo" />
+		<Header isOverlay={true} translatedPaths={translatedPaths} />
+		<PageHero title={t("nav.trips")} />
 		<main>
 			<section>
 				<ul>
@@ -229,6 +235,7 @@ const posts = (
 										<p class="date">
 											<FormattedDate
 												date={post.data.pubDate}
+												locale={lang}
 											/>
 										</p>
 									</div>
