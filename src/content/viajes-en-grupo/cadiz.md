@@ -3,6 +3,7 @@ title: 'Sabores y Paisajes Gaditanos'
 description: 'Circuito cultural y gastronómico en autocar de cuatro días / tres noches por las tierras de Cádiz y la sierra de Grazalema.'
 pubDate: 'Feb 26 2026'
 heroImage: '../../assets/cadiz.webp'
+tags: ['gastronomia', 'andalucia', 'cultura']
 ---
 
 Circuito cultural y gastronómico en autocar de cuatro días / tres noches. Un viaje por las tierras de Cádiz y la sierra de Grazalema en el que disfrutaremos una experiencia de contrastes: desde las doradas playas del Atlántico hasta los frondosos bosques de pinsapos.
