@@ -56,7 +56,14 @@ const formatDate = (date: Date) => {
                             <div class="slide-date">
                                 {formatDate(slide.data.pubDate)}
                             </div>
-                            <h2 class="slide-title">{slide.data.title}</h2>
+                            <h2 class="slide-title">
+                                <a
+                                    href={`/viajes-en-grupo/${slide.id.split("/").slice(1).join("/")}/`}
+                                    class="title-link"
+                                >
+                                    {slide.data.title}
+                                </a>
+                            </h2>
                             <div class="bottom-separator" />
                             <a
                                 href={`/viajes-en-grupo/${slide.id.split("/").slice(1).join("/")}/`}
@@ -156,6 +163,7 @@ const formatDate = (date: Date) => {
                 delay: AUTOPLAY_DELAY,
                 disableOnInteraction: false,
             },
+            allowTouchMove: false, // User requested to disable slide changing on click/drag
             loop: true,
             on: {
                 autoplayTimeLeft(_s, _time, progress) {
@@ -318,6 +326,17 @@ const formatDate = (date: Date) => {
             color-mix(in srgb, var(--neutral-black), transparent 50%);
         font-weight: 400;
         transform: translateZ(200px); /* Depth Layer: Nearest */
+    }
+
+    .title-link {
+        color: inherit;
+        text-decoration: none;
+        cursor: pointer;
+        transition: opacity 0.3s ease;
+    }
+
+    .title-link:hover {
+        opacity: 0.8;
     }
 
     .bottom-separator {
