@@ -1,0 +1,517 @@
+---
+import { getCollection } from "astro:content";
+import { Image } from "astro:assets";
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+import FormattedDate from "./FormattedDate.astro";
+
+interface Props {
+    // Optional props if needed
+}
+
+const lang = getLangFromUrl(Astro.url);
+const currentLang = lang;
+const isSpanish = lang === "es";
+
+// Fetch groups
+const groups = await getCollection("groups", ({ id }) => {
+    return id.startsWith(`${lang}/`);
+});
+
+// Sort by date (descending)
+const sortedGroups = groups.sort(
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+const categories = [
+    { id: "all", label: isSpanish ? "TODO" : "ALL" },
+    { id: "spain", label: isSpanish ? "ESPAÑA" : "SPAIN" },
+    { id: "europe", label: isSpanish ? "EUROPA" : "EUROPE" },
+    {
+        id: "long-haul",
+        label: isSpanish ? "LARGAS DISTANCIAS" : "LONG DISTANCE",
+    },
+];
+---
+
+<section class="group-trips-section">
+    <div class="container-wide">
+        <h2 class="section-title text-center text-3xl font-serif">
+            VIAJES EN GRUPO
+        </h2>
+
+        <div class="separator-container">
+            <span class="line"></span>
+            <i class="fas fa-paper-plane icon"></i>
+            <span class="line"></span>
+        </div>
+
+        <div class="filters-container">
+            {
+                categories.map((cat) => (
+                    <button
+                        class={`filter-btn ${cat.id === "all" ? "active" : ""}`}
+                        data-filter={cat.id}
+                    >
+                        {cat.label}
+                    </button>
+                ))
+            }
+        </div>
+
+        <ul class="trips-grid">
+            {
+                sortedGroups.map((post, index) => (
+                    <li
+                        class="post-item"
+                        data-category={post.data.category || "all"}
+                    >
+                        <a
+                            href={`/viajes-en-grupo/${post.id.split("/").slice(1).join("/")}/`}
+                        >
+                            <div class="image-container">
+                                {post.data.heroImage && (
+                                    <Image
+                                        width={720}
+                                        height={480}
+                                        src={post.data.heroImage}
+                                        alt=""
+                                        loading={index === 0 ? "eager" : "lazy"}
+                                    />
+                                )}
+                                <div class="overlay" />
+                            </div>
+                            <div class="content">
+                                <h4 class="title">{post.data.title}</h4>
+                                <p class="date">
+                                    <FormattedDate
+                                        date={post.data.pubDate}
+                                        locale={lang}
+                                    />
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                ))
+            }
+            {
+                sortedGroups.length === 0 && (
+                    <div
+                        class="no-trips"
+                        style="grid-column: 1 / -1; text-align: center; padding: 2rem;"
+                    >
+                        <p>
+                            {isSpanish
+                                ? "No hay viajes disponibles en este momento."
+                                : "No trips available at the moment."}
+                        </p>
+                    </div>
+                )
+            }
+        </ul>
+    </div>
+</section>
+
+<script>
+    import { FastAverageColor } from "fast-average-color";
+    const fac = new FastAverageColor();
+
+    function initGrid() {
+        runColorExtraction();
+        initFilters();
+    }
+
+    function runColorExtraction() {
+        const items = document.querySelectorAll(".post-item");
+        items.forEach((item) => {
+            const img = item.querySelector("img");
+            const overlay = item.querySelector(".overlay") as HTMLElement;
+
+            if (img && overlay) {
+                img.crossOrigin = "Anonymous";
+                fac.getColorAsync(img, { algorithm: "dominant" })
+                    .then((color) => {
+                        const [r, g, b] = color.value;
+                        overlay.style.backgroundColor = `rgba(${r}, ${g}, ${b}, 0.6)`;
+                    })
+                    .catch((e) => {
+                        // Fallback
+                        overlay.style.backgroundColor = "rgba(0,0,0,0.6)";
+                    });
+            }
+        });
+    }
+
+    function initFilters() {
+        const buttons = document.querySelectorAll(".filter-btn");
+        const grid = document.querySelector(".trips-grid") as HTMLElement;
+        const allItems = Array.from(
+            document.querySelectorAll(".post-item"),
+        ) as HTMLElement[];
+
+        // State to manage animations
+        let activeTimeout: number | undefined;
+        let activeFrame: number | undefined;
+        let cleanupFn: (() => void) | undefined;
+
+        // Helper: Get Map of rects
+        const getRects = (items: HTMLElement[]) =>
+            new Map(items.map((item) => [item, item.getBoundingClientRect()]));
+
+        buttons.forEach((btn) => {
+            const newBtn = btn.cloneNode(true) as Element;
+            btn.parentNode?.replaceChild(newBtn, btn);
+
+            newBtn.addEventListener("click", async (e) => {
+                const clickedBtn = e.target as Element;
+                if (clickedBtn.classList.contains("active")) return;
+
+                // 0. Interrupt previous animation if running
+                if (cleanupFn) {
+                    clearTimeout(activeTimeout);
+                    cancelAnimationFrame(activeFrame!);
+                    cleanupFn(); // Force immediate cleanup/reset
+                    cleanupFn = undefined;
+                    // Force a reflow to ensure clean state before measuring again
+                    grid.offsetHeight;
+                }
+
+                const filter = clickedBtn.getAttribute("data-filter");
+
+                // 1. Update Buttons
+                document
+                    .querySelectorAll(".filter-btn")
+                    .forEach((b) => b.classList.remove("active"));
+                clickedBtn.classList.add("active");
+
+                // 2. Identify layout groups
+                const leaving: HTMLElement[] = [];
+                const entering: HTMLElement[] = [];
+                const staying: HTMLElement[] = [];
+
+                allItems.forEach((item) => {
+                    const category = item.getAttribute("data-category");
+                    const isVisible = item.style.display !== "none";
+                    const willBeVisible =
+                        filter === "all" || category === filter;
+
+                    if (isVisible && !willBeVisible) leaving.push(item);
+                    else if (!isVisible && willBeVisible) entering.push(item);
+                    else if (isVisible && willBeVisible) staying.push(item);
+                });
+
+                // If nothing changes, return
+                if (leaving.length === 0 && entering.length === 0) return;
+
+                // 3. Record Start State
+                // We lock the leaving items in place so the grid can reflow around them
+                const stateFirst = getRects([...staying, ...leaving]);
+                const gridRect = grid.getBoundingClientRect();
+                const startHeight = gridRect.height;
+
+                // 4. Lock Leaving Items (Absolute)
+                leaving.forEach((item) => {
+                    const rect = stateFirst.get(item)!;
+                    item.style.position = "absolute";
+                    item.style.top = `${rect.top - gridRect.top}px`;
+                    item.style.left = `${rect.left - gridRect.left}px`;
+                    item.style.width = `${rect.width}px`;
+                    item.style.height = `${rect.height}px`;
+                    item.style.zIndex = "0";
+                    item.style.margin = "0"; // Ensure no margin affects absolute pos
+                });
+
+                // 5. Setup Entering Items (Start State)
+                entering.forEach((item) => {
+                    item.style.display = "block";
+                    item.style.opacity = "0";
+                    item.style.transform = "scale(0.8)";
+                    item.style.zIndex = "1";
+                });
+
+                // 6. Force Reflow & Measure Final State
+                // Staying items will have moved to fill voids
+                // Entering items will have appeared in their slots
+                const stateLast = getRects([...staying, ...entering]);
+                const endHeight = grid.offsetHeight;
+
+                // 7. Invert: Apply transform to Staying items to visually put them back at start
+                staying.forEach((item) => {
+                    const first = stateFirst.get(item)!;
+                    const last = stateLast.get(item)!;
+                    const dx = first.left - last.left;
+                    const dy = first.top - last.top;
+
+                    item.style.transition = "none";
+                    item.style.transform = `translate(${dx}px, ${dy}px)`;
+                });
+
+                // Prepare Grid Height Animation
+                grid.style.height = `${startHeight}px`;
+                grid.offsetWidth; // Force reflow
+
+                // Define cleanup function to be used at end OR on interruption
+                cleanupFn = () => {
+                    grid.style.height = "";
+                    grid.style.transition = "";
+
+                    leaving.forEach((item) => {
+                        item.style.display = "none";
+                        item.style.position = "";
+                        item.style.top = "";
+                        item.style.left = "";
+                        item.style.width = "";
+                        item.style.height = "";
+                        item.style.transform = "";
+                        item.style.opacity = "";
+                        item.style.zIndex = "";
+                        item.style.margin = "";
+                        // Reset transform (important if interrupted during rotate)
+                        item.style.transform = "";
+                    });
+
+                    [...staying, ...entering].forEach((item) => {
+                        item.style.transition = "";
+                        item.style.transform = "";
+                        item.style.opacity = "";
+                        item.style.zIndex = "";
+                    });
+                };
+
+                // 8. Play Animations
+                activeFrame = requestAnimationFrame(() => {
+                    // Animate Grid Height
+                    grid.style.transition =
+                        "height 0.6s cubic-bezier(0.2, 0, 0.2, 1)";
+                    grid.style.height = `${endHeight}px`;
+
+                    // Staying: Move to natural position
+                    staying.forEach((item) => {
+                        item.style.transition =
+                            "transform 0.6s cubic-bezier(0.2, 0, 0.2, 1)";
+                        item.style.transform = "";
+                    });
+
+                    // Entering: Fade/Scale In
+                    entering.forEach((item) => {
+                        item.style.transition =
+                            "all 0.6s cubic-bezier(0.2, 0, 0.2, 1)";
+                        item.style.opacity = "1";
+                        item.style.transform = "scale(1)";
+                    });
+
+                    // Leaving: Animate out (Reduce size + Face away)
+                    leaving.forEach((item) => {
+                        item.style.transition =
+                            "all 0.6s cubic-bezier(0.2, 0, 0.2, 1)";
+                        item.style.opacity = "0";
+                        // 3D rotation + scale down
+                        item.style.transform =
+                            "scale(0.5) perspective(500px) rotateY(15deg)";
+                    });
+                });
+
+                // 9. Schedule Cleanup
+                activeTimeout = setTimeout(() => {
+                    if (cleanupFn) {
+                        cleanupFn();
+                        cleanupFn = undefined; // Clear it so we don't double call
+                    }
+                }, 600) as unknown as number;
+            });
+        });
+    }
+
+    // Run on load and after Astro swaps
+    document.addEventListener("astro:page-load", initGrid);
+    document.addEventListener("DOMContentLoaded", initGrid);
+</script>
+
+<style>
+    .group-trips-section {
+        padding: 4rem 1rem;
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .section-title {
+        font-family: "Lato", sans-serif;
+        font-weight: 300;
+        font-size: 2.5rem;
+        letter-spacing: 2px;
+        color: var(--on-surface);
+        margin-bottom: 1rem;
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    /* Separator Styles */
+    .separator-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+        color: #7dd3fc;
+    }
+
+    .line {
+        height: 1px;
+        background-color: #7dd3fc;
+        width: 100px;
+        opacity: 0.7;
+    }
+
+    .icon {
+        font-size: 1.2rem;
+        transform: rotate(-10deg);
+    }
+
+    /* Filters */
+    .filters-container {
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+        margin-bottom: 3rem;
+        flex-wrap: wrap;
+    }
+
+    .filter-btn {
+        background: none;
+        border: none;
+        font-family: "Lato", sans-serif;
+        font-size: 0.9rem;
+        letter-spacing: 2px;
+        color: var(--on-surface-variant);
+        cursor: pointer;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid transparent;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+    }
+
+    .filter-btn:hover {
+        color: var(--primary);
+    }
+
+    .filter-btn.active {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+    }
+
+    /* GRID STYLES COPIED FROM VIAJES-EN-GRUPO */
+    ul.trips-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 4px;
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        position: relative; /* Essential for absolute positioning of children during animation */
+    }
+    li.post-item {
+        position: relative;
+        overflow: hidden;
+        aspect-ratio: 4/3;
+        border-radius: 12px;
+        isolation: isolate;
+    }
+    li.post-item a {
+        display: block;
+        width: 100%;
+        height: 100%;
+        color: inherit;
+        text-decoration: none;
+    }
+    .image-container {
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+    .image-container::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            to top,
+            rgba(0, 0, 0, 0.8) 0%,
+            transparent 60%
+        );
+        z-index: 1;
+        transition: opacity 0.4s ease;
+        pointer-events: none;
+    }
+    li.post-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .overlay {
+        position: absolute;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.4);
+        opacity: 0;
+        transition:
+            opacity 0.4s ease,
+            background-color 0.4s ease;
+        z-index: 1;
+    }
+    .content {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        z-index: 2;
+        color: white;
+        transform: translateY(0);
+        transition:
+            bottom 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+            transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        pointer-events: none;
+    }
+    .title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0 0 0.5rem 0;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        line-height: 1.2;
+        color: #fff;
+    }
+    .date {
+        font-size: 0.9rem;
+        margin: 10px 0 0 0;
+        color: rgba(255, 255, 255, 0.9);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Hover Effects */
+    li.post-item:hover img {
+        transform: scale(1.05);
+    }
+    li.post-item:hover .image-container::after {
+        opacity: 0;
+    }
+    li.post-item:hover .overlay {
+        opacity: 1;
+    }
+    li.post-item:hover .content {
+        bottom: 50%;
+        transform: translateY(50%);
+    }
+
+    @media (max-width: 768px) {
+        ul.trips-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        .content {
+            justify-content: flex-end;
+        }
+    }
+</style>

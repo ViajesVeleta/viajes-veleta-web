@@ -26,6 +26,7 @@ const groups = defineCollection({
 			updatedDate: z.coerce.date().optional(),
 			heroImage: z.string().transform((val) => val.replace(/^assets\//, '/src/assets/')).pipe(image()).optional(),
 			tags: z.array(z.string()).optional(),
+			category: z.enum(['spain', 'europe', 'long-haul']).optional(), // Category for filtering
 			id: z.string().optional(),
 		}),
 });
