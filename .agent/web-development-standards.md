@@ -254,6 +254,21 @@ Most Complex & Error-Prone ↑
 
 ---
 
+---
+
+## Development Environment & Testing
+
+### Testing Port Rule
+When starting the dev server for testing purposes, ALWAYS use the following command to ensure a consistent, isolated port:
+
+```bash
+npm run dev -- --port 4329
+```
+
+This prevents port conflicts (`4321`, `4322`, etc.) and ensures that your testing environment is predictable and does not interfere with other running instances.
+
+---
+
 ## References
 
 - [MDN Web Docs](https://developer.mozilla.org/)
