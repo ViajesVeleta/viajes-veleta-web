@@ -3,6 +3,7 @@ import BaseHead from "../../components/BaseHead.astro";
 import Footer from "../../components/Footer.astro";
 import Header from "../../components/Header.astro";
 import HomeSlider from "../../components/HomeSlider.astro";
+import ParallaxSection from "../../components/ParallaxSection.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
 import { getLangFromUrl } from "../../i18n/utils";
 
@@ -26,6 +27,18 @@ const translatedPaths = {
         <Header isOverlay={true} translatedPaths={translatedPaths} />
 
         <HomeSlider />
+
+        <ParallaxSection
+            stats={[
+                { value: "30", label: "Years of experience" },
+                { value: "150.000", label: "Bookings made" },
+                { value: "25.000", label: "Clients" },
+            ]}
+        >
+            <span slot="title">
+                AT <strong>VIAJES VELETA</strong> WE KNOW WHAT YOU NEED
+            </span>
+        </ParallaxSection>
 
         <main
             style="padding: 2rem; max-width: 800px; margin: 0 auto; text-align: center;"

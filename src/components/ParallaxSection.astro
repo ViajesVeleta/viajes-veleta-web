@@ -1,0 +1,176 @@
+---
+import background from "../assets/sea.webp";
+
+interface Props {
+    stats?: {
+        value: string;
+        label: string;
+    }[];
+}
+
+const {
+    stats = [
+        { value: "30", label: "Años de experiencia" },
+        { value: "150.000", label: "Reservas realizadas" },
+        { value: "25.000", label: "Clientes" },
+    ],
+} = Astro.props;
+---
+
+<section
+    class="parallax-section"
+    style={`background-image: url(${background.src});`}
+>
+    <div class="overlay"></div>
+    <div class="content">
+        <h2 class="title">
+            <slot name="title">
+                EN <strong>VIAJES VELETA</strong> SABEMOS LO QUE NECESITAS
+            </slot>
+        </h2>
+
+        <div class="separator">
+            <span class="line"></span>
+            <i class="fas fa-paper-plane icon"></i>
+            <span class="line"></span>
+        </div>
+
+        <div class="stats-container">
+            {
+                stats.map((stat) => (
+                    <div class="stat-item">
+                        <span class="stat-value">{stat.value}</span>
+                        <span class="stat-label">{stat.label}</span>
+                    </div>
+                ))
+            }
+        </div>
+    </div>
+</section>
+
+<style>
+    .parallax-section {
+        position: relative;
+        width: 100%;
+        min-height: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6rem 1rem;
+        background-attachment: fixed;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        color: white;
+        text-align: center;
+    }
+
+    .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(
+            30,
+            41,
+            59,
+            0.6
+        ); /* Slate tone overlay similar to screenshot */
+        z-index: 1;
+    }
+
+    .content {
+        position: relative;
+        z-index: 2;
+        max-width: 1200px;
+        width: 100%;
+    }
+
+    .title {
+        font-family: "Lato", sans-serif;
+        font-weight: 300;
+        font-size: 2rem;
+        letter-spacing: 1px;
+        margin-bottom: 2rem;
+        color: white;
+    }
+
+    .title strong {
+        font-weight: 900;
+    }
+
+    .separator {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-bottom: 4rem;
+        opacity: 0.9;
+    }
+
+    .line {
+        height: 1px;
+        background-color: white;
+        width: 150px;
+        opacity: 0.7;
+    }
+
+    .icon {
+        font-size: 1.2rem;
+        transform: rotate(-10deg);
+    }
+
+    .stats-container {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 2rem;
+    }
+
+    .stat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0 1rem;
+    }
+
+    .stat-value {
+        font-family: "Lato", sans-serif;
+        font-size: 4rem;
+        font-weight: 300;
+        line-height: 1.2;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        font-family: "Playfair Display", serif;
+        font-size: 1.1rem;
+        letter-spacing: 0.5px;
+    }
+
+    @media (max-width: 768px) {
+        .parallax-section {
+            background-attachment: scroll; /* Better for mobile performance */
+            min-height: auto;
+        }
+
+        .title {
+            font-size: 1.5rem;
+            padding: 0 1rem;
+        }
+
+        .line {
+            width: 60px;
+        }
+
+        .stats-container {
+            flex-direction: column;
+            gap: 3rem;
+        }
+
+        .stat-value {
+            font-size: 3rem;
+        }
+    }
+</style>
