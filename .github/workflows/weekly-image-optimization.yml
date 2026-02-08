@@ -4,6 +4,12 @@ on:
   schedule:
     - cron: '0 0 * * 0' # Every Sunday at midnight
   workflow_dispatch:
+    inputs:
+      quality:
+        description: 'Image Quality (0-100)'
+        required: true
+        default: '80'
+        type: string
 
 jobs:
   optimize:
@@ -19,6 +25,8 @@ jobs:
 
       - name: Run Optimization Script
         id: optimize
+        env:
+          QUALITY: ${{ inputs.quality || '80' }}
         run: |
           chmod +x .github/scripts/optimize-images.sh
           .github/scripts/optimize-images.sh

@@ -11,6 +11,8 @@ HAS_CHANGES=false
 > "$PROCESSED_LIST"
 
 echo "Starting image optimization..."
+QUALITY=${QUALITY:-80}
+echo "Using quality: $QUALITY"
 
 # Function to get max width resize args
 get_resize_args() {
@@ -71,7 +73,7 @@ find . -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" \) \
     if [ "$needs_update" = true ]; then
         
         # Convert to webp with quality 80
-        cwebp -q 80 $resize_args "$file" -o "$webp_file" -quiet
+        cwebp -q $QUALITY $resize_args "$file" -o "$webp_file" -quiet
         
         if [ -f "$file" ] && [ -f "$webp_file" ]; then
             src_size=$(stat -c%s "$file")
@@ -121,7 +123,7 @@ find . -type f -iname "*.webp" \
     fi
      
     # Trial run
-    cwebp -q 80 $resize_args "$file" -o "${file}.tmp" -quiet
+    cwebp -q $QUALITY $resize_args "$file" -o "${file}.tmp" -quiet
     
     if [ -f "${file}.tmp" ]; then
         original_size=$(stat -c%s "$file")
