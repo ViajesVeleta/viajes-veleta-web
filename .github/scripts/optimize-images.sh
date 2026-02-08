@@ -87,6 +87,9 @@ find . -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" \) \
             else
                  echo "- \`$file\` converted, \`$src_fmt -> $dest_fmt\`" >> "$SUMMARY_FILE"
             fi
+            
+            # Delete original file
+            rm "$file"
         fi
         
         echo "changed" >> "$PROCESSED_LIST"

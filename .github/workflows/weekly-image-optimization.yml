@@ -30,7 +30,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "chore: optimize images"
-          title: "Optimize Images (Weekly)"
+          title: "Optimize Images"
           assignees: JavierSegoviaCordoba
           body: |
             Weekly image optimization run.
