@@ -5,13 +5,20 @@ import { glob } from 'astro/loaders';
 function resolveImagePath(path: string): string {
 	if (!path) return path;
 
+	// Normalize the path to remove 'assets/' prefix if present
+	// This allows using 'assets/image-name' instead of '../../../assets/image-name'
+	let normalizedPath = path;
+	if (path.startsWith('assets/')) {
+		normalizedPath = path.replace('assets/', '../../../assets/');
+	}
+
 	// If it already has an extension, return as-is
-	if (path.match(/\.(png|jpg|jpeg|webp|svg)$/i)) {
-		return path;
+	if (normalizedPath.match(/\.(png|jpg|jpeg|webp|svg)$/i)) {
+		return normalizedPath;
 	}
 
 	// Otherwise, append .webp (since all images are now webp)
-	return `${path}.webp`;
+	return `${normalizedPath}.webp`;
 }
 
 const commonSchema = ({ image }: SchemaContext) => z.object({

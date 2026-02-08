@@ -25,7 +25,7 @@ id: "my-amazing-trip"
 title: "Mi increíble viaje a los Alpes"
 description: "Una experiencia única en las montañas"
 pubDate: "2026-01-30"
-heroImage: "../../assets/trip-alps"
+heroImage: "assets/trip-alps"
 tags: ["viajes", "montaña", "aventura"]
 ---
 
@@ -46,7 +46,7 @@ id: "my-amazing-trip"
 title: "My Amazing Trip to the Alps"
 description: "A unique experience in the mountains"
 pubDate: "2026-01-30"
-heroImage: "../../assets/trip-alps"
+heroImage: "assets/trip-alps"
 tags: ["travel", "mountain", "adventure"]
 ---
 
@@ -77,7 +77,7 @@ pubDate: "2026-01-15"
 startDate: "2026-08-01"
 endDate: "2026-08-07"
 price: 1200
-heroImage: "../../assets/alps-hero"
+heroImage: "assets/alps-hero"
 ---
 
 Descripción completa del viaje...
@@ -96,7 +96,7 @@ pubDate: "2026-01-15"
 startDate: "2026-08-01"
 endDate: "2026-08-07"
 price: 1200
-heroImage: "../../assets/alps-hero"
+heroImage: "assets/alps-hero"
 ---
 
 Full trip description...
@@ -224,9 +224,9 @@ Simply delete the file from the language folder. If only one translation exists,
 
 **Problem:** Hero image doesn't display.
 
-**Solution:** Check the image path. Use `../../assets/` for images in the assets folder:
+**Solution:** Check the image path. Use `assets/` for images in the assets folder:
 ```markdown
-heroImage: "../../assets/my-image"
+heroImage: "assets/my-image"
 ```
 
 ---

@@ -3,7 +3,7 @@ id: 'first-post'
 title: 'First Post'
 description: 'Exploring new horizons in adventure travel'
 pubDate: 'Jul 08 2022'
-heroImage: '../../../assets/blog-placeholder-3'
+heroImage: 'assets/blog-placeholder-3'
 tags: ['adventure', 'iceland']
 ---
 

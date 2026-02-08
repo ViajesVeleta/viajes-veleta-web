@@ -3,7 +3,7 @@ id: 'cadiz'
 title: 'Flavors and Landscapes of Cadiz'
 description: 'A four-day / three-night cultural and gastronomic coach tour through the lands of Cadiz and the Grazalema mountains.'
 pubDate: 'Feb 26 2026'
-heroImage: '../../../assets/cadiz'
+heroImage: 'assets/cadiz'
 tags: ['gastronomy', 'andalusia', 'culture']
 ---
 
