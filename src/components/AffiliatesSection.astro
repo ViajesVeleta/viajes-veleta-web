@@ -1,0 +1,183 @@
+---
+import { Image } from "astro:assets";
+import { getDynamicImage } from "../utils/images";
+
+interface Props {}
+
+const affiliates: {
+    name: string;
+    logoAlt: string;
+    description: string;
+    class: string;
+    title?: string;
+    subtitle?: string;
+}[] = [
+    {
+        name: "geomoon",
+        logoAlt: "Geomoon logo",
+        description:
+            "Empresa miembro del Grupo de Gestión líder en el sector turístico",
+        class: "geomoon",
+    },
+    {
+        name: "comarca-de-guadix-logo",
+        logoAlt: "Comarca de Guadix logo",
+        description:
+            "Empresa asociada al Grupo de Desarrollo Rural de la Comarca de Guadix",
+        class: "comarca",
+    },
+    {
+        name: "asociacion-intersectorial-de-empresarios-comarca-de-guadix",
+        logoAlt:
+            "Asociación Intersectorial de Empresarios Comarca de Guadix logo",
+        description: "Empresa Asociada",
+        class: "asociacion",
+    },
+];
+---
+
+<section class="affiliates-section">
+    <div class="container">
+        <h2>AFILIADOS</h2>
+        <div class="section-divider">
+            <span class="line"></span>
+            <i class="fa-solid fa-paper-plane paper-plane"></i>
+            <span class="line"></span>
+        </div>
+
+        <div class="affiliates-grid">
+            {
+                affiliates.map((item) => {
+                    const image = getDynamicImage(item.name);
+                    return (
+                        <div class={`affiliate-item ${item.class}`}>
+                            <div class="logo-container">
+                                {image ? (
+                                    <Image
+                                        src={image}
+                                        alt={item.logoAlt}
+                                        class="logo"
+                                    />
+                                ) : (
+                                    <div class="placeholder-logo">
+                                        {item.name}
+                                    </div>
+                                )}
+                            </div>
+                            {item.title && <h3 class="title">{item.title}</h3>}
+                            {item.subtitle && (
+                                <h3 class="subtitle">{item.subtitle}</h3>
+                            )}
+                            <p>{item.description}</p>
+                        </div>
+                    );
+                })
+            }
+        </div>
+    </div>
+</section>
+
+<style>
+    .affiliates-section {
+        padding: 4rem 1rem;
+        background-color: #f6f9fc;
+        text-align: center;
+        color: #333;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    h2 {
+        font-size: 2.5rem;
+        font-weight: 300;
+        margin-bottom: 0.5rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: #333;
+    }
+
+    .section-divider {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 3rem;
+        gap: 1rem;
+        color: var(--secondary);
+        font-size: 1.5rem;
+        border: none;
+        margin-top: 0;
+    }
+
+    .line {
+        height: 2px;
+        width: 10rem;
+        background-color: var(--secondary);
+        border-radius: 2px;
+    }
+
+    .paper-plane {
+        /* Icon styles */
+    }
+
+    .affiliates-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 3rem;
+        align-items: flex-start;
+    }
+
+    .affiliate-item {
+        flex: 1;
+        min-width: 280px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .logo-container {
+        height: 160px; /* Increased height for larger logos */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+        width: 100%;
+    }
+
+    .logo {
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+    }
+
+    .title {
+        font-size: 1rem;
+        font-weight: normal;
+        font-style: italic;
+        color: #1a4b8e; /* Blue for 'Grupo de Desarrollo Rural' */
+        margin: 0;
+        line-height: 1.2;
+    }
+
+    .subtitle {
+        font-size: 1.4rem;
+        font-weight: bold;
+        color: #8a9a2a; /* Greenish/Olive for 'Comarca de Guadix' */
+        margin: 0.2rem 0 1rem;
+        line-height: 1.2;
+    }
+
+    p {
+        font-size: 0.95rem;
+        line-height: 1.5;
+        color: #333;
+        max-width: 300px;
+    }
+
+    /* Specific Adjustments removed to prevent cutting off images */
+</style>

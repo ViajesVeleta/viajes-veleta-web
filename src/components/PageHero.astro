@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
-import heroBg from "../assets/blog-hero.webp";
+import { getDynamicImage } from "../utils/images";
+const heroBg = getDynamicImage("blog-hero");
 
 interface Props {
     title: string;
@@ -11,13 +12,17 @@ const { title } = Astro.props;
 
 <div class="page-hero">
     <div class="hero-image-container">
-        <Image
-            src={heroBg}
-            alt=""
-            class="hero-image"
-            loading="eager"
-            fetchpriority="high"
-        />
+        {
+            heroBg && (
+                <Image
+                    src={heroBg}
+                    alt=""
+                    class="hero-image"
+                    loading="eager"
+                    fetchpriority="high"
+                />
+            )
+        }
         <div class="overlay"></div>
     </div>
     <div class="hero-content">

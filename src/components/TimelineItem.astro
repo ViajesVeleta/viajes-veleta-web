@@ -9,6 +9,11 @@ interface Props {
 }
 
 const { date, title, image } = Astro.props;
+
+import { Image } from "astro:assets";
+import { getDynamicImage } from "../utils/images";
+
+const dynamicImage = getDynamicImage(image);
 ---
 
 <div class="timeline-item">
@@ -32,12 +37,20 @@ const { date, title, image } = Astro.props;
         {
             image && (
                 <div class="card-image-wrapper">
-                    <img
-                        src={image}
-                        alt={title || "Itinerario"}
-                        loading="lazy"
-                        class="card-image"
-                    />
+                    {dynamicImage ? (
+                        <Image
+                            src={dynamicImage}
+                            alt={title || "Itinerario"}
+                            class="card-image"
+                        />
+                    ) : (
+                        <img
+                            src={image}
+                            alt={title || "Itinerario"}
+                            loading="lazy"
+                            class="card-image"
+                        />
+                    )}
                     <div class="image-overlay" />
                 </div>
             )

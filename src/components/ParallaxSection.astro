@@ -1,5 +1,6 @@
 ---
-import background from "../assets/sea.webp";
+import { getDynamicImage } from "../utils/images";
+const background = getDynamicImage("sea");
 
 interface Props {
     stats?: {
@@ -19,7 +20,7 @@ const {
 
 <section
     class="parallax-section"
-    style={`background-image: url(${background.src});`}
+    style={`background-image: url(${background?.src});`}
 >
     <div class="overlay"></div>
     <div class="content">
@@ -110,9 +111,9 @@ const {
     }
 
     .line {
-        height: 1px;
+        height: 2px;
         background-color: white;
-        width: 150px;
+        width: 10rem;
         opacity: 0.7;
     }
 
@@ -144,7 +145,7 @@ const {
     }
 
     .stat-label {
-        font-family: "Playfair Display", serif;
+        font-family: inherit;
         font-size: 1.1rem;
         letter-spacing: 0.5px;
     }

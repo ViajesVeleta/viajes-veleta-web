@@ -6,15 +6,11 @@ import Layout from '../layouts/BlogPost.astro';
 import Timeline from '../components/Timeline.astro';
 import TimelineItem from '../components/TimelineItem.astro';
 
-import heroImage from '../assets/blog-placeholder-about.webp';
-import img2 from '../assets/blog-placeholder-2.webp';
-import img3 from '../assets/blog-placeholder-3.webp';
-
 <Layout 
-  title="Style Guide & Components" 
+  title="Style Guide &components" 
   description="Full style guide for markdown and travel components" 
   pubDate={new Date('2026-01-25')}
-  heroImage={heroImage}
+  heroImage="blog-placeholder-about"
 >
 
 Here is a sample of some basic Markdown syntax that can be used when writing Markdown content in Astro.
@@ -35,20 +31,6 @@ The following HTML `<h1>`—`<h6>` elements represent six levels of section head
 Xerum, quo qui aut unt expliquam qui dolut labo. Aque venitatiusda cum, voluptionse latur sitiae dolessi aut parist aut dollo enim qui voluptate ma dolestendit peritin re plis aut quas inctum laceat est volestemque commosa as cus endigna tectur, offic to cor sequas etum rerum idem sintibus eiur? Quianimin porecus evelectur, cum que nis nust voloribus ratem aut omnimi, sitatur? Quiatem. Nam, omnis sum am facea corem alique molestrunt et eos evelece arcillit ut aut eos eos nus, sin conecerem erum fuga. Ri oditatquam, ad quibus unda veliamenimin cusam et facea ipsamus es exerum sitate dolores editium rerore eost, temped molorro ratiae volorro te reribus dolorer sperchicium faceata tiustia prat.
 
 Itatur? Quiatae cullecum rem ent aut odis in re eossequodi nonsequ idebis ne sapicia is sinveli squiatum, core et que aut hariosam ex eat.
-
-## Images
-
-### Syntax
-
-```markdown
-import myImage from '../assets/my-image.webp';
-
-<img src={myImage.src} alt="Alt text" />
-```
-
-### Output
-
-<img src={heroImage.src} alt="blog placeholder" style="border-radius: 12px; box-shadow: var(--box-shadow);" />
 
 ## Blockquotes
 
@@ -231,14 +213,14 @@ Most <mark>salamanders</mark> are nocturnal, and hunt for insects, worms, and ot
 Perfect for trip itineraries and step-by-step travel guides.
 
 <Timeline>
-  <TimelineItem date="8 Feb" title="Llegada a las Islas Lofoten" image={img2.src}>
+  <TimelineItem date="8 Feb" title="Llegada a las Islas Lofoten" image="blog-placeholder-2">
     Aterrizaje en Harstad y recogida de nuestra furgoneta camper.
     
     * **Checkpoint:** Supermercado para provisiones.
     * **Ruta:** Conducción por la E10 bajo cielos árticos.
   </TimelineItem>
 
-  <TimelineItem date="9 Feb" title="Explorando Reine y Hamnøy" image={img3.src}>
+  <TimelineItem date="9 Feb" title="Explorando Reine y Hamnøy" image="blog-placeholder-3">
     Los pueblos más icónicos de Noruega. 
     
     * **Foto obligatoria:** El puente de Hamnøy al amanecer.

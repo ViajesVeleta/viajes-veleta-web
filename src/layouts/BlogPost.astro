@@ -10,12 +10,7 @@ import {
 	useTranslations,
 	useTranslatedPath,
 } from "../i18n/utils";
-
-type Props = (
-	| CollectionEntry<"blog">["data"]
-	| CollectionEntry<"groups">["data"]
-	| CollectionEntry<"offers">["data"]
-) & { translatedPaths?: Record<string, string> };
+import { getDynamicImage } from "../utils/images";
 
 const {
 	title,
@@ -26,6 +21,10 @@ const {
 	tags,
 	translatedPaths,
 } = Astro.props;
+
+const resolvedHeroImage =
+	typeof heroImage === "string" ? getDynamicImage(heroImage) : heroImage;
+
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const translatePath = useTranslatedPath(lang);
@@ -37,6 +36,7 @@ const translatePath = useTranslatedPath(lang);
 			title={title}
 			description={description}
 			translatedPaths={translatedPaths}
+			image={resolvedHeroImage}
 		/>
 		<style>
 			main {
@@ -126,11 +126,11 @@ const translatePath = useTranslatedPath(lang);
 			<article>
 				<div class="hero-image">
 					{
-						heroImage && (
+						resolvedHeroImage && (
 							<Image
 								width={1920}
 								height={1080}
-								src={heroImage}
+								src={resolvedHeroImage}
 								alt=""
 								loading="eager"
 								fetchpriority="high"
