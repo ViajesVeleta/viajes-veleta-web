@@ -1,46 +1,239 @@
 ---
-const today = new Date();
+import { getCollection } from "astro:content";
+
+// Get current year for copyright
+const currentYear = new Date().getFullYear();
+
+// Get latest blog posts (limit to 4)
+const allPosts = await getCollection("blog");
+const latestPosts = allPosts
+	.filter((post) => post.id.startsWith("es/"))
+	.sort(
+		(a, b) =>
+			new Date(b.data.pubDate).getTime() -
+			new Date(a.data.pubDate).getTime(),
+	)
+	.slice(0, 4);
 ---
 
 <footer transition:persist>
-	&copy; {today.getFullYear()} Your name here. All rights reserved.
-	<div class="social-links">
-		<a href="https://m.webtoo.ls/@astro" target="_blank">
-			<span class="sr-only">Follow Astro on Mastodon</span>
-			<i class="fa-brands fa-mastodon"></i>
-		</a>
-		<a href="https://twitter.com/astrodotbuild" target="_blank">
-			<span class="sr-only">Follow Astro on Twitter</span>
-			<i class="fa-brands fa-x-twitter"></i>
-		</a>
-		<a href="https://github.com/withastro/astro" target="_blank">
-			<span class="sr-only">Go to Astro's GitHub repo</span>
-			<i class="fa-brands fa-github"></i>
-		</a>
+	<!-- Upper Footer -->
+	<div class="footer-upper">
+		<div class="footer-container">
+			<div class="footer-section">
+				<h3>¡Síguenos!</h3>
+				<div class="social-links">
+					<a
+						href="https://www.facebook.com/viajesveleta"
+						target="_blank"
+						rel="noopener noreferrer"
+						aria-label="Síguenos en Facebook"
+					>
+						<i class="fa-brands fa-facebook-f"></i>
+					</a>
+					<a
+						href="https://twitter.com/viajesveleta"
+						target="_blank"
+						rel="noopener noreferrer"
+						aria-label="Síguenos en Twitter"
+					>
+						<i class="fa-brands fa-twitter"></i>
+					</a>
+				</div>
+				<p class="cif">CIF: B18802645</p>
+			</div>
+
+			<div class="footer-section">
+				<h3>Últimas entradas</h3>
+				<ul class="latest-posts">
+					{
+						latestPosts.map((post) => (
+							<li>
+								<a href={`/blog/${post.id.replace("es/", "")}`}>
+									{post.data.title}
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<!-- Lower Footer -->
+	<div class="footer-lower">
+		<div class="footer-container">
+			<p class="copyright">&copy; Viajes Veleta {currentYear}</p>
+			<nav class="footer-links">
+				<a href="/condiciones-generales">Condiciones generales</a>
+				<a href="/contrato-viaje-combinado"
+					>Contrato de viaje combinado</a
+				>
+				<a href="/politica-privacidad">Política de privacidad</a>
+			</nav>
+		</div>
 	</div>
 </footer>
+
 <style>
 	footer {
-		padding: 2em 1em 6em 1em;
-		background: linear-gradient(var(--surface-gradient)) no-repeat;
-		color: var(--on-surface-variant);
-		text-align: center;
+		margin-top: auto;
 	}
+
+	.footer-upper {
+		background-color: #003d7a;
+		color: #ffffff;
+		padding: 3rem 1.5rem;
+	}
+
+	.footer-lower {
+		background-color: #002952;
+		color: #ffffff;
+		padding: 1.5rem 1.5rem;
+	}
+
+	.footer-container {
+		max-width: 1200px;
+		margin: 0 auto;
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		gap: 3rem;
+		flex-wrap: wrap;
+	}
+
+	.footer-lower .footer-container {
+		align-items: center;
+		gap: 2rem;
+	}
+
+	.footer-section {
+		flex: 1;
+		min-width: 250px;
+	}
+
+	.footer-section h3 {
+		font-size: 1.25rem;
+		margin-bottom: 1rem;
+		font-weight: 600;
+		color: #ffffff;
+	}
+
 	.social-links {
 		display: flex;
-		justify-content: center;
-		gap: 1em;
-		margin-top: 1em;
+		gap: 0.5rem;
+		margin-bottom: 1.5rem;
 	}
+
 	.social-links a {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
 		text-decoration: none;
-		color: var(--on-surface-variant);
+		color: #ffffff;
+		transition:
+			transform 0.2s ease,
+			opacity 0.2s ease;
+	}
+
+	.social-links a:nth-child(1) {
+		background-color: #3b5998; /* Facebook blue */
+	}
+
+	.social-links a:nth-child(2) {
+		background-color: #55acee; /* Twitter light blue */
+	}
+
+	.social-links a:hover {
+		transform: scale(1.1);
+		opacity: 0.9;
+	}
+
+	.social-links i {
+		font-size: 1.1rem;
+	}
+
+	.cif {
+		font-size: 0.95rem;
+		margin: 0;
+		color: #ffffff;
+	}
+
+	.latest-posts {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	.latest-posts li {
+		margin-bottom: 0.75rem;
+	}
+
+	.latest-posts a {
+		color: #4fc3f7;
+		text-decoration: none;
+		transition: color 0.2s ease;
+		font-size: 0.95rem;
+		line-height: 1.4;
+	}
+
+	.latest-posts a:hover {
+		color: #ffffff;
+		text-decoration: underline;
+	}
+
+	.copyright {
+		margin: 0;
+		font-size: 0.95rem;
+	}
+
+	.footer-links {
+		display: flex;
+		gap: 2rem;
+		flex-wrap: wrap;
+	}
+
+	.footer-links a {
+		color: #4fc3f7;
+		text-decoration: none;
+		font-size: 0.9rem;
 		transition: color 0.2s ease;
 	}
-	.social-links a:hover {
-		color: var(--on-surface);
+
+	.footer-links a:hover {
+		color: #ffffff;
+		text-decoration: underline;
 	}
-	.social-links i {
-		font-size: 1.5rem;
+
+	/* Mobile responsive */
+	@media (max-width: 768px) {
+		.footer-container {
+			flex-direction: column;
+			gap: 2rem;
+		}
+
+		.footer-lower .footer-container {
+			flex-direction: column;
+			text-align: center;
+			gap: 1rem;
+		}
+
+		.footer-section {
+			min-width: 100%;
+			text-align: center;
+		}
+
+		.social-links {
+			justify-content: center;
+		}
+
+		.footer-links {
+			flex-direction: column;
+			gap: 0.75rem;
+			align-items: center;
+		}
 	}
 </style>
