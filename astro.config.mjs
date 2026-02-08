@@ -30,7 +30,7 @@ function styleGuideToolbar() {
 
 export default defineConfig({
     adapter: cloudflare({
-        imageService: 'cloudflare',
+        imageService: 'passthrough',
     }),
     site: 'https://example.com',
     prefetch: {

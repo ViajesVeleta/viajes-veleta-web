@@ -1,48 +1,28 @@
-import { defineCollection, z } from 'astro:content';
+import { defineCollection, z, type SchemaContext } from 'astro:content';
 import { glob } from 'astro/loaders';
 
-import type { ImageMetadata } from "astro";
+// This function will be used at build time to resolve image paths
+function resolveImagePath(path: string): string {
+	if (!path) return path;
 
-// Load all images eagerly for dynamic resolution
-const allImages = import.meta.glob<{ default: ImageMetadata }>(
-	"/src/assets/*.{png,jpg,jpeg,webp,svg}",
-	{ eager: true },
-);
+	// If it already has an extension, return as-is
+	if (path.match(/\.(png|jpg|jpeg|webp|svg)$/i)) {
+		return path;
+	}
 
-const resolveImage = (path: string) => {
-	// Normalize path: assets/foo.png -> foo
-	// Also handle full paths if passed
-	const cleanName = path.split("/").pop()?.split(".")[0];
-	if (!cleanName) return undefined;
+	// Otherwise, append .webp (since all images are now webp)
+	return `${path}.webp`;
+}
 
-	// Search for matching image in glob results
-	const match = Object.keys(allImages).find((key) => {
-		const keyName = key.split("/").pop()?.split(".")[0];
-		return keyName === cleanName;
-	});
-
-	return match ? allImages[match].default : undefined;
-};
-
-const commonSchema = z.object({
+const commonSchema = ({ image }: SchemaContext) => z.object({
 	title: z.string(),
 	description: z.string(),
 	pubDate: z.coerce.date(),
 	updatedDate: z.coerce.date().optional(),
-	heroImage: z.string().transform((val, ctx) => {
-		const img = resolveImage(val);
-		if (!img) {
-			// Warn but don't fail hard? Or fail? The original schema would fail if image missing.
-			// We can let it pass as undefined or throw error.
-			// Let's emulate pipe(image()) behavior which validates existence.
-			ctx.addIssue({
-				code: z.ZodIssueCode.custom,
-				message: `Image not found: ${val}`,
-			});
-			return z.NEVER;
-		}
-		return img;
-	}).optional(),
+	heroImage: z.string()
+		.transform(resolveImagePath)
+		.pipe(image())
+		.optional(),
 	tags: z.array(z.string()).optional(),
 	id: z.string().optional(),
 });
@@ -54,7 +34,7 @@ const blog = defineCollection({
 
 const groups = defineCollection({
 	loader: glob({ base: './src/content/viajes-en-grupo', pattern: '**/*.{md,mdx}' }),
-	schema: commonSchema.extend({
+	schema: ({ image }: SchemaContext) => commonSchema({ image }).extend({
 		category: z.enum(['spain', 'europe', 'long-haul']).optional(),
 	}),
 });
