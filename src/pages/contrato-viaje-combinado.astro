@@ -1,0 +1,233 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import PageHero from "../components/PageHero.astro";
+import Footer from "../components/Footer.astro";
+import ContentFallback from "../components/ContentFallback.astro";
+import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
+
+const title = "Contrato de viaje combinado";
+
+// Detect if this was accessed via language fallback
+const urlParams = Astro.url.searchParams;
+const isFallback = urlParams.get("lang") === "en"; // User wants English but viewing Spanish content
+---
+
+<!doctype html>
+<html lang="es">
+    <head>
+        <BaseHead
+            title={`${title} - ${SITE_TITLE}`}
+            description={SITE_DESCRIPTION}
+        />
+        <style>
+            main {
+                width: 100%;
+                max-width: 900px;
+                margin: 0 auto;
+                padding: 4rem 1.5rem;
+                line-height: 1.7;
+                color: var(--gray-dark);
+            }
+            .legal-content p {
+                margin-bottom: 1.2rem;
+                text-align: justify;
+            }
+            .legal-content ol {
+                margin-bottom: 1.5rem;
+                padding-left: 1.5rem;
+            }
+            .legal-content li {
+                margin-bottom: 1rem;
+                text-align: justify;
+            }
+            .legal-content ol[style*="lower-alpha"] {
+                list-style-type: lower-alpha;
+                margin-top: 0.5rem;
+            }
+            .signature-container {
+                margin-top: 4rem;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 3rem;
+            }
+            .signature-box {
+                display: flex;
+                flex-direction: column;
+                gap: 4rem;
+            }
+            .signature-line {
+                border-top: 1px solid var(--black);
+                padding-top: 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            @media (max-width: 600px) {
+                .signature-container {
+                    grid-template-columns: 1fr;
+                    gap: 2rem;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <Header isOverlay={true} />
+        <PageHero title={title} />
+        <main>
+            {
+                isFallback && (
+                    <ContentFallback
+                        availableIn="es"
+                        fallbackPath="/contrato-viaje-combinado"
+                    />
+                )
+            }
+            <div class="legal-content">
+                <p>
+                    De acuerdo con la legislación vigente, y en especial con la
+                    Ley 21/95 reguladora de los Viajes Combinados y los
+                    distintos reglamentos de Agencias de Viajes de las
+                    Comunidades Autónomas, el presente documento, junto con el
+                    bono/s – billete/s que se les enviaran antes de la salida
+                    del viaje de ____________, conforman el citado contrato de
+                    viaje combinado, según las siguientes cláusulas:
+                </p>
+
+                <ol>
+                    <li>
+                        Son datos que constan en el bono parte de este contrato,
+                        los siguientes: los del contratante principal, los de la
+                        Agencia Detallista / Vendedora; la confirmación de la
+                        reserva con sus: fecha/s de salida/s y regreso; hora/s
+                        de salida/s y regreso; tipo de habitación y régimen
+                        alimenticio; precio; derecho o tasas e impuestos.
+                    </li>
+                    <li>
+                        Son datos que constan bien en el bono – billete o bien
+                        en el programa / folleto que ha dado origen a la oferta
+                        del presente contrato de viaje combinado, los
+                        siguientes: descripción del viaje;: destino/s;
+                        requisitos y lugar de presentación a la salida;
+                        itinerario; medios de transporte, su clase y categoría
+                        del lugar a ocupar, horarios y escalas; fecha/s de
+                        llegada/s; alojamiento/s, tipo, situación,
+                        categoría/clasificación, características, días de
+                        estancia y núm. de comidas a servir; seguro de
+                        asistencia ; otros, con especificación de si están
+                        incluidos en el precio del paquete o son opcionales;
+                        servicios turísticos no accesorios al viaje combinado,
+                        si los hubiere; requisito de número mínimo de
+                        participantes para que pueda realizarse el viaje y fecha
+                        límite; información sobre documentación necesaria para
+                        el pasajero (pasaporte, DNI, visado, vacunas, etc..);
+                        condiciones especiales de viaje para menores.
+                    </li>
+                    <li>
+                        En todo lo referente a inscripciones y reembolsos;
+                        prescripciones sobre Apartamentos, Hoteles y Servicios
+                        Alimenticios; servicios turísticos no accesorios;
+                        equipajes, documentación; plazo de confirmación reserva;
+                        anulaciones y cesiones, con especificación de las
+                        penalizaciones y condicionantes; revisión de precios;
+                        modificaciones del contrato; resolución del contrato o
+                        cancelación del viaje; consecuencias de la no prestación
+                        de servicios; prescripción de acciones; y
+                        responsabilidad, se estará a lo estipulado en las
+                        Condiciones Generales incluidas en el programa / folleto
+                        que ha dado origen a la oferta del presente contrato de
+                        viaje combinado. No obstante, se destacan los siguientes
+                        puntos:
+                        <ol style="list-style-type: lower-alpha;">
+                            <li>
+                                Los precios están calculados en base al cambio
+                                de moneda, tarifas de transporte, combustible y
+                                tasas según la fecha que figura en las
+                                Condiciones Generales de la Agencia
+                                Organizadora. Cualquier cambio en la citada
+                                cotización podrá repercutirse al cliente hasta
+                                20 días antes de la fecha de salida.
+                            </li>
+                            <li>
+                                En caso de cualquier incumplimiento en la
+                                ejecución de los servicios, el consumidor se
+                                obliga a comunicarlo al prestador de servicios
+                                de que se trate y a la Agencia, de manera
+                                fehaciente y a la mayor brevedad posible,
+                                preferentemente “in situ” o en todo caso en los
+                                cinco días siguientes a la finalización del
+                                viaje. El plazo de prescripción de las acciones
+                                será el establecido en el Art. 13 de la Ley
+                                21/95.
+                            </li>
+                            <li>
+                                En el supuesto de solicitud de cesión de reserva
+                                por parte del consumidor, se estará a lo
+                                especificado para el tipo de viaje de que se
+                                trate, según se contempla en las Condiciones
+                                Generales del programa / folleto o en la
+                                descripción del viaje que consta en el mismo.
+                            </li>
+                            <li>
+                                La modalidad de pago será la estipulada en las
+                                Condiciones Generales del programa / folleto o
+                                las pactadas expresa y fehacientemente con la
+                                Agencia Vendedora.
+                            </li>
+                        </ol>
+                    </li>
+                    <li>
+                        Los datos de la representación local de la Agencia
+                        Organizadora constan en la documentación del viaje.
+                    </li>
+                    <li>
+                        Para cualquier aspecto relacionado con la asistencia
+                        sanitaria o resto de coberturas aseguradas, si las
+                        hubiere, el cliente habrá de contactar directamente con
+                        el teléfono de la Compañía Aseguradora que consta en la
+                        documentación del viaje. En el supuesto de que no se
+                        haya suscrito contrato de asistencia o éste no esté
+                        incluido en el precio, el cliente asume toda la
+                        responsabilidad que se derive de ello.
+                    </li>
+                    <li>
+                        La formalización del presente documento implica que obra
+                        en poder del cliente el bono/s-billete/s que conforman
+                        el contrato, así como el programa/folleto que ha dado
+                        origen a la oferta del presente contrato de viaje
+                        combinado, Condiciones Generales del mismo y resto de
+                        documentación que se cita e igualmente que ha sido
+                        informado con anterioridad del contenido de las
+                        cláusulas contractuales que integran el presente
+                        contrato y que dispone de toda la información
+                        pertinente. El contratante principal, manifiesta
+                        disponer de facultades para contratar en nombre de los
+                        restantes beneficiarios del viaje integrados en el mismo
+                        localizador de reserva e igualmente declara conocer y
+                        aceptar todo lo reseñado en las cláusulas del presente
+                        contrato.
+                    </li>
+                    <li>
+                        El precio acordado del viaje según itinerario adjunto es
+                        de ____________________________
+                    </li>
+                </ol>
+
+                <div class="signature-container">
+                    <div class="signature-box">
+                        <p><strong>Firmado:</strong></p>
+                        <div class="signature-line">
+                            Por el Consumidor / Contratante Principal
+                        </div>
+                    </div>
+                    <div class="signature-box">
+                        <p><strong>Viajes Veleta</strong></p>
+                        <div class="signature-line">
+                            Por la Agencia Vendedora
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <Footer />
+    </body>
+</html>

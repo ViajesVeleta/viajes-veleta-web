@@ -1,0 +1,1091 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import PageHero from "../components/PageHero.astro";
+import Footer from "../components/Footer.astro";
+import ContentFallback from "../components/ContentFallback.astro";
+import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
+
+const title = "Condiciones generales";
+
+// Detect if this was accessed via language fallback
+const urlParams = Astro.url.searchParams;
+const isFallback = urlParams.get("lang") === "en"; // User wants English but viewing Spanish content
+---
+
+<!doctype html>
+<html lang="es">
+    <head>
+        <BaseHead
+            title={`${title} - ${SITE_TITLE}`}
+            description={SITE_DESCRIPTION}
+        />
+        <style>
+            main {
+                width: 100%;
+                max-width: 900px;
+                margin: 0 auto;
+                padding: 4rem 1.5rem;
+                line-height: 1.7;
+                color: var(--gray-dark);
+            }
+            .legal-content h2 {
+                color: var(--black);
+                margin-top: 3rem;
+                margin-bottom: 1.5rem;
+                font-size: 1.6rem;
+                font-weight: 600;
+                border-bottom: 2px solid var(--primary-fixed-dim);
+                padding-bottom: 0.5rem;
+            }
+            .legal-content h3 {
+                color: var(--black);
+                margin-top: 2rem;
+                margin-bottom: 1rem;
+                font-size: 1.3rem;
+                font-weight: 600;
+            }
+            .legal-content p {
+                margin-bottom: 1.2rem;
+            }
+            .legal-content ul,
+            .legal-content ol {
+                margin-bottom: 1.5rem;
+                padding-left: 1.5rem;
+            }
+            .legal-content li {
+                margin-bottom: 0.8rem;
+            }
+            .legal-content ol[style*="upper-alpha"] {
+                list-style-type: upper-alpha;
+            }
+            .legal-content ol[style*="lower-alpha"] {
+                list-style-type: lower-alpha;
+            }
+        </style>
+    </head>
+    <body>
+        <Header isOverlay={true} />
+        <PageHero title={title} />
+        <main>
+            {
+                isFallback && (
+                    <ContentFallback
+                        availableIn="es"
+                        fallbackPath="/condiciones-generales"
+                    />
+                )
+            }
+            <div class="legal-content">
+                <p>
+                    A los efectos de las presentes Condiciones Generales, el
+                    programa/folleto es el documento informativo al que éstas se
+                    incorporan.
+                </p>
+                <p>
+                    El programa/oferta es la descripción del viaje combinado
+                    contenida en el programa/folleto que constituye el objeto
+                    del contrato de viaje combinado.
+                </p>
+                <p>
+                    La información sobre el programa/oferta contenida en el
+                    programa/folleto es vinculante para el organizador o
+                    detallista, salvo que concurra alguna de las siguientes
+                    circunstancias:
+                </p>
+                <ol style="list-style-type: upper-alpha;">
+                    <li>
+                        Que los cambios en dicha información se hayan comunicado
+                        claramente por escrito al consumidor antes de la
+                        celebración del contrato y tal posibilidad haya sido
+                        objeto de expresa mención en el programa oferta.
+                    </li>
+                    <li>
+                        Que se produzcan posteriormente modificaciones, previo
+                        acuerdo por escrito entre las partes contratantes.
+                    </li>
+                </ol>
+
+                <h2>
+                    1. REGULACIÓN JURÍDICA APLICABLE AL CONTRATO DE VIAJE
+                    COMBINADO Y ACEPTACIÓN DE LAS CONDICIONES GENERALES
+                </h2>
+                <p>
+                    Las presentes Condiciones Generales están sujetas a lo
+                    dispuesto en el Real Decreto Legislativo 1/2007 de 16 de
+                    noviembre (BOE 287 de 30.11) y demás disposiciones vigentes
+                    y concordantes.
+                </p>
+                <p>
+                    Las presentes Condiciones Generales se incorporarán,
+                    firmadas por las partes contratantes, a todos los contratos
+                    de viajes combinados cuyo objeto sean los programas/oferta
+                    contenidos en el programa/folleto y obligan a las partes,
+                    con las condiciones particulares que se pacten en el
+                    contrato o que consten en la documentación del viaje
+                    facilitada simultáneamente a la suscripción del contrato.
+                </p>
+
+                <h2>2. ORGANIZACIÓN</h2>
+                <p>
+                    La organización de este viaje combinado ha sido realizada
+                    por VIAJES SENDAS DE EUROPA S.L., AGENCIA DE VIAJES
+                    MAYORISTA con C.I.F. B-82717547, con domicilio en PASEO DE
+                    LAS ACACIAS, 56 – 28005 MADRID, Título Licencia CICMA 1.229.
+                </p>
+
+                <h2>3. PRECIO</h2>
+                <ol>
+                    <li>
+                        El precio del Viaje Combinado incluye
+                        <ol>
+                            <li>
+                                El transporte de ida y regreso, cuando este
+                                servicio esté incluido en el Programa oferta
+                                contratado, con el tipo de transporte,
+                                características y categoría que conste en el
+                                contrato o en la documentación que se entrega al
+                                consumidor en el momento de suscribirlo.
+                            </li>
+                            <li>
+                                El alojamiento, cuando este servicio esté
+                                incluido en el programa/oferta contratado, en el
+                                establecimiento y con el régimen alimenticio que
+                                figura en el contrato o en la documentación que
+                                se entrega al consumidor en el momento de
+                                suscribirlo.
+                            </li>
+                            <li>
+                                Las tasas o impuestos de los establecimientos
+                                hoteleros y los impuestos indirectos Impuesto
+                                sobre el Valor Añadido (I.V.A.), impuesto
+                                General Indirecto Canario (I.G.I.C.), etc.,
+                                cuando sean aplicables.
+                            </li>
+                            <li>
+                                La asistencia técnica durante el viaje, cuando
+                                este servicio esté específicamente incluido en
+                                el programa/ oferta contratado.
+                            </li>
+                            <li>
+                                Todos los demás servicios y complementos que se
+                                especifiquen concretamente en el programa/oferta
+                                contratado o que expresamente se haga constar en
+                                el contrato de viaje combinado.
+                            </li>
+                            <li>
+                                Compañías aéreas. Estas, generalmente, cargan en
+                                el importe del pasaje lo que denominan “tasa o
+                                coste de combustible” (YQ) que repercute en el
+                                precio del viaje hasta 20 días antes de la fecha
+                                de salida y viene representando aproximadamente
+                                un 40-50% sobre el precio de billete aéreo. Las
+                                compañías aéreas mantienen este YQ fuera de la
+                                tarifa.
+                            </li>
+                        </ol>
+                    </li>
+                    <li>
+                        Revisión de precios
+                        <ol>
+                            <li>
+                                El precio del viaje combinado ha sido calculado
+                                en base a los tipos de cambio, tarifas de
+                                transporte, coste del carburante y tasas e
+                                impuestos aplicables en la fecha de edición del
+                                programa/folleto o de las posteriores que, en su
+                                caso, se hayan hecho públicas de forma impresa.
+                            </li>
+                            <li>
+                                Cualquier variación del precio de los citados
+                                elementos podrá dar lugar a la revisión del
+                                precio final del viaje, tanto al alza como a la
+                                baja, en los importes estrictos de las
+                                variaciones de precio aludidas.
+                            </li>
+                            <li>
+                                Estas modificaciones serán notificadas al
+                                consumidor, por escrito o por cualquier medio
+                                que permita tener constancia de la comunicación
+                                efectuada, pudiendo, cuando la modificación
+                                efectuada sea significativa, desistir del viaje,
+                                sin penalización alguna, o aceptar la
+                                modificación del contrato. En ningún caso, se
+                                revisará al alza en los veinte días anteriores a
+                                la fecha de salida del viaje, respecto de
+                                solicitudes ya realizadas.
+                            </li>
+                        </ol>
+                    </li>
+                    <li>
+                        Ofertas especiales
+                        <ol>
+                            <li>
+                                Cuando se realice la contratación del viaje
+                                combinado como consecuencia de ofertas
+                                especiales, de última hora o equivalentes, a
+                                precio distinto del expresado en el
+                                programa/folleto, los servicios comprendidos en
+                                el precio son únicamente aquellos que se
+                                especifican detalladamente en la oferta, aún
+                                cuando, dicha oferta haga referencia a alguno de
+                                los programas descritos en este folleto, siempre
+                                que dicha remisión se realice a los exclusivos
+                                efectos de información general del destino.
+                            </li>
+                        </ol>
+                    </li>
+                    <li>
+                        Exclusiones
+                        <ol>
+                            <li>
+                                El precio del Viaje Combinado NO incluye:
+                                Certificados de vacunación, cualquier tipo de
+                                propinas especialmente en el caso de Cruceros,
+                                (en este caso se advierte al cliente que debe
+                                asumir el compromiso de entregar las mismas a la
+                                finalización del viaje), bebidas, cafés, vinos,
+                                licores, aguas minerales, así como gastos extras
+                                no incluidos en el precio, en su caso, regímenes
+                                alimenticios especiales, salvo que expresamente
+                                se pacte en el contrato otra cosa, lavado y
+                                planchado de ropa, servicios de hotel
+                                opcionales, y, en general, cualquier otro
+                                servicio que no figure en supuestos de pensión
+                                completa o todo incluido.
+                            </li>
+                            <li>Excursiones o visitas facultativas.</li>
+                            <li>
+                                En el caso de excursiones o visitas facultativas
+                                no contratadas en origen, debe tenerse presente
+                                que no forman parte del contrato de viaje
+                                combinado. Su publicación en el folleto tiene
+                                mero carácter informativo. Dichas excursiones
+                                serán ofrecidas al consumidor con sus
+                                condiciones específicas y precio definitivo de
+                                forma independiente, no garantizándose hasta el
+                                momento de su contratación la posible
+                                realización de las mismas.
+                            </li>
+                            <li>
+                                Como quiera que resulte prácticamente imposible,
+                                siquiera a título orientativo, el precio de las
+                                excursiones facultativas, se informa que éste es
+                                otro concepto que aún cuando no incide en el
+                                precio del viaje, por cuanto no forma parte de
+                                su oferta, ni del contrato, sí podría
+                                representar un mayor gasto para el
+                                cliente/consumidor, si se adquiere. Por otra
+                                parte, dichas excursiones no se garantiza la
+                                posible realización de las mismas hasta el
+                                momento de su contratación.
+                            </li>
+                        </ol>
+                    </li>
+                    <li>
+                        Viajes de nieve
+                        <ol>
+                            <li>
+                                En los viajes de nieve, salvo indicación
+                                contraria en el programa/folleto, no estarán
+                                incluidos los remontes o cursillos de esquí.
+                            </li>
+                        </ol>
+                    </li>
+                </ol>
+
+                <h2>4. FORMA DE PAGO. INSCRIPCIONES Y REEMBOLSOS</h2>
+                <p>
+                    En el acto de la inscripción, la Agencia podrá requerir un
+                    anticipo que en ningún caso será superior al 40% del importe
+                    total del viaje, expidiendo el correspondiente recibo en el
+                    que se especifique, además del importe anticipado por el
+                    consumidor, el viaje combinado solicitado. El importe
+                    restante deberá abonarse contra la entrega de los bonos o
+                    documentación del viaje, que deberá realizarse al menos
+                    siete días antes de la fecha de la salida.
+                </p>
+                <p>
+                    De no procederse al pago del precio total del viaje en las
+                    condiciones señaladas, se entenderá que el consumidor
+                    desiste del viaje solicitado, siéndole de aplicación las
+                    condiciones previstas en el apartado siguiente.
+                </p>
+                <p>
+                    Todos los reembolsos que sean procedentes por cualquier
+                    concepto, se formalizarán siempre a través de la Agencia
+                    Detallista donde se hubiera realizado la inscripción, no
+                    efectuándose devolución alguna por servicios no utilizados
+                    voluntariamente por el consumidor.
+                </p>
+                <p>
+                    En el supuesto caso de que antes de la salida del viaje, el
+                    Organizador se vea obligado a modificar de manera
+                    significativa algún elemento o servicio del contrato deberá
+                    ponerlo inmediatamente en conocimiento del consumidor a
+                    través de la Agencia Minorista.
+                </p>
+
+                <h2>
+                    5. DESISTIMIENTO DEL CONSUMIDOR, CESIONES Y CANCELACIÓN DEL
+                    VIAJE POR NO ALCANZAR EL NÚMERO DE PERSONAS INSCRITAS EL
+                    MÍNIMO PREVISTO
+                </h2>
+                <p>
+                    En todo momento el usuario o consumidor puede desistir de
+                    los servicios solicitados o contratados, teniendo derecho a
+                    la devolución de las cantidades que hubiera abonado, tanto
+                    si se trata del precio total como del anticipo previsto en
+                    el apartado precedente, pero deberá indemnizar a la Agencia
+                    por los conceptos que a continuación se indican:
+                </p>
+                <ol style="list-style-type: upper-alpha;">
+                    <li>
+                        En el caso de servicios sueltos: La totalidad de los
+                        gastos de gestión, más los gastos de anulación, si se
+                        hubieran producido estos últimos.
+                        <ol style="list-style-type: lower-alpha;">
+                            <li>
+                                “Dada la variedad de causas y circunstancias de
+                                posible anulación del viaje, así como los
+                                numerosos servicios de los que se ocupan en
+                                destino no resulta posible el cálculo previo de
+                                los mismos, pero se significa que, en tales
+                                casos se podrán repercutir los gastos de
+                                anulación debidamente justificados, siempre que
+                                se hayan efectivamente producido.
+                            </li>
+                        </ol>
+                    </li>
+                    <li>
+                        En el caso de viajes combinados y salvo que el
+                        desistimiento se produzca por causa de fuerza mayor:
+                    </li>
+                </ol>
+                <ol>
+                    <li>
+                        Los gastos de gestión más los gastos de anulación, si
+                        los hubiere.
+                    </li>
+                    <li>
+                        Una penalización, consistente en el 5% del total del
+                        viaje si el desistimiento se produce con más de diez
+                        días y menos de quince de antelación a la fecha de
+                        comienzo del viaje; el 15% entre los días 3 y 10, y el
+                        25% dentro de las cuarenta y ocho horas anteriores a la
+                        salida.
+                    </li>
+                </ol>
+                <p>
+                    De no presentarse a la hora prevista para la salida, no
+                    tendrá derecho a devolución alguna de la cantidad abonada,
+                    salvo acuerdo entre las partes en otro sentido.
+                </p>
+                <p>
+                    En el caso de que alguno de los servicios contratados y
+                    anulados estuviera sujeto a condiciones económicas
+                    especiales de contratación, tales como flete de aviones,
+                    buques, tarifas especiales, etc., los gastos de anulación
+                    por desistimiento se establecerán de acuerdo con las
+                    condiciones acordadas por ambas partes. En concreto están
+                    sujetos a condiciones económicas especiales de contratación,
+                    y por tanto a gastos especiales de anulación los cruceros
+                    marítimos o fluviales, así como los programas de
+                    Confirmación Inmediata, hoteles y circuitos en EE.UU.,
+                    Canadá, México, Caribe, Guatemala, Costa Rica, Nicaragua,
+                    Panamá, Colombia,Ecuador, Bolivia, Perú, Chile, Argentina,
+                    Brasil, India, Siria, Jordania, Israel, Egipto, Libia y en
+                    general todos aquellos programas, productos u hoteles
+                    exclusivos de venta regulada. Asimismo indicamos que la
+                    mayoría de las compañías aéreas exige la emisión del billete
+                    físico o electrónico con bastante antelación y fijan un
+                    gasto a partir de esa fecha. Les recomendamos que es
+                    importante consulte las condiciones particulares de estos
+                    programas cuyo cómputo en los gastos de anulación será
+                    acreditado por el Organizador en caso de desistimiento.
+                </p>
+
+                <p>Cesión de la reserva.</p>
+                <ol>
+                    <li>
+                        El contratante principal o el beneficiario podrán ceder
+                        gratuitamente su reserva en el viaje combinado a una
+                        persona que reúna todas las condiciones requeridas para
+                        el mismo.
+                    </li>
+                    <li>
+                        La cesión deberá ser comunicada por escrito al
+                        detallista o, en su caso, al organizador con una
+                        antelación mínima de 15 días a la fecha de inicio del
+                        viaje, salvo que las partes pacten un plazo menor en el
+                        contrato.
+                    </li>
+                    <li>
+                        La persona que ceda su reserva en el viaje combinado y
+                        el cesionario responderán solidariamente, ante el
+                        detallista o, en su caso, el organizador que sean parte
+                        del contrato, del pago del saldo del precio, así como de
+                        los gastos adicionales justificados que pudiera haber
+                        causado dicha cesión.
+                    </li>
+                </ol>
+                <p>
+                    En los casos que el Organizador condicione, y así lo
+                    especifique expresamente, la viabilidad de la oferta de
+                    viaje combinado a contar con un mínimo de participantes y
+                    por no alcanzarse ese número, se produzca la anulación del
+                    viaje, el usuario tendrá derecho exclusivamente al reembolso
+                    del total del precio o de las cantidades anticipadas, sin
+                    que pueda reclamar cantidad alguna en concepto de
+                    indemnización, siempre y cuando la Agencia se lo haya
+                    notificado por escrito con un mínimo de diez días de
+                    antelación a la fecha prevista de inicio del viaje.
+                </p>
+
+                <h2>6. ALTERACIONES</h2>
+                <p>
+                    La Agencia de Viajes se compromete a facilitar a sus
+                    clientes la totalidad de los servicios contratados
+                    contenidos en el programa/oferta que ha dado origen al
+                    contrato de viaje combinado, con las condiciones y
+                    características estipuladas, todo ello de acuerdo a los
+                    siguientes extremos:
+                </p>
+                <ol style="list-style-type: upper-alpha;">
+                    <li>
+                        En el supuesto de que, antes de la salida del viaje, el
+                        Organizador se vea obligado a modificar de manera
+                        significativa algún elemento esencial del contrato,
+                        incluido el precio, deberá ponerlo inmediatamente en
+                        conocimiento del consumidor, bien directamente, cuando
+                        actúe también como detallista, bien a través del
+                        respectivo detallista en los demás casos.
+                    </li>
+                    <li>
+                        En tal supuesto, y salvo que las partes convengan otra
+                        cosa, el consumidor podrá optar entre resolver el
+                        contrato sin penalización alguna o aceptar una
+                        modificación del contrato en el que se precisen las
+                        variaciones introducidas y su repercusión en el precio.
+                        El consumidor deberá comunicar la decisión que adopte al
+                        Detallista o, en su caso, al Organizador dentro de los
+                        tres días siguientes a ser notificado de la modificación
+                        a que se refiere el apartado a). En el supuesto de que
+                        el consumidor no notifique su decisión en los términos
+                        indicados, se entenderá que opta por la resolución del
+                        contrato sin penalización alguna.
+                    </li>
+                    <li>
+                        En el supuesto de que el consumidor opte por resolver el
+                        contrato, al amparo de lo previsto en el apartado b), o
+                        de que el organizador cancele el viaje combinado antes
+                        de la fecha de salida acordada, por cualquier motivo que
+                        no sea imputable al consumidor, éste tendrá derecho,
+                        desde el momento in que se produzca la resolución del
+                        contrato, al reembolso de todas las cantidades pagadas,
+                        con arreglo al mismo, o bien a la realización de otro
+                        viaje combinado de calidad equivalente o superior
+                        siempre que el Organizador o Detallista pueda
+                        proponérselo. En el supuesto de que el viaje ofrecido
+                        fuera de calidad inferior, el Organizador o el
+                        Detallista deberán rembolsar al consumidor, cuando
+                        proceda en función de las cantidades ya desembolsadas,
+                        la diferencia de precio, con arreglo al contrato.
+                    </li>
+                </ol>
+                <p>
+                    En todo caso, el consumidor y usuario podrá exigir el
+                    reintegro de las cantidades desembolsadas al empresario al
+                    que se las abonó, que deberá reintegrárselas en los plazos y
+                    condiciones previstas en el artículo 76 de la Ley 1/2007. El
+                    cómputo del plazo, en este caso, se iniciará desde la
+                    notificación del consumidor y usuario de su opción por la
+                    resolución o desde que se produjeran las circunstancias
+                    determinantes de la cancelación.
+                </p>
+                <ol>
+                    <li>
+                        El mismo derecho previsto en el número anterior
+                        corresponderá al consumidor y usuario que no obtuviese
+                        confirmación de la reserva en los términos estipulados
+                        en el contrato.
+                    </li>
+                </ol>
+                <p>
+                    En los anteriores supuestos, el Organizador y el Detallista
+                    serán responsables del pago al consumidor de la
+                    indemnización que, en su caso, corresponda por
+                    incumplimiento del contrato, que será del 5% del precio
+                    total del viaje contratado, si el citado incumplimiento se
+                    produce entre los dos meses y quince días inmediatamente
+                    anteriores a la fecha prevista de realización del viaje; el
+                    10% si se produce entre los quince días y tres días
+                    anteriores, y el 25% en el supuesto de que el incumplimiento
+                    citado se produzca en las cuarenta y ocho horas anteriores.
+                </p>
+                <ol>
+                    <li>
+                        No existirá obligación de indemnizar en los siguientes
+                        supuestos:
+                        <ol>
+                            <li>
+                                Cuando la cancelación se deba a que el número de
+                                personas inscritas para el viaje combinado sea
+                                inferior al exigido y así se comunique por
+                                escrito al consumidor y usuario antes de la
+                                fecha límite fijada a tal fin en el contrato,
+                                que como mínimo será de 10 días de antelación
+                                mínima a la fecha prevista de iniciación del
+                                viaje.
+                            </li>
+                            <li>
+                                Cuando la cancelación del viaje, salvo en los
+                                supuestos de exceso de reservas, se deba a
+                                motivos de fuerza mayor, entendiendo por tales
+                                aquellas circunstancias ajenas a quien las
+                                invoca, anormales e imprevisibles cuyas
+                                consecuencias no habrían podido evitarse, a
+                                pesar de haber actuado con la diligencia debida.
+                            </li>
+                            <li>
+                                Cuando la cancelación del viaje se deba a “causa
+                                suficiente” por aplicación de del Reglamento de
+                                la respectiva Comunidad Autónoma si así es
+                                especificado.
+                            </li>
+                        </ol>
+                    </li>
+                    <li>
+                        En el caso de que, después de la salida del viaje, el
+                        Organizador no suministre o compruebe que no puede
+                        suministrar una parte importante de los servicios
+                        previstos en el contrato, adoptará las soluciones
+                        adecuadas para la continuación del viaje organizado, sin
+                        suplemento alguno de precio para el consumidor, y, en su
+                        caso, abonará a este último el importe de la diferencia
+                        entre las prestaciones previstas y las suministradas.
+                    </li>
+                </ol>
+                <p>
+                    Si el consumidor continúa el viaje con las soluciones dadas
+                    por el Organizador, se considerará que acepta
+                    tácitamentedichas propuestas.
+                </p>
+                <ol>
+                    <li>
+                        Si las soluciones adoptadas por el Organizador fueran
+                        inviables o el consumidor no las aceptase por motivos
+                        razonables, aquél deberá facilitar a éste, sin
+                        suplemento alguno de precio, un medio de transporte
+                        equivalente al utilizado en el viaje para regresar al
+                        lugar de salida o a cualquier otro que ambos hayan
+                        convenido, sin perjuicio de la indemnización que en su
+                        caso proceda.
+                    </li>
+                    <li>
+                        En caso de reclamación, el detallista o, en su caso, el
+                        organizador deberá obrar con diligencia para hallar
+                        soluciones adecuadas.
+                    </li>
+                    <li>
+                        En ningún caso, todo aquello no incluido en el contrato
+                        de viaje combinado (como, por ejemplo, billetes de
+                        transporte desde el lugar de origen del pasajero hasta
+                        el lugar de salida del viaje, o viceversa, reservas de
+                        hotel en días previos o posteriores al viaje, etc.) será
+                        responsabilidad del Organizador, no existiendo
+                        obligación de indemnizar por esos posibles gastos de
+                        servicios independientes en caso de que el viaje se
+                        cancele por las causas previstas en el apartado e).
+                    </li>
+                    <li>
+                        Si los traslados/asistencia del hotel-aeropuerto o
+                        viceversa u otros similares, incluidos en la oferta, no
+                        se cumpliesen, fundamentalmente por causas ajenas al
+                        transferista y no imputables al Organizador, éste
+                        reembolsará el importe del transporte alternativo
+                        utilizado por el cliente en el desplazamiento, previa
+                        presentación del recibo o factura correspondiente.
+                    </li>
+                </ol>
+
+                <h2>
+                    7. OBLIGACIÓN DEL CONSUMIDOR DE COMUNICAR TODO
+                    INCUMPLIMIENTO EN LA EJECUCIÓN DEL CONTRATO
+                </h2>
+                <p>
+                    El consumidor está obligado a comunicar todo incumplimiento
+                    en la ejecución del contrato –preferentemente “in situ” o,
+                    en otro caso, a la mayor brevedad posible- por escrito o en
+                    cualquier otra forma en que quede constancia, al organizador
+                    o al detallista y, en su caso, al prestador del servicio de
+                    que se trate.
+                </p>
+                <p>
+                    En el caso de que las soluciones arbitradas por la Agencia
+                    –Organizador o Detallista– no sean satisfactorias para el
+                    consumidor, éste dispondrá del plazo de un mes para reclamar
+                    ante la Agencia detallista o el organizador, siempre a
+                    través de aquella. La Agencia detallista o el organizador
+                    dispondrán de cuarenta y cinco días naturales para dar
+                    respuesta a la reclamación planteada por el consumidor,
+                    plazo que comenzará a contarse a partir del día siguiente a
+                    la presentación de la reclamación ante la Agencia
+                    Detallista.
+                </p>
+
+                <h2>8. PRESCRIPCIÓN DE ACCIONES</h2>
+                <p>
+                    No obstante lo dispuesto en el apartado precedente, el plazo
+                    de prescripción de las acciones derivadas de los derechos
+                    reconocidos en el Real Decreto Legislativo 1/2007 de 16 de
+                    noviembre (B.O.E. 287 de 30-11-2007) será de dos años, según
+                    queda establecido en el Artículo 164 del citado Real
+                    Decreto.
+                </p>
+
+                <h2>9. RESPONSABILIDAD</h2>
+                <ul>
+                    <li><strong>General</strong></li>
+                </ul>
+                <p>
+                    La Agencia de Viajes Organizadora y la Detallista vendedora
+                    final del viaje responderán frente al consumidor y usuario,
+                    en función de las obligaciones que les correspondan por su
+                    ámbito respectivo de gestión del viaje combinado, del
+                    correcto cumplimiento de las obligaciones derivadas del
+                    contrato, con independencia de que éstas las deban ejecutar
+                    ellos mismos u otros prestadores de servicios, y sin
+                    perjuicio del derecho de los organizadores y detallistas a
+                    actuar contra dichos prestadores de servicios.
+                </p>
+                <p>
+                    La responsabilidad frente al consumidor será solidaria de
+                    cuantos empresarios, sean organizadores o detallistas,
+                    concurran conjuntamente en el contrato cualquiera que sea su
+                    clase y las relaciones que existan entre ellos, sin
+                    perjuicio del derecho de repetición de quien responda ante
+                    el consumidor y usuario frente a quien sea imputable el
+                    incumplimiento o cumplimiento defectuoso del contrato en
+                    función de su respectivo ámbito de gestión del viaje
+                    combinado.
+                </p>
+                <p>
+                    El Organizador manifiesta que asume las funciones de
+                    organización y ejecución del viaje.
+                </p>
+                <p>
+                    Los Organizadores y Detallistas de viajes combinados
+                    responderán de los daños sufridos por el consumidor y
+                    usuario como consecuencia de la no ejecución o ejecución
+                    deficiente del contrato. Dicha responsabilidad cesará cuando
+                    concurra alguna de las siguientes circunstancias:
+                </p>
+                <ol>
+                    <li>
+                        Que los defectos observados en la ejecución del contrato
+                        sean imputables al consumidor y usuario.
+                    </li>
+                    <li>
+                        Que dichos defectos sean imputables a un tercero ajeno
+                        al suministro de las prestaciones previstas en el
+                        contrato y revistan un carácter imprevisible o
+                        insuperable.
+                    </li>
+                    <li>
+                        Que los defectos aludidos se deban a motivos de fuerza
+                        mayor, entendiendo por tales aquellas circunstancias
+                        ajenas a quien las invoca, anormales e imprevisibles
+                        cuyas consecuencias no habrían podido evitarse, a pesar
+                        de haber actuado con la diligencia debida.
+                    </li>
+                    <li>
+                        Que los defectos se deban a un acontecimiento que el
+                        Detallista, o en su caso, el Organizador, a pesar de
+                        haber puesto toda la diligencia necesaria, no podía
+                        prever ni superar.
+                    </li>
+                </ol>
+                <p>
+                    No obstante, en los supuestos de exclusión de
+                    responsabilidad por darse alguna de las circunstancias
+                    previstas en los párrafos 2, 3 y 4 el Organizador y el
+                    Detallista que sean partes en el contrato estarán obligados
+                    a prestar la necesaria asistencia al consumidor y usuario
+                    que se encuentre en dificultades.
+                </p>
+                <ul>
+                    <li>
+                        <strong>Límites del resarcimiento por daños:</strong> En cuanto
+                        al límite del resarcimiento por los daños que resulten del
+                        incumplimiento o de la mala ejecución de las prestaciones
+                        incluidas en el viaje combinado, se estará a lo dispuesto
+                        en los Convenios Internacionales sobre la materia.
+                    </li>
+                </ul>
+
+                <h2>10. DELIMITACIÓN DE LOS SERVICIOS DEL VIAJE COMBINADO</h2>
+                <ol>
+                    <li>
+                        Viajes en avión. Presentación en el aeropuerto
+                        <ol>
+                            <li>
+                                En los viajes en avión, la presentación en el
+                                aeropuerto se efectuará con un mínimo de
+                                antelación de dos horas sobre el horario oficial
+                                de salida, y en todo caso se seguirán
+                                estrictamente las recomendaciones específicas
+                                que indique la documentación del viaje
+                                facilitada al suscribir el contrato. En la
+                                contratación de servicios sueltos, se recomienda
+                                que el cliente reconfirme con cuarenta y ocho
+                                horas de antelación los horarios de salida de
+                                los vuelos.
+                            </li>
+                        </ol>
+                    </li>
+                    <li>
+                        HOTELES
+                        <ol>
+                            <li>
+                                General: La calidad y contenido de los servicios
+                                prestados por el hotel vendrá determinada por la
+                                categoría turística oficial, si la hubiere,
+                                asignada por el órgano competente de su país.
+                                Dada la vigente legislación al respecto, que
+                                establece normalmente sólo la existencia de
+                                habitaciones individuales y dobles permitiendo
+                                que en algunas de estas últimas pueda
+                                habilitarse una tercera cama, se estimará
+                                siempre que la utilización de la tercera cama se
+                                hace con el conocimiento y consentimiento de las
+                                personas que ocupan la habitación. Esta tácita
+                                estimación deriva de la circunstancia cierta de
+                                haber sido advertidos previamente, así como de
+                                figurar reflejada la habitación como triple en
+                                todos los impresos de reservas facilitados al
+                                consumidor al abonar el anticipo, en el contrato
+                                y los billetes y/o documentación del viaje que
+                                se entrega simultáneamente a la firma del mismo.
+                                Igualmente en los casos de habitaciones dobles
+                                para uso de hasta cuatro personas, con cuatro
+                                camas, cuando así se especifique en la oferta
+                                del programa/folleto.
+                                <ul>
+                                    <li>
+                                        El horario habitual para la entrada y
+                                        salida en los hoteles está en función
+                                        del primer y último servicio que el
+                                        usuario vaya a utilizar. Como norma
+                                        general y salvo que expresamente se
+                                        pacte otra cosa en el contrato, las
+                                        habitaciones podrán ser utilizadas a
+                                        partir de las 14 horas del día de
+                                        llegada y deberán quedar libres antes de
+                                        las 12 horas del día de salida. Cuando
+                                        el servicio contratado no incluya el
+                                        acompañamiento permanente de guía y en
+                                        el supuesto de que el usuario prevea su
+                                        llegada al hotel o apartamento reservado
+                                        en fechas u horas distintas a las
+                                        reseñadas, es conveniente, para evitar
+                                        problemas y malas interpretaciones,
+                                        comunicar con la mayor anticipación
+                                        posible tal circunstancia a la Agencia
+                                        Organizadora, o al hotel o a los
+                                        apartamentos directamente, según los
+                                        casos. Igualmente, debe consultar a la
+                                        Agencia, en el momento de hacer la
+                                        reserva, la posibilidad de llevar
+                                        animales, pues generalmente no son
+                                        admitidos en los hoteles y apartamentos.
+                                    </li>
+                                    <li>
+                                        En el supuesto de haber confirmado la
+                                        admisión de animales y se pretenda
+                                        viajar con ellos, tal circunstancia
+                                        deberá hacerse constar en el contrato.
+                                    </li>
+                                    <li>
+                                        El servicio de alojamiento implicará que
+                                        la habitación esté disponible en la
+                                        noche correspondiente, entendiéndose
+                                        prestado con independencia de que, por
+                                        circunstancias propias del viaje
+                                        combinado, el horario de entrada en el
+                                        mismo se produzca más tarde de lo
+                                        inicialmente previsto.
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                Otros Servicios
+                                <ul>
+                                    <li>
+                                        En los vuelos cuya llegada al punto de
+                                        destino se realice después de las 12.00
+                                        horas, el primer servicio del hotel,
+                                        cuando esté incluido en la oferta del
+                                        programa/folleto, será la cena.
+                                        Igualmente, en los vuelos cuya llegada
+                                        al punto de destino se realice después
+                                        de las 19.00 horas, el primer servicio
+                                        del hotel será el alojamiento.
+                                    </li>
+                                    <li>
+                                        Se entenderá siempre como trayecto aéreo
+                                        directo aquel cuyo soporte documental
+                                        sea un solo cupón de vuelo, con
+                                        independencia de que el vuelo realice
+                                        alguna parada técnica.
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                Servicios Suplementarios
+                                <ul>
+                                    <li>
+                                        Cuando los usuarios soliciten servicios
+                                        suplementarios (por ejemplo habitación
+                                        vista al mar, etc.) que no les puedan
+                                        ser confirmados definitivamente por la
+                                        Agencia Organizadora, el usuario podrá
+                                        optar por desistir definitivamente del
+                                        servicio suplementario solicitado o
+                                        mantener su solicitud a la espera de que
+                                        tales servicios puedan finalmente serle
+                                        prestados. En el supuesto de que las
+                                        partes hubieran convenido el pago previo
+                                        del precio de los servicios
+                                        suplementarios que finalmente no le
+                                        puedan ser prestados, el importe abonado
+                                        le será reembolsado por la Agencia
+                                        detallista inmediatamente al
+                                        desistimiento del servicio por parte del
+                                        consumidor o al regreso del viaje, según
+                                        el usuario haya optado por el
+                                        desistimiento en la prestación del
+                                        servicio suplementario solicitado o haya
+                                        mantenido la solicitud.
+                                    </li>
+                                </ul>
+                            </li>
+                        </ol>
+                    </li>
+                    <li>
+                        APARTAMENTOS
+                        <ul>
+                            <li>
+                                Al efectuar la reserva, el cliente es plena y
+                                exclusivamente responsable de hacer la
+                                declaración correcta del número de personas que
+                                ha de ocupar el apartamento, sin omitir los
+                                niños cualesquiera que sea su edad. Se advierte
+                                que la administración de los apartamentos puede
+                                legalmente negarse a admitir la entrada de
+                                aquellas personas no declaradas, no habiendo
+                                lugar a reclamación alguna por esa causa. En
+                                algunos casos hay posibilidad de habilitar
+                                cama/s supletoria/s o cunas, que deberán ser
+                                solicitadas por los clientes antes de
+                                perfeccionarse el contrato, y que salvo expresa
+                                mención en contrario, no estarán incluidas en el
+                                precio publicado del apartamento. Del mismo
+                                modo, el cliente y consumidor reconoce haber
+                                sido informado sobre la existencia de distinta
+                                normativa propia de cada Comunidad Autónoma
+                                sobre la contratación de apartamentos y
+                                bungalows donde se recogen distintos gastos de
+                                anulación en función de los plazos del
+                                desistimiento por la contratación de estos
+                                servicios.
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        CONDICIONES ECONÓMICAS ESPECIALES PARA NIÑOS
+                        <ul>
+                            <li>
+                                Dada la diversidad del tratamiento aplicable a
+                                los niños, dependiendo de su edad, del proveedor
+                                de servicios y de la fecha del viaje, se
+                                recomienda consultar siempre el alcance de las
+                                condiciones especiales que existan y que en cada
+                                momento serán objeto de información concreta y
+                                detallada y se recogerá en el contrato o en la
+                                documentación del viaje que se entregue en el
+                                momento de su firma. En general, en cuanto al
+                                alojamiento, serán aplicables siempre que el
+                                niño comparta la habitación con dos adultos.
+                            </li>
+                            <li>
+                                En lo referente a estancias de menores en el
+                                extranjero se estará a la información facilitada
+                                puntualmente para cada caso y a lo que pueda
+                                constar en el contrato o en la documentación del
+                                viaje que se entregue al suscribirlo.
+                            </li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <h2>11. PASAPORTES, VISADOS Y DOCUMENTACIÓN</h2>
+                <p>
+                    Todos los usuarios, sin excepción (niños incluidos), deberán
+                    llevar en regla su documentación personal y familiar
+                    correspondiente, sea el pasaporte o D.N.I., según las leyes
+                    del país o países que se visitan. Será por cuenta de los
+                    mismos cuando los viajes así lo requieran la obtención de
+                    visados, pasaportes, certificados de vacunación, etc.
+                </p>
+                <p>
+                    La información de índole general sobre las condiciones
+                    aplicables a los nacionales de los Estados miembros de la
+                    Unión Europea en materia de pasaportes y de visados, y las
+                    formalidades sanitarias necesarias para el viaje y la
+                    estancia sí será asumida o por la agencia de viajes
+                    minorista o mayorista.
+                </p>
+                <p>
+                    Caso de ser rechazada por alguna Autoridad la concesión de
+                    visados, por causas particulares del usuario, o ser denegada
+                    su entrada en el país por carecer de los requisitos que se
+                    exigen, o por defecto en la documentación exigida, o por no
+                    ser portador de la misma, la Agencia Organizadora declina
+                    toda responsabilidad por hechos de esta índole, siendo por
+                    cuenta del consumidor cualquier gasto que se origine,
+                    aplicándose en estas circunstancias las condiciones y normas
+                    establecidas para los supuestos de desistimiento voluntario
+                    de servicios. Se recuerda igualmente a todos los usuarios, y
+                    en especial a los que posean nacionalidad distinta a la
+                    española, que deben asegurarse, antes de iniciar el viaje,
+                    de tener cumplidas todas las normas y requisitos aplicables
+                    en materia de visados a fin de poder entrar sin problemas en
+                    todos los países que vayan a visitarse. Los menores de 18
+                    años deben llevar un permiso escrito firmado por sus padres
+                    o tutores, en previsión de que el mismo pueda ser solicitado
+                    por cualquier autoridad.
+                </p>
+                <p>
+                    Para cualquier información al respecto, el Ministerio de
+                    Asuntos Exteriores dispone de un servicio de recomendaciones
+                    específicas que se podrán consultar a través de la página
+                    web www.exteriores.gob.es&nbsp;Para ciudadanos de otros
+                    estados deberán consultar con su embajada o consulado. Así
+                    mismo para aquellos pasajeros que viajen a EE.UU. deberán
+                    tener actualizado el pasaporte electrónico y rellenar el
+                    formulario y autorización de viaje ESTA requisito de viaje
+                    solicitado por el Gobierno de los EE.UU. a partir del 20 de
+                    Marzo de 2010 con carácter obligatorio, a rellenar por el
+                    pasajero en: https://esta.cbp.dhs.gov/esta/esta.html
+                </p>
+
+                <h2>12. EQUIPAJES</h2>
+                <p>
+                    A todos los efectos y en cuanto al transporte terrestre se
+                    refiere, se entenderá que el equipaje y demás enseres
+                    personales del usuario los conserva consigo, cualquiera que
+                    sea la parte del vehículo en que vayan colocados, y que se
+                    transporta por cuenta y riesgo del usuario. Se recomienda a
+                    los usuarios que estén presentes en todas las manipulaciones
+                    de carga y descarga de los equipajes. En cuanto al
+                    transporte aéreo, ferroviario, marítimo o fluvial de
+                    equipaje, son de aplicación las condiciones de las compañías
+                    transportadoras, siendo el billete de pasaje el documento
+                    vinculante entre las citadas compañías y el pasajero. En el
+                    supuesto de sufrir algún daño o extravío el consumidor
+                    deberá presentar, en el acto, la oportuna reclamación a la
+                    Compañía de Transportes.
+                </p>
+
+                <h2>
+                    13. INFORMACIÓN QUE LA AGENCIA DETALLISTA DEBE FACILITAR AL
+                    CONSUMIDOR
+                </h2>
+                <p>
+                    Se informa al consumidor que en el momento de la
+                    formalización del contrato deberá recibir de la Agencia
+                    Detallista la información pertinente sobre la documentación
+                    específica necesaria para el viaje elegido. Especialmente
+                    sobre precio, contenido de los servicios, alcance
+                    obligacional de las condiciones del contrato, posibilidades
+                    y procedimiento de cancelación, los horarios y lugares de
+                    las escalas y los enlaces, así como la indicación de la
+                    categoría del lugar que deberá ocupar el viajero en el medio
+                    o medios de transporte que vayan a ser utilizados, los
+                    números de teléfono de la representación consular de España
+                    en destinos e igualmente el número de atención 24 horas de
+                    la organizadora, así como, asesoramiento sobre la
+                    suscripción facultativa de un seguro que le cubra de los
+                    gastos de cancelación y/o de un seguro de asistencia que
+                    cubra los gastos de repatriación en caso de accidente,
+                    enfermedad o fallecimiento; e información de los riesgos
+                    probables implícitos al destino y al viaje contratado, en
+                    cumplimiento de la Ley 1/2007 General de Defensa de
+                    Consumidores y Usuarios.
+                </p>
+
+                <h2>14. VIGENCIA.</h2>
+                <p>
+                    La vigencia del programa/folleto será 10 de Abril de 2013 al
+                    31 de Diciembre de 2013.
+                </p>
+                <p>Fecha de edición: 10 de Abril de 2013.</p>
+                <p><strong>INFORMACIÓN ADICIONAL</strong></p>
+                <ol>
+                    <li>
+                        <strong>Vuelos en Conexión:</strong> Cuando no exista conexión
+                        desde la ciudad de origen del cliente a las de inicio del
+                        vuelo internacional, los gastos que origine la pernoctación
+                        correrán por cuenta del cliente.
+                    </li>
+                    <li>
+                        <strong>Derecho de Admisión/Expulsión:</strong> El buen desarrollo
+                        del viaje está en función de un grado normal de armonía en
+                        la convivencia del grupo, por lo que podrá ser excluido del
+                        grupo aquel integrante de él que perturbe o perjudique tal
+                        convivencia.
+                    </li>
+                    <li>
+                        <strong>Circuitos:</strong> La Agencia Organizadora pone en
+                        conocimiento de los clientes, que en los circuitos especificados
+                        en el folleto, el servicio de alojamiento se prestará en alguno
+                        de los establecimientos relacionados en el mismo o en otro
+                        de igual categoría y zona si no existe disponibilidad en los
+                        primeros o se procede a un cambio de itinerario que así lo
+                        exija. Igualmente el itinerario del circuito podrá ser desarrollado
+                        según alguna de las opciones descritas en el programa/oferta.
+                        Esta identificación no supondrá modificación del contrato.
+                    </li>
+                    <li>
+                        <strong>Documentaciones:</strong> En los viajes en grupo,
+                        por razones de organización y seguridad, el guía será el portador
+                        de la documentación acreditativa de las reservas de alojamiento,
+                        billetes aéreos y demás servicios a prestar. En los viajes
+                        individuales dicha documentación será entregada al cliente
+                        antes de la fecha de salida.
+                    </li>
+                    <li>
+                        <strong>Viajes en Grupo:</strong> Los precios de los viajes
+                        en grupo están basados en un mínimo concreto de personas según
+                        cada caso o destino y comunicado por el Organizador al Detallista
+                        al realizar la contratación, realizando juntas la totalidad
+                        del itinerario desde el punto de consolidación. Consulte las
+                        características particulares de cada viaje. El hecho de que
+                        el grupo viaje con número de personas mayor al mínimo no implica
+                        reducción alguna del precio.
+                    </li>
+                    <li>
+                        <strong>Aceptación:</strong> El hecho de formar parte de cualquiera
+                        de los viajes incluidos en este catálogo, web o aquellos a
+                        los que se refieran a estas Condiciones Generales, implican
+                        el conocimiento y aceptación por parte de los viajeros de
+                        todas y cada una de las Condiciones Generales, por lo que
+                        el consumidor declara haber recibido toda la información oportuna.
+                    </li>
+                </ol>
+            </div>
+        </main>
+        <Footer />
+    </body>
+</html>

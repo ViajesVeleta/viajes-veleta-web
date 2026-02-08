@@ -1,0 +1,114 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import PageHero from "../components/PageHero.astro";
+import Footer from "../components/Footer.astro";
+import ContentFallback from "../components/ContentFallback.astro";
+import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
+
+const title = "Política de privacidad";
+
+// Detect if this was accessed via language fallback
+const urlParams = Astro.url.searchParams;
+const isFallback = urlParams.get("lang") === "en"; // User wants English but viewing Spanish content
+---
+
+<!doctype html>
+<html lang="es">
+    <head>
+        <BaseHead
+            title={`${title} - ${SITE_TITLE}`}
+            description={SITE_DESCRIPTION}
+        />
+        <style>
+            main {
+                width: 100%;
+                max-width: 900px;
+                margin: 0 auto;
+                padding: 4rem 1.5rem;
+                line-height: 1.7;
+                color: var(--gray-dark);
+            }
+            .legal-content p {
+                margin-bottom: 1.5rem;
+                text-align: justify;
+            }
+        </style>
+    </head>
+    <body>
+        <Header isOverlay={true} />
+        <PageHero title={title} />
+        <main>
+            {
+                isFallback && (
+                    <ContentFallback
+                        availableIn="es"
+                        fallbackPath="/politica-privacidad"
+                    />
+                )
+            }
+            <div class="legal-content">
+                <p>
+                    En cumplimiento de lo establecido en el artículo 5 de la Ley
+                    Orgánica 15/1999, de 13 de diciembre, de Protección de Datos
+                    de Carácter Personal (en adelante LOPD), Viajes Veleta S.
+                    L., Guadix, Calle Poetisa Hafsa 3, C. P: 18500 (ESPAÑA),
+                    sociedad propietaria del dominio www.viajesveleta.net, en
+                    adelante LA EMPRESA, le informa que los datos de carácter
+                    personal que nos proporcione mediante la cumplimentación de
+                    cualquier formulario de registro electrónico que aparece en
+                    nuestra página web, así como los datos a los que LA EMPRESA
+                    acceda como consecuencia de su navegación, consulta,
+                    solicitud u operación realizada a través de la página web de
+                    www.viajesveleta.net, serán recogidos en un fichero cuyo
+                    responsable es la EMPRESA. Usted podrá ejercer sus derechos
+                    de acceso, rectificación, cancelación y oposición al
+                    tratamiento de sus datos personales, en los términos y
+                    condiciones previstos en la propia LOPD en las instalaciones
+                    de la Sociedad.
+                </p>
+                <p>
+                    Para su mayor comodidad, la EMPRESA le ofrece la posibilidad
+                    de ejercer los derechos antes referidos mediante la
+                    siguiente dirección de correo electrónico <strong
+                        >guadix@viajesveleta.net</strong
+                    >.
+                </p>
+                <p>
+                    Le rogamos comunique de forma inmediata a la EMPRESA
+                    cualquier modificación de sus datos de forma que la
+                    información recogida dentro de los ficheros de la EMPRESA
+                    esté en todo momento actualizada y no contenga errores.
+                    Asimismo, con la aceptación del presente Aviso Legal, Usted
+                    reconoce que la información y los datos facilitados a la
+                    EMPRESA son exactos y veraces.
+                </p>
+                <p>
+                    En el supuesto de no cumplimentar o cumplimentar
+                    parcialmente los datos de carácter personal de carácter
+                    obligatorio solicitados en cualquier formulario de registro
+                    electrónico podría suponer que la EMPRESA no pudiera atender
+                    su solicitud.
+                </p>
+                <p>
+                    La finalidad de la recogida de sus datos es la que
+                    particularmente se indique en cada uno de los apartados en
+                    los que se encuentre el formulario de registro electrónico.
+                    Con carácter general, los datos de carácter personal que
+                    Usted proporcione a la EMPRESA se tratarán con la finalidad
+                    de prestarle los servicios que Ud. en cada caso solicite y
+                    gestionar y agilizar la relación de la EMPRESA con sus
+                    clientes. Asimismo Ud. consiente que sus datos sean tratados
+                    con la finalidad de registrar y dar cumplimiento a los
+                    premios que, en su caso, pueda obtener a través de los
+                    sorteos y promociones ofrecidos por la EMPRESA En este
+                    sentido, Ud. consiente que los referidos datos sean tratados
+                    por la EMPRESA para remitirle información comercial relativa
+                    a la actividad desarrollada por dicha Sociedad, así como,
+                    sobre las promociones ofrecidas por la EMPRESA.
+                </p>
+            </div>
+        </main>
+        <Footer />
+    </body>
+</html>
