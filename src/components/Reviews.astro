@@ -405,7 +405,8 @@ const sortedReviews = reviews.sort(
         }
 
         .reviews-carousel {
-            height: 400px;
+            height: 580px;
+            padding-bottom: 80px;
         }
 
         .review-card {
@@ -414,10 +415,22 @@ const sortedReviews = reviews.sort(
         }
 
         .nav-buttons {
+            position: absolute;
             top: auto;
-            bottom: 80px;
-            right: 50%;
-            transform: translateX(50%);
+            bottom: 0;
+            left: 50%;
+            right: auto;
+            transform: translateX(-50%);
+        }
+
+        .nav-button {
+            width: 44px;
+            height: 44px;
+            font-size: 1rem;
+        }
+
+        .pagination-dots {
+            bottom: 70px;
         }
 
         .review-company {
