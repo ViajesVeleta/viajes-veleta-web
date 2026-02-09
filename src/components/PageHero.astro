@@ -1,6 +1,11 @@
 ---
 import { Image } from "astro:assets";
 import { getDynamicImage } from "../utils/images";
+import {
+    getLangFromUrl,
+    useTranslations,
+    useTranslatedPath,
+} from "../i18n/utils";
 
 interface Props {
     title: string;
@@ -11,6 +16,10 @@ const { title, heroImage } = Astro.props;
 const heroBg = heroImage
     ? getDynamicImage(heroImage)
     : getDynamicImage("blog-hero");
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const translatePath = useTranslatedPath(lang);
 ---
 
 <div class="page-hero">
@@ -32,7 +41,7 @@ const heroBg = heroImage
         <h1>{title}</h1>
         <nav class="breadcrumb" aria-label="Breadcrumb">
             <ol>
-                <li><a href="/">Inicio</a></li>
+                <li><a href={translatePath("/")}>{t("nav.home")}</a></li>
                 <li class="separator">&gt;</li>
                 <li class="current" aria-current="page">{title}</li>
             </ol>

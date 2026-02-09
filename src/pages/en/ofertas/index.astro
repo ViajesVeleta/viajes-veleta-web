@@ -7,11 +7,20 @@ import FormattedDate from "../../../components/FormattedDate.astro";
 import Header from "../../../components/Header.astro";
 import PageHero from "../../../components/PageHero.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../../../consts";
-import { getLangFromUrl, useTranslatedPath } from "../../../i18n/utils";
+import {
+    getLangFromUrl,
+    useTranslatedPath,
+    useTranslations,
+} from "../../../i18n/utils";
 
 const lang = getLangFromUrl(Astro.url);
-
+const t = useTranslations(lang);
 const translatePath = useTranslatedPath(lang);
+
+const translatedPaths = {
+    es: "/ofertas",
+    en: "/en/ofertas",
+};
 
 const posts = (
     await getCollection("offers", ({ id }) => {
@@ -24,8 +33,9 @@ const posts = (
 <html lang={lang}>
     <head>
         <BaseHead
-            title={`Ofertas - ${SITE_TITLE}`}
+            title={`${t("nav.offers")} - ${SITE_TITLE}`}
             description={SITE_DESCRIPTION}
+            translatedPaths={translatedPaths}
         />
         <script>
             import { FastAverageColor } from "fast-average-color";
@@ -194,8 +204,8 @@ const posts = (
         </style>
     </head>
     <body>
-        <Header isOverlay={true} />
-        <PageHero title="Ofertas" />
+        <Header isOverlay={true} translatedPaths={translatedPaths} />
+        <PageHero title={t("nav.offers")} heroImage="ofertas" />
         <main>
             <section>
                 <ul>
@@ -228,6 +238,7 @@ const posts = (
                                         <p class="date">
                                             <FormattedDate
                                                 date={post.data.pubDate}
+                                                locale={lang}
                                             />
                                         </p>
                                     </div>
