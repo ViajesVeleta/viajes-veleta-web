@@ -1,13 +1,16 @@
 ---
 import { Image } from "astro:assets";
 import { getDynamicImage } from "../utils/images";
-const heroBg = getDynamicImage("blog-hero");
 
 interface Props {
     title: string;
+    heroImage?: string;
 }
 
-const { title } = Astro.props;
+const { title, heroImage } = Astro.props;
+const heroBg = heroImage
+    ? getDynamicImage(heroImage)
+    : getDynamicImage("blog-hero");
 ---
 
 <div class="page-hero">

@@ -79,11 +79,6 @@ const sortedReviews = reviews.sort(
         let currentIndex = 0;
         const totalCards = cards.length;
 
-        // Arc configuration
-        const arcRadius = 600; // Radius of the arc
-        const arcSpread = 140; // Total degrees of arc spread
-        const centerAngle = 90; // Center position (straight ahead)
-
         function updateCarousel() {
             const maxVisible = 3; // Show max 3 cards at once
 
@@ -147,10 +142,6 @@ const sortedReviews = reviews.sort(
 
         function nextSlide() {
             goToSlide(currentIndex + 1);
-        }
-
-        function prevSlide() {
-            goToSlide(currentIndex - 1);
         }
 
         // Event listeners for dots
