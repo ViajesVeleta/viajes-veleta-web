@@ -50,7 +50,7 @@ const translatePath = useTranslatedPath(currentLang);
 		const isSpanishPath = !isEnglishPath;
 
 		// If user prefers English but is on Spanish page, redirect to English equivalent
-		if (stored === "en" && isSpanishPath && currentPath !== "/contacto") {
+		if (stored === "en" && isSpanishPath) {
 			// Try to go to English version
 			const englishPath = "/en" + currentPath;
 			window.location.href = englishPath;
