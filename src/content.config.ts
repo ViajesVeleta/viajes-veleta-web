@@ -51,4 +51,13 @@ const offers = defineCollection({
 	schema: commonSchema,
 });
 
-export const collections = { blog, groups, offers };
+const reviews = defineCollection({
+	loader: glob({ base: './src/content/reviews', pattern: '**/*.{md,mdx}' }),
+	schema: z.object({
+		name: z.string(),
+		role: z.string(),
+		pubDate: z.coerce.date(),
+	}),
+});
+
+export const collections = { blog, groups, offers, reviews };

@@ -1,0 +1,432 @@
+---
+import { getCollection, render } from "astro:content";
+import { getLangFromUrl } from "../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
+const reviews = await getCollection("reviews", ({ id }) =>
+    id.startsWith(`${lang}/`),
+);
+
+// Sort reviews by date descending
+const sortedReviews = reviews.sort(
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+---
+
+<section class="reviews-section">
+    <div class="container">
+        <h2 class="section-title">Lo que dicen nuestros clientes</h2>
+
+        <div class="reviews-carousel">
+            <!-- Navigation Buttons -->
+            <div class="nav-buttons">
+                <button
+                    class="nav-button nav-prev"
+                    id="reviews-prev"
+                    aria-label="Anterior"
+                >
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button
+                    class="nav-button nav-next"
+                    id="reviews-next"
+                    aria-label="Siguiente"
+                >
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+
+            <!-- Reviews Container -->
+            <div class="reviews-container">
+                {
+                    sortedReviews.map(async (review, index) => {
+                        const { Content } = await render(review);
+                        return (
+                            <div class="review-card" data-index={index}>
+                                <div class="review-content">
+                                    <h3 class="review-company">
+                                        {review.data.name}
+                                    </h3>
+                                    <div class="review-text">
+                                        <Content />
+                                    </div>
+                                    <div class="review-author">
+                                        <div class="author-avatar">
+                                            <i class="fa-solid fa-user" />
+                                        </div>
+                                        <div class="author-info">
+                                            <div class="author-name">
+                                                {review.data.name}
+                                            </div>
+                                            <div class="author-role">
+                                                Cliente
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })
+                }
+            </div>
+
+            <!-- Pagination Dots -->
+            <div class="pagination-dots">
+                {
+                    sortedReviews.map((_, index) => (
+                        <button
+                            class={`dot ${index === 0 ? "active" : ""}`}
+                            data-index={index}
+                            aria-label={`Ir a reseña ${index + 1}`}
+                        />
+                    ))
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function initReviewsCarousel() {
+        const container = document.querySelector(".reviews-container");
+        const cards = document.querySelectorAll(".review-card");
+        const dots = document.querySelectorAll(".pagination-dots .dot");
+        const prevBtn = document.getElementById("reviews-prev");
+        const nextBtn = document.getElementById("reviews-next");
+
+        if (!container || cards.length === 0) return;
+
+        let currentIndex = 0;
+        const totalCards = cards.length;
+
+        // Arc configuration
+        const arcRadius = 600; // Radius of the arc
+        const arcSpread = 140; // Total degrees of arc spread
+        const centerAngle = 90; // Center position (straight ahead)
+
+        function updateCarousel() {
+            const maxVisible = 3; // Show max 3 cards at once
+
+            cards.forEach((card, index) => {
+                const offset = index - currentIndex;
+                const absOffset = Math.abs(offset);
+
+                // Only show cards within range
+                if (absOffset > Math.floor(maxVisible / 2)) {
+                    (card as HTMLElement).style.opacity = "0";
+                    (card as HTMLElement).style.pointerEvents = "none";
+                    (card as HTMLElement).style.transform =
+                        "translate3d(0, 0, -500px) scale(0.5)";
+                    return;
+                }
+
+                // Calculate horizontal position (spread cards horizontally)
+                const spacing = 420; // Space between cards
+                const x = offset * spacing;
+
+                // Calculate vertical arc (cards on sides go down)
+                const y = absOffset * absOffset * 40; // Parabolic curve
+
+                // Calculate depth (center card forward, sides back)
+                const z = -absOffset * 150;
+
+                // Scale: center is 1, sides are smaller
+                const scale = Math.max(0.75, 1 - absOffset * 0.15);
+
+                // Opacity: center is 1, sides fade
+                const opacity = Math.max(0.5, 1 - absOffset * 0.25);
+
+                // Rotation: slight tilt for depth
+                const rotateY = offset * -10;
+
+                // Z-index: center card on top
+                const zIndex = 100 - absOffset * 10;
+
+                // Apply transforms
+                (card as HTMLElement).style.transform = `
+                    translate3d(${x}px, ${y}px, ${z}px)
+                    scale(${scale})
+                    rotateY(${rotateY}deg)
+                `;
+                (card as HTMLElement).style.opacity = opacity.toString();
+                (card as HTMLElement).style.zIndex = zIndex.toString();
+                (card as HTMLElement).style.pointerEvents =
+                    offset === 0 ? "auto" : "none";
+            });
+
+            // Update dots
+            dots.forEach((dot, index) => {
+                dot.classList.toggle("active", index === currentIndex);
+            });
+        }
+
+        function goToSlide(index: number) {
+            currentIndex = (index + totalCards) % totalCards;
+            updateCarousel();
+        }
+
+        function nextSlide() {
+            goToSlide(currentIndex + 1);
+        }
+
+        function prevSlide() {
+            goToSlide(currentIndex - 1);
+        }
+
+        // Event listeners
+        prevBtn?.addEventListener("click", prevSlide);
+        nextBtn?.addEventListener("click", nextSlide);
+
+        dots.forEach((dot, index) => {
+            dot.addEventListener("click", () => goToSlide(index));
+        });
+
+        // Auto-play
+        let autoplayInterval = setInterval(nextSlide, 5000);
+
+        container.addEventListener("mouseenter", () => {
+            clearInterval(autoplayInterval);
+        });
+
+        container.addEventListener("mouseleave", () => {
+            autoplayInterval = setInterval(nextSlide, 5000);
+        });
+
+        // Initialize
+        updateCarousel();
+    }
+
+    document.addEventListener("astro:page-load", initReviewsCarousel);
+    initReviewsCarousel();
+</script>
+
+<style>
+    .reviews-section {
+        padding: 100px 0;
+        background-color: var(--neutral-white);
+        overflow: hidden;
+    }
+
+    [data-theme="dark"] .reviews-section {
+        background-color: var(--surface);
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 40px;
+    }
+
+    .section-title {
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: 400;
+        color: var(--on-surface);
+        margin-bottom: 80px;
+        letter-spacing: 0.5px;
+    }
+
+    .reviews-carousel {
+        position: relative;
+        width: 100%;
+        height: 550px;
+        margin-top: 40px;
+    }
+
+    .nav-buttons {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        display: flex;
+        gap: 12px;
+        z-index: 200;
+    }
+
+    .nav-button {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background-color: var(--neutral-white);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        color: var(--on-surface);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1.1rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    [data-theme="dark"] .nav-button {
+        background-color: var(--surface-container-high);
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-button:hover {
+        background-color: var(--primary);
+        color: var(--on-primary);
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        border-color: transparent;
+    }
+
+    .reviews-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        perspective: 1500px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: visible;
+    }
+
+    .review-card {
+        position: absolute;
+        width: 400px;
+        background-color: var(--neutral-white);
+        border-radius: 16px;
+        padding: 40px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        transition: all 0.7s cubic-bezier(0.34, 1.2, 0.64, 1);
+        transform-style: preserve-3d;
+        backface-visibility: hidden;
+        will-change: transform, opacity;
+    }
+
+    [data-theme="dark"] .review-card {
+        background-color: var(--surface-container);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .review-company {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--on-surface);
+        margin-bottom: 20px;
+    }
+
+    .review-text {
+        font-size: 1rem;
+        line-height: 1.7;
+        color: var(--on-surface-variant);
+        margin-bottom: 30px;
+        min-height: 120px;
+    }
+
+    .review-text :global(p) {
+        margin: 0;
+    }
+
+    .review-author {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding-top: 20px;
+        border-top: 1px solid var(--outline-variant);
+    }
+
+    .author-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--on-primary);
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+
+    .author-info {
+        flex: 1;
+    }
+
+    .author-name {
+        font-weight: 600;
+        color: var(--on-surface);
+        font-size: 1rem;
+        margin-bottom: 4px;
+    }
+
+    .author-role {
+        font-size: 0.875rem;
+        color: var(--on-surface-variant);
+        opacity: 0.7;
+    }
+
+    .pagination-dots {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 12px;
+        z-index: 200;
+    }
+
+    .dot {
+        width: 40px;
+        height: 4px;
+        border-radius: 2px;
+        background-color: var(--outline-variant);
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        padding: 0;
+    }
+
+    .dot.active {
+        background-color: var(--primary);
+        width: 60px;
+    }
+
+    .dot:hover:not(.active) {
+        background-color: var(--outline);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .review-card {
+            width: 380px;
+        }
+
+        .reviews-carousel {
+            height: 450px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 60px;
+        }
+
+        .reviews-carousel {
+            height: 400px;
+        }
+
+        .review-card {
+            width: 320px;
+            padding: 30px;
+        }
+
+        .nav-buttons {
+            top: auto;
+            bottom: 80px;
+            right: 50%;
+            transform: translateX(50%);
+        }
+
+        .review-company {
+            font-size: 1.1rem;
+        }
+
+        .review-text {
+            font-size: 0.95rem;
+            min-height: 100px;
+        }
+    }
+</style>
