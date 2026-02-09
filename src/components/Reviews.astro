@@ -150,15 +150,45 @@ const sortedReviews = reviews.sort(
             dot.addEventListener("click", () => goToSlide(index));
         });
 
-        // Auto-play
-        let autoplayInterval = setInterval(nextSlide, 5000);
+        // Auto-play logic with IntersectionObserver
+        let autoplayInterval: ReturnType<typeof setInterval> | undefined;
 
-        container.addEventListener("mouseenter", () => {
-            clearInterval(autoplayInterval);
-        });
+        function startAutoplay() {
+            if (!autoplayInterval) {
+                autoplayInterval = setInterval(nextSlide, 5000);
+            }
+        }
 
+        function stopAutoplay() {
+            if (autoplayInterval) {
+                clearInterval(autoplayInterval);
+                autoplayInterval = undefined;
+            }
+        }
+
+        // Intersection Observer to only play when visible
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        startAutoplay();
+                    } else {
+                        stopAutoplay();
+                    }
+                });
+            },
+            { threshold: 0.2 },
+        );
+
+        observer.observe(container);
+
+        // Pause on hover
+        container.addEventListener("mouseenter", stopAutoplay);
         container.addEventListener("mouseleave", () => {
-            autoplayInterval = setInterval(nextSlide, 5000);
+            // Only restart if still visible
+            if (document.visibilityState === "visible") {
+                startAutoplay();
+            }
         });
 
         // Initialize
