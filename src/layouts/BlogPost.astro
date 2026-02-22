@@ -10,6 +10,11 @@ import {
 	useTranslatedPath,
 } from "../i18n/utils";
 import { getDynamicImage } from "../utils/images";
+import {
+	getPostNavigation,
+	getRelatedPosts,
+	getPostUrl,
+} from "../utils/postUtils";
 
 const {
 	title,
@@ -19,6 +24,8 @@ const {
 	heroImage,
 	tags,
 	translatedPaths,
+	id,
+	collection,
 } = Astro.props;
 
 const resolvedHeroImage =
@@ -27,6 +34,24 @@ const resolvedHeroImage =
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const translatePath = useTranslatedPath(lang);
+
+let nextPost: any = null;
+let prevPost: any = null;
+let relatedPosts: any[] = [];
+
+if (collection && id) {
+	const nav = await getPostNavigation(collection, id, lang);
+	nextPost = nav.nextPost;
+	prevPost = nav.prevPost;
+
+	const mockPost = { id, data: { tags } } as any;
+	relatedPosts = await getRelatedPosts(collection, mockPost, lang, 3);
+}
+
+const isEs = lang === "es";
+const prevLabel = isEs ? "ENTRADA ANTERIOR" : "PREVIOUS ENTRY";
+const nextLabel = isEs ? "ENTRADA SIGUIENTE" : "NEXT ENTRY";
+const relatedLabel = isEs ? "Entradas relacionadas" : "Related entries";
 ---
 
 <html lang={lang} dir="ltr">
@@ -126,6 +151,98 @@ const translatePath = useTranslatedPath(lang);
 				background: var(--primary);
 				color: var(--on-primary);
 			}
+			.post-navigation-wrapper {
+				max-width: 1000px;
+				margin: 4rem auto;
+				padding: 0 1rem;
+			}
+			.post-navigation {
+				display: flex;
+				justify-content: space-between;
+			}
+			.nav-link {
+				display: flex;
+				align-items: center;
+				gap: 1rem;
+				text-decoration: none;
+				color: var(--on-surface);
+				max-width: 45%;
+				transition: color 0.2s ease;
+			}
+			.nav-link:hover {
+				color: var(--primary);
+			}
+			.nav-link.next {
+				text-align: right;
+				flex-direction: row-reverse;
+				margin-left: auto;
+			}
+			.nav-content {
+				display: flex;
+				flex-direction: column;
+			}
+			.nav-label {
+				font-size: 0.8rem;
+				color: var(--on-surface-variant);
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
+				margin-bottom: 0.25rem;
+			}
+			.nav-title {
+				font-size: 1.1rem;
+				font-weight: 400;
+			}
+			.nav-chevron {
+				color: var(--on-surface-variant);
+				width: 32px;
+				height: 32px;
+				opacity: 0.5;
+			}
+
+			.related-posts {
+				background: var(--surface-container-low);
+				padding: 4rem 1rem;
+				margin-top: 4rem;
+			}
+			.related-posts-inner {
+				max-width: 1000px;
+				margin: auto;
+			}
+			.related-posts h2 {
+				font-size: 1.8rem;
+				font-weight: 300;
+				margin-bottom: 2rem;
+				color: var(--on-surface);
+			}
+			.related-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+				gap: 2rem;
+			}
+			.related-card {
+				text-decoration: none;
+				color: var(--on-surface);
+				transition: transform 0.2s ease;
+			}
+			.related-card:hover {
+				transform: translateY(-5px);
+			}
+			.related-img {
+				width: 100%;
+				aspect-ratio: 16/10;
+				object-fit: cover;
+				margin-bottom: 1rem;
+				display: block;
+			}
+			.related-card h3 {
+				font-size: 1.1rem;
+				font-weight: 400;
+				margin: 0 0 0.5rem 0;
+			}
+			.related-card time {
+				font-size: 0.9rem;
+				color: var(--on-surface-variant);
+			}
 		</style>
 	</head>
 
@@ -184,6 +301,139 @@ const translatePath = useTranslatedPath(lang);
 					</div>
 					<slot />
 				</div>
+
+				{
+					collection && id && (
+						<div class="post-footer">
+							{(prevPost || nextPost) && (
+								<div class="post-navigation-wrapper">
+									<div class="post-navigation">
+										{prevPost ? (
+											<a
+												href={getPostUrl(
+													collection,
+													prevPost.id,
+												)}
+												class="nav-link prev"
+											>
+												<svg
+													width="24"
+													height="24"
+													viewBox="0 0 24 24"
+													fill="none"
+													stroke="currentColor"
+													stroke-width="2"
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													class="nav-chevron"
+												>
+													<path d="M15 18l-6-6 6-6" />
+												</svg>
+												<div class="nav-content">
+													<span class="nav-label">
+														{prevLabel}
+													</span>
+													<span class="nav-title">
+														{prevPost.data.title}
+													</span>
+												</div>
+											</a>
+										) : (
+											<div />
+										)}
+
+										{nextPost ? (
+											<a
+												href={getPostUrl(
+													collection,
+													nextPost.id,
+												)}
+												class="nav-link next"
+											>
+												<svg
+													width="24"
+													height="24"
+													viewBox="0 0 24 24"
+													fill="none"
+													stroke="currentColor"
+													stroke-width="2"
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													class="nav-chevron"
+												>
+													<path d="M9 18l6-6-6-6" />
+												</svg>
+												<div class="nav-content">
+													<span class="nav-label">
+														{nextLabel}
+													</span>
+													<span class="nav-title">
+														{nextPost.data.title}
+													</span>
+												</div>
+											</a>
+										) : (
+											<div />
+										)}
+									</div>
+								</div>
+							)}
+
+							{relatedPosts.length > 0 && (
+								<div class="related-posts">
+									<div class="related-posts-inner">
+										<h2>{relatedLabel}</h2>
+										<div class="related-grid">
+											{relatedPosts.map((p: any) => {
+												const pImage =
+													typeof p.data.heroImage ===
+													"string"
+														? getDynamicImage(
+																p.data
+																	.heroImage,
+															)
+														: p.data.heroImage;
+												return (
+													<a
+														href={getPostUrl(
+															collection,
+															p.id,
+														)}
+														class="related-card"
+													>
+														{pImage && (
+															<Image
+																src={pImage}
+																alt={
+																	p.data.title
+																}
+																width={400}
+																height={250}
+																class="related-img"
+															/>
+														)}
+														<h3>{p.data.title}</h3>
+														<time
+															datetime={p.data.pubDate.toISOString()}
+														>
+															<FormattedDate
+																date={
+																	p.data
+																		.pubDate
+																}
+																locale={lang}
+															/>
+														</time>
+													</a>
+												);
+											})}
+										</div>
+									</div>
+								</div>
+							)}
+						</div>
+					)
+				}
 			</article>
 		</main>
 		<Footer />

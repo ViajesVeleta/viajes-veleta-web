@@ -43,6 +43,11 @@ translations.forEach((p) => {
 });
 ---
 
-<BlogPost {...post.data} translatedPaths={translatedPaths}>
+<BlogPost
+	{...post.data}
+	id={post.id}
+	collection="blog"
+	translatedPaths={translatedPaths}
+>
 	<Content components={components} />
 </BlogPost>

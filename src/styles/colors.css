@@ -39,6 +39,7 @@
     --on-surface: #1a1c1e;
     --surface-variant: #dee3eb;
     --on-surface-variant: #42474e;
+    --surface-container-low: #f4f5f6;
     --surface-container: #ffffff;
     --surface-container-high: #ffffff;
 
@@ -87,6 +88,7 @@
     --on-surface: #f0f1f5;
     --surface-variant: #282a2d;
     --on-surface-variant: #c1c7ce;
+    --surface-container-low: #14181f;
     --surface-container: #14181f;
     --surface-container-high: #1d2129;
 
