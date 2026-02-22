@@ -30,6 +30,9 @@ const commonSchema = ({ image }: SchemaContext) => z.object({
 		.transform(resolveImagePath)
 		.pipe(image())
 		.optional(),
+	location: z.union([z.string(), z.array(z.string())])
+		.transform((val) => (Array.isArray(val) ? val : [val]))
+		.optional(),
 	tags: z.array(z.string()).optional(),
 	id: z.string().optional(),
 });

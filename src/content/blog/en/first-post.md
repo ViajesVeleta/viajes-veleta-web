@@ -4,6 +4,7 @@ title: 'First Post'
 description: 'Exploring new horizons in adventure travel'
 pubDate: 'Jul 08 2022'
 heroImage: 'assets/blog-placeholder-3'
+location: ['Paris, France (Europe)', 'Berlin, Germany (Europe)']
 tags: ['adventure', 'iceland']
 ---
 
