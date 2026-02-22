@@ -12,3 +12,5 @@ Angers is a historic city in the Loire Valley (France), part of the cultural lan
 The cultural offer includes several quality museums: the *Musée des Beaux-Arts* with European painting and sculpture, the *Muséum* of Natural Sciences with large collections of natural history, and botanical spaces like the *Jardin des Plantes* or the *Gaston Allard Arboretum*. Nearby is **Terra Botanica**, a botanical theme park that combines shows, gardens, and educational experiences about nature.
 
 Photography: *Grand Théâtre d’Angers*, one of the most emblematic buildings in the city.
+
+![Angers](../../../assets/europa/france/angers/angers.jpg)
