@@ -24,9 +24,9 @@ function resolveImagePath(path: string): string {
 const commonSchema = ({ image }: SchemaContext) => z.object({
 	title: z.string(),
 	description: z.string(),
-	pubDate: z.coerce.date(),
+	date: z.coerce.date(),
 	updatedDate: z.coerce.date().optional(),
-	heroImage: z.string()
+	image: z.string()
 		.transform(resolveImagePath)
 		.pipe(image())
 		.optional(),
@@ -59,7 +59,7 @@ const reviews = defineCollection({
 	schema: z.object({
 		name: z.string(),
 		role: z.string(),
-		pubDate: z.coerce.date(),
+		date: z.coerce.date(),
 	}),
 });
 

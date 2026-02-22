@@ -9,8 +9,8 @@ export async function getPostNavigation(
 ) {
     const allPosts = await getCollection(collectionName, ({ id }) => id.startsWith(`${lang}/`));
 
-    // Sort by pubDate descending (newest first)
-    allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+    // Sort by date descending (newest first)
+    allPosts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
     const currentIndex = allPosts.findIndex(p => p.id === currentPostId);
 
@@ -51,7 +51,7 @@ export async function getRelatedPosts(
         if (b.score !== a.score) {
             return b.score - a.score;
         }
-        return b.post.data.pubDate.valueOf() - a.post.data.pubDate.valueOf();
+        return b.post.data.date.valueOf() - a.post.data.date.valueOf();
     });
 
     return scoredPosts.slice(0, maxCount).map(sp => sp.post);

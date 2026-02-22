@@ -18,7 +18,7 @@ const groups = await getCollection("groups", ({ id }) => {
 
 // Sort by date (descending)
 const sortedGroups = groups.sort(
-    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+    (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
 );
 
 const categories = [
@@ -68,11 +68,11 @@ const categories = [
                             href={`/viajes-en-grupo/${post.id.split("/").slice(1).join("/")}/`}
                         >
                             <div class="image-container">
-                                {post.data.heroImage && (
+                                {post.data.image && (
                                     <Image
                                         width={720}
                                         height={480}
-                                        src={post.data.heroImage}
+                                        src={post.data.image}
                                         alt=""
                                         loading={index === 0 ? "eager" : "lazy"}
                                     />
@@ -83,7 +83,7 @@ const categories = [
                                 <h4 class="title">{post.data.title}</h4>
                                 <p class="date">
                                     <FormattedDate
-                                        date={post.data.pubDate}
+                                        date={post.data.date}
                                         locale={lang}
                                     />
                                 </p>

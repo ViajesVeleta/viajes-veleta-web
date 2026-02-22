@@ -10,8 +10,7 @@ const latestPosts = allPosts
 	.filter((post) => post.id.startsWith("es/"))
 	.sort(
 		(a, b) =>
-			new Date(b.data.pubDate).getTime() -
-			new Date(a.data.pubDate).getTime(),
+			new Date(b.data.date).getTime() - new Date(a.data.date).getTime(),
 	)
 	.slice(0, 4);
 ---

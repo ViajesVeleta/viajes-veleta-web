@@ -2,8 +2,8 @@
 id: 'bali-offer'
 title: 'Special Offer to Bali!'
 description: 'Enjoy a week in Bali with everything included.'
-pubDate: 'Jul 27 2026'
-heroImage: 'assets/blog-placeholder-1'
+date: 'Jul 27 2026'
+image: 'assets/blog-placeholder-1'
 tags: ['offer', 'bali', 'relax']
 ---
 

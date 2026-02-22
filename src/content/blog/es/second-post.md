@@ -2,8 +2,8 @@
 id: 'second-post'
 title: 'Second post'
 description: 'Lorem ipsum dolor sit amet'
-pubDate: 'Jul 15 2022'
-heroImage: 'assets/blog-placeholder-4'
+date: 'Jul 15 2022'
+image: 'assets/blog-placeholder-4'
 tags: ['cultura', 'europa']
 ---
 

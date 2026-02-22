@@ -19,9 +19,9 @@ import {
 const {
 	title,
 	description,
-	pubDate,
+	date,
 	updatedDate,
-	heroImage,
+	image,
 	location,
 	tags,
 	translatedPaths,
@@ -29,8 +29,8 @@ const {
 	collection,
 } = Astro.props;
 
-const resolvedHeroImage =
-	typeof heroImage === "string" ? getDynamicImage(heroImage) : heroImage;
+const resolvedImage =
+	typeof image === "string" ? getDynamicImage(image) : image;
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
@@ -61,7 +61,7 @@ const relatedLabel = isEs ? "Entradas relacionadas" : "Related entries";
 			title={title}
 			description={description}
 			translatedPaths={translatedPaths}
-			image={resolvedHeroImage}
+			image={resolvedImage}
 		/>
 		<style>
 			main {
@@ -265,11 +265,11 @@ const relatedLabel = isEs ? "Entradas relacionadas" : "Related entries";
 			<article>
 				<div class="hero-image">
 					{
-						resolvedHeroImage && (
+						resolvedImage && (
 							<Image
 								width={1920}
 								height={1080}
-								src={resolvedHeroImage}
+								src={resolvedImage}
 								alt=""
 								loading="eager"
 								fetchpriority="high"
@@ -280,7 +280,7 @@ const relatedLabel = isEs ? "Entradas relacionadas" : "Related entries";
 				<div class="prose">
 					<div class="title">
 						<div class="date">
-							<FormattedDate date={pubDate} locale={lang} />
+							<FormattedDate date={date} locale={lang} />
 							{
 								updatedDate && (
 									<div class="last-updated-on">
@@ -425,13 +425,12 @@ const relatedLabel = isEs ? "Entradas relacionadas" : "Related entries";
 										<div class="related-grid">
 											{relatedPosts.map((p: any) => {
 												const pImage =
-													typeof p.data.heroImage ===
+													typeof p.data.image ===
 													"string"
 														? getDynamicImage(
-																p.data
-																	.heroImage,
+																p.data.image,
 															)
-														: p.data.heroImage;
+														: p.data.image;
 												return (
 													<a
 														href={getPostUrl(
@@ -453,12 +452,11 @@ const relatedLabel = isEs ? "Entradas relacionadas" : "Related entries";
 														)}
 														<h3>{p.data.title}</h3>
 														<time
-															datetime={p.data.pubDate.toISOString()}
+															datetime={p.data.date.toISOString()}
 														>
 															<FormattedDate
 																date={
-																	p.data
-																		.pubDate
+																	p.data.date
 																}
 																locale={lang}
 															/>

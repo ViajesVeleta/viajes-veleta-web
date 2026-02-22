@@ -9,13 +9,11 @@ import {
 
 interface Props {
     title: string;
-    heroImage?: string;
+    image?: string;
 }
 
-const { title, heroImage } = Astro.props;
-const heroBg = heroImage
-    ? getDynamicImage(heroImage)
-    : getDynamicImage("blog-hero");
+const { title, image } = Astro.props;
+const heroBg = image ? getDynamicImage(image) : getDynamicImage("blog-hero");
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);

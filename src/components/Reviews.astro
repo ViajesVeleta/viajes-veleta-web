@@ -9,7 +9,7 @@ const reviews = await getCollection("reviews", ({ id }) =>
 
 // Sort reviews by date descending
 const sortedReviews = reviews.sort(
-    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+    (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
 );
 ---
 

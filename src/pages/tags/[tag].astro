@@ -82,7 +82,7 @@ const allTaggedContent = [
         type: "offers",
         url: translatePath(`/ofertas/${p.id.split("/").slice(1).join("/")}/`),
     })),
-].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+].sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 
 <!doctype html>
@@ -285,11 +285,11 @@ const allTaggedContent = [
                             <li class="post-item">
                                 <a href={item.url}>
                                     <div class="image-container">
-                                        {item.data.heroImage && (
+                                        {item.data.image && (
                                             <Image
                                                 width={720}
                                                 height={480}
-                                                src={item.data.heroImage}
+                                                src={item.data.image}
                                                 alt=""
                                                 loading={
                                                     index === 0
@@ -311,7 +311,7 @@ const allTaggedContent = [
                                         <h4 class="title">{item.data.title}</h4>
                                         <p class="date">
                                             <FormattedDate
-                                                date={item.data.pubDate}
+                                                date={item.data.date}
                                             />
                                         </p>
                                     </div>

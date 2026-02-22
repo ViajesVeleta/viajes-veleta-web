@@ -10,7 +10,7 @@ const allGroups = await getCollection("groups", ({ id }) =>
 );
 // Filter only future trips and sort by date
 const slides = allGroups
-    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()) // Sort descending (newest first)
+    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()) // Sort descending (newest first)
     .slice(0, 5); // Limit to 5 for the slider to keep it performant and relevant
 
 // Format date helper
@@ -38,9 +38,9 @@ const formatDate = (date: Date) => {
                 slides.map((slide) => (
                     <div class="swiper-slide">
                         <div class="slide-bg">
-                            {slide.data.heroImage && (
+                            {slide.data.image && (
                                 <Image
-                                    src={slide.data.heroImage}
+                                    src={slide.data.image}
                                     alt={slide.data.title}
                                     width={1920}
                                     height={1080}
@@ -54,7 +54,7 @@ const formatDate = (date: Date) => {
                         <div class="slide-content parallax-target">
                             <div class="date-separator" />
                             <div class="slide-date">
-                                {formatDate(slide.data.pubDate)}
+                                {formatDate(slide.data.date)}
                             </div>
                             <h2 class="slide-title">
                                 <a

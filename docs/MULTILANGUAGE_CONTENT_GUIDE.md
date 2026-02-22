@@ -24,8 +24,8 @@ This guide explains how to create blog posts, group trips, and offers in multipl
 id: "my-amazing-trip"
 title: "Mi increíble viaje a los Alpes"
 description: "Una experiencia única en las montañas"
-pubDate: "2026-01-30"
-heroImage: "assets/trip-alps"
+date: "2026-01-30"
+image: "assets/trip-alps"
 tags: ["viajes", "montaña", "aventura"]
 ---
 
@@ -45,8 +45,8 @@ Aquí va el contenido de tu post en español...
 id: "my-amazing-trip"
 title: "My Amazing Trip to the Alps"
 description: "A unique experience in the mountains"
-pubDate: "2026-01-30"
-heroImage: "assets/trip-alps"
+date: "2026-01-30"
+image: "assets/trip-alps"
 tags: ["travel", "mountain", "adventure"]
 ---
 
@@ -56,9 +56,9 @@ Here goes your post content in English...
 **Key Points:**
 - ✅ Same `id` in both files
 - ✅ Same filename recommended (not required)
-- ✅ Can use same `heroImage` or different ones
+- ✅ Can use same `image` or different ones
 - ✅ Translate title, description, and tags
-- ✅ Same or different `pubDate` (your choice)
+- ✅ Same or different `date` (your choice)
 
 ---
 
@@ -73,11 +73,11 @@ File: `src/content/groups/es/my-trip-name.md`
 id: "alps-adventure-2026"
 title: "Aventura en los Alpes 2026"
 description: "Viaje organizado de 7 días"
-pubDate: "2026-01-15"
+date: "2026-01-15"
 startDate: "2026-08-01"
 endDate: "2026-08-07"
 price: 1200
-heroImage: "assets/alps-hero"
+image: "assets/alps-hero"
 ---
 
 Descripción completa del viaje...
@@ -92,11 +92,11 @@ File: `src/content/groups/en/my-trip-name.md`
 id: "alps-adventure-2026"
 title: "Alps Adventure 2026"
 description: "7-day organized trip"
-pubDate: "2026-01-15"
+date: "2026-01-15"
 startDate: "2026-08-01"
 endDate: "2026-08-07"
 price: 1200
-heroImage: "assets/alps-hero"
+image: "assets/alps-hero"
 ---
 
 Full trip description...
@@ -164,7 +164,7 @@ Filenames don't need to match - only the `id` field matters. But using the same 
 
 ### Can I have different publication dates?
 
-Yes! You can publish the Spanish version first and translate later. Use different `pubDate` values if needed.
+Yes! You can publish the Spanish version first and translate later. Use different `date` values if needed.
 
 ### What about images?
 
@@ -226,7 +226,7 @@ Simply delete the file from the language folder. If only one translation exists,
 
 **Solution:** Check the image path. Use `assets/` for images in the assets folder:
 ```markdown
-heroImage: "assets/my-image"
+image: "assets/my-image"
 ```
 
 ---
