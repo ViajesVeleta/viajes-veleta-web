@@ -14,4 +14,4 @@ If you visit **New York**, there is a mandatory stop in the **Financial District
 
 What many do not know is that its origin was an act of rebellion. The artist **Arturo Di Modica** installed it illegally in front of the Stock Exchange in 1989 as a Christmas gift after the financial crisis, seeking to inspire New Yorkers to "charge" against adversity. Today, it is one of the most photographed spots in the world.
 
-![The Wall Street Bull](../../../assets/america/estados-unidos/nueva-york/el-toro-de-wall-street.jpg)
+![The Wall Street Bull](assets/america/estados-unidos/nueva-york/el-toro-de-wall-street)

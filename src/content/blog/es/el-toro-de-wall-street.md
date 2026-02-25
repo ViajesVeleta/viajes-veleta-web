@@ -14,4 +14,4 @@ Si visitas **Nueva York**, hay una parada obligatoria en el **Distrito Financier
 
 Lo que muchos no saben es que su origen fue un acto de rebeldía. El artista **Arturo Di Modica** lo instaló ilegalmente frente a la Bolsa en 1989 como un regalo de Navidad tras la crisis financiera, buscando inspirar a los neoyorquinos a “embestir” contra la adversidad. Hoy, es uno de los puntos más fotografiados del mundo.
 
-![El Toro de Wall Street](../../../assets/america/estados-unidos/nueva-york/el-toro-de-wall-street.jpg)
+![El Toro de Wall Street](assets/america/estados-unidos/nueva-york/el-toro-de-wall-street)
