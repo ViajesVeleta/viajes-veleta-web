@@ -96,6 +96,18 @@ location: ["Ciudad, País (Continente)"]
 - Usa títulos `##` / `###` **solo si el post es largo** y tiene secciones claramente diferenciadas. Para posts cortos, no añadas títulos.
 - Tono: cercano y narrativo, como si le contaras el viaje a un amigo.
 
+### Imágenes en el cuerpo
+
+⛔ **NUNCA** uses rutas relativas (`../../../`) ni extensiones de archivo en las imágenes del markdown.
+
+```markdown
+✅ ![Alt texto](assets/continente/pais/ciudad/nombre)
+❌ ![Alt texto](../../../assets/continente/pais/ciudad/nombre.jpg)
+❌ ![Alt texto](assets/continente/pais/ciudad/nombre.webp)
+```
+
+Mismo formato que en el frontmatter: `assets/` + ruta relativa + sin extensión. El pipeline de CI/CD y Astro resuelven la extensión automáticamente.
+
 ---
 
 ## 6. Dos archivos, mismo nombre

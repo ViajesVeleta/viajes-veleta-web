@@ -1,15 +1,22 @@
+import { existsSync } from 'fs';
+import { fileURLToPath } from 'url';
+import path from 'path';
 import { defineCollection, z, type SchemaContext } from 'astro:content';
 import { glob } from 'astro/loaders';
 
-// This function will be used at build time to resolve image paths
-function resolveImagePath(path: string): string {
-	if (!path) return path;
+// Absolute path to src/ so we can probe files on disk
+const srcDir = fileURLToPath(new URL('.', import.meta.url));
 
-	// Normalize the path to remove 'assets/' prefix if present
-	// This allows using 'assets/image-name' instead of '../../../assets/image-name'
-	let normalizedPath = path;
-	if (path.startsWith('assets/')) {
-		normalizedPath = path.replace('assets/', '../../../assets/');
+// This function will be used at build time to resolve image paths.
+// It probes disk for the actual extension so it works with .jpg originals
+// in development and with CI/CD-converted .webp files in production.
+function resolveImagePath(imagePath: string): string {
+	if (!imagePath) return imagePath;
+
+	// Normalize the path: 'assets/foo' → '../../../assets/foo'
+	let normalizedPath = imagePath;
+	if (imagePath.startsWith('assets/')) {
+		normalizedPath = imagePath.replace('assets/', '../../../assets/');
 	}
 
 	// If it already has an extension, return as-is
@@ -17,7 +24,15 @@ function resolveImagePath(path: string): string {
 		return normalizedPath;
 	}
 
-	// Otherwise, append .webp (since all images are now webp)
+	// Probe disk for the real extension (webp first — CI/CD output — then originals)
+	const assetRelPath = normalizedPath.replace('../../../assets/', 'assets/');
+	for (const ext of ['webp', 'jpg', 'jpeg', 'png']) {
+		if (existsSync(path.join(srcDir, `${assetRelPath}.${ext}`))) {
+			return `${normalizedPath}.${ext}`;
+		}
+	}
+
+	// Fallback (never reached if the image actually exists)
 	return `${normalizedPath}.webp`;
 }
 
