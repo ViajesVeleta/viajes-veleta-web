@@ -3,6 +3,7 @@ id: "el-castillo-de-andalucia-que-parece-sacado-de-dune"
 title: "El castillo de Andalucía que parece sacado de Dune"
 description: "Descubre el Castillo de La Calahorra, una fortaleza austera a los pies de Sierra Nevada que esconde un deslumbrante patio renacentista en su interior."
 date: "2026-01-17"
+image: "assets/europa/espana/la-calahorra/castillo-de-la-calahorra"
 tags: ["castillo", "comarca de guadix", "guadix", "la calahorra", "marquesado del zenete", "renacimiento"]
 location: ["La Calahorra, España (Europa)"]
 ---
