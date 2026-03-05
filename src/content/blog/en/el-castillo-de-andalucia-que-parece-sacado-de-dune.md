@@ -15,3 +15,5 @@ An austere fortress at the foot of **Sierra Nevada** that hides a Renaissance co
 They say that on this slope of the **Marquisate of Zenete** the wind sounds different. It blows from Sierra Nevada and, upon reaching the hill, hits an almost hermetic mass of stone. On the outside, it is a castle with sober lines; on the inside, a palace that seems brought from Italy, with a courtyard full of light and marbles that light up when the sun gets through the embrasures. Here the story is about rebellious loves and trips that changed destinies: a marquis in love, masters arriving from Genoa and a building that was quite a statement of intentions in the midst of an era shifting.
 
 ![Castle of La Calahorra](assets/europa/espana/la-calahorra/castillo-de-la-calahorra)
+
+[Read full article on National Geographic](https://viajes.nationalgeographic.com.es/a/pueblo-andalucia-castillo-que-parece-sacado-dune_24166)
