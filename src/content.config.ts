@@ -13,27 +13,32 @@ const srcDir = fileURLToPath(new URL('.', import.meta.url));
 function resolveImagePath(imagePath: string): string {
 	if (!imagePath) return imagePath;
 
-	// Normalize the path: 'assets/foo' → '../../../assets/foo'
-	let normalizedPath = imagePath;
-	if (imagePath.startsWith('assets/')) {
-		normalizedPath = imagePath.replace('assets/', '../../../assets/');
+	// Normalize the path by removing any leading 'assets/' prefix if present
+	// We want to find the file inside srcDir/assets/
+	const assetSubPath = imagePath.replace(/^assets\//, '');
+	const assetsBaseDir = path.join(srcDir, 'assets');
+
+	// Search for the actual file with a supported extension
+	const extensions = ['webp', 'jpg', 'jpeg', 'png', 'svg', 'JPG', 'JPEG', 'PNG'];
+
+	// Check if the path already has a supported extension
+	const currentExt = path.extname(assetSubPath).toLowerCase();
+	if (currentExt && extensions.includes(currentExt.slice(1))) {
+		const fullPath = path.join(assetsBaseDir, assetSubPath);
+		if (existsSync(fullPath)) return fullPath;
 	}
 
-	// If it already has an extension, return as-is
-	if (normalizedPath.match(/\.(png|jpg|jpeg|webp|svg)$/i)) {
-		return normalizedPath;
-	}
-
-	// Probe disk for the real extension (webp first — CI/CD output — then originals)
-	const assetRelPath = normalizedPath.replace('../../../assets/', 'assets/');
-	for (const ext of ['webp', 'jpg', 'jpeg', 'png']) {
-		if (existsSync(path.join(srcDir, `${assetRelPath}.${ext}`))) {
-			return `${normalizedPath}.${ext}`;
+	// Probe disk for the real extension
+	for (const ext of extensions) {
+		const fullPath = path.join(assetsBaseDir, `${assetSubPath}.${ext}`);
+		if (existsSync(fullPath)) {
+			// Returning an absolute path works perfectly with Astro's image()
+			return fullPath;
 		}
 	}
 
-	// Fallback (never reached if the image actually exists)
-	return `${normalizedPath}.webp`;
+	// Fallback (this might still break, but it's consistent with existing behavior)
+	return path.join(assetsBaseDir, `${assetSubPath}.webp`);
 }
 
 const commonSchema = ({ image }: SchemaContext) => z.object({
