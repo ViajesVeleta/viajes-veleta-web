@@ -1,15 +1,15 @@
 ---
 id: "cuzco-capital-imperio-inca-peru"
-title: "Cuzco: El corazón místico del Imperio Inca"
-description: "Descubre Cuzco, la antigua capital inca en Perú, una ciudad de calles adoquinadas, catedrales barrocas y mística andina."
+title: "Cuzco: El Corazón Eterno del Imperio Inca"
+description: "Paseamos por Cuzco, la mística capital inca donde la historia andina y el barroco colonial se funden en una ciudad única."
 date: "2021-11-27"
-image: "assets/america/peru/cuzco/sacsayhuaman-cuzco"
-tags: ["cuzco", "peru", "inca", "machu picchu", "america"]
-location: ["Cuzco, Perú (América)"]
+image: "assets/america/peru/cuzco/sacsayhuaman-muros-incas-cuzco"
+tags: ["cuzco", "peru", "incas", "historia", "viajes"]
+location: ["Cuzco, Cusco (América)"]
 ---
 
-Por sus antiguas calles adoquinadas, grandiosas iglesias barrocas y los restos de templos incas con tallas centenarias, ninguna ciudad destaca en la historia andina como **Cuzco**. Habitada desde tiempos prehispánicos y antaño capital del Imperio inca, esta vibrante población es mucho más que la puerta de entrada a Machu Picchu.
+Ninguna ciudad en los Andes destila tanta historia como **Cuzco**. Habitada ininterrumpidamente desde tiempos prehispánicos, la antigua capital del **Imperio Inca** es un museo vivo donde los restos de templos sagrados bajo edificios coloniales cuentan la historia de un choque de mundos.
 
-Mística, comercial y caótica, Cuzco es una ciudad única que sigue siendo una maravilla para los sentidos. Es el lugar donde se encuentran mujeres con vestimentas tradicionales llevando llamas, museos dedicados a plantas mágicas y la vida nocturna más animada de los altos Andes. Como bien describe **Lonely Planet**, Cuzco es el alma palpitante del Perú.
+Caminar por sus calles adoquinadas es descubrir una ciudad mística, comercial y vibrante. Cuzco no es solo la puerta de entrada a Machu Picchu; es un destino con alma propia. Aquí puedes cruzarte con mujeres que llevan llamas de la correa junto a imponentes iglesias barrocas, explorar museos dedicados a las plantas mágicas de los Andes y disfrutar de una de las vidas nocturnas más animadas del continente. Como bien dice *Lonely Planet*, Cuzco es una maravilla donde la tradición y la modernidad conviven en un equilibrio caótico y fascinante.
 
-![Restos arqueológicos de Sacsayhuamán en Cuzco](assets/america/peru/cuzco/sacsayhuaman-cuzco)
+![Imponentes muros de piedra inca en la fortaleza de Sacsayhuaman en Cuzco](assets/america/peru/cuzco/sacsayhuaman-muros-incas-cuzco)
