@@ -54,7 +54,7 @@ crucero-zenith-navegacion-adriatico-turquia
 cruceros-rodas-grecia-escala-imprescindible
 canal-de-castilla-navegacion-fluvial-españa
 experiencia-crucero-mediterraneo-msc-fantasia
-historia-cuarentena-dubrovnik-quarantena
+history-cuarentena-dubrovnik-quarantena
 cuevas-guadix-paisaje-antropico-arcilla
 globo-aerostatico-vuelo-cuevas-guadix
 curtiduria-chouwara-fez-marruecos-artesania
@@ -73,3 +73,13 @@ palomas-enamoradas-adelaide-australia
 mercado-chichicastenango-guatemala-tradicion
 ritual-todos-santos-chichicastenango-guatemala
 dia-del-libro-quijote-campo-criptana
+dia-del-trabajo-bolonia-italia
+vendedor-paraguas-bilbao-lluvia
+paisaje-marquesado-granada-charches
+dinan-bretana-francia-medieval
+dubrovnik-centro-historico-calles
+dubrovnik-centro-historico-callejones
+route-66-gasolinera-dwight-illinois
+edificio-flatiron-nueva-york-historia
+edificio-metropolis-madrid-gran-via
+murallas-avila-medieval-emblematico
