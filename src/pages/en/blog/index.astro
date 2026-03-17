@@ -25,25 +25,81 @@ const posts = (
 <html lang={lang}>
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<script>
+				<script>
 			import { FastAverageColor } from "fast-average-color";
 			const fac = new FastAverageColor();
 
+			let currentPage = 1;
+			let isLoading = false;
+			let hasMore = true;
+
 			document.addEventListener("astro:page-load", () => {
 				runColorExtraction();
+				setupInfiniteScroll();
 			});
 
 			document.addEventListener("DOMContentLoaded", () => {
 				runColorExtraction();
+				setupInfiniteScroll();
 			});
 
-			function runColorExtraction() {
-				const items = document.querySelectorAll(".post-item");
+			function setupInfiniteScroll() {
+				const trigger = document.getElementById("load-more-trigger");
+				if (!trigger) return;
+
+				const observer = new IntersectionObserver(async (entries) => {
+					if (entries[0].isIntersecting && !isLoading && hasMore) {
+						await loadMorePosts();
+					}
+				}, { rootMargin: "400px" });
+				
+				observer.observe(trigger);
+			}
+
+			async function loadMorePosts() {
+				isLoading = true;
+				const lang = document.documentElement.lang || "es";
+				const indicator = document.getElementById("loading-indicator");
+				const trigger = document.getElementById("load-more-trigger");
+				if (indicator) indicator.style.display = "block";
+
+				try {
+					const res = await fetch(`/api/posts/${lang}/${currentPage + 1}/`);
+					if (!res.ok) {
+						hasMore = false;
+						if (trigger) trigger.remove();
+						return;
+					}
+					const html = await res.text();
+					if (!html || html.trim() === "" || html.includes("<html")) {
+						hasMore = false;
+						if (trigger) trigger.remove();
+						return;
+					}
+					
+					currentPage++;
+					const ul = document.querySelector("main section ul");
+					if (ul) {
+						ul.insertAdjacentHTML("beforeend", html);
+						runColorExtraction(true);
+					}
+				} catch (e) {
+					hasMore = false;
+				} finally {
+					isLoading = false;
+					if (indicator) indicator.style.display = "none";
+				}
+			}
+
+			function runColorExtraction(onlyNew = false) {
+				const query = onlyNew ? ".post-item:not(.color-processed)" : ".post-item";
+				const items = document.querySelectorAll(query);
 				items.forEach((item) => {
+					item.classList.add("color-processed");
 					const img = item.querySelector("img");
 					const overlay = item.querySelector(
 						".overlay",
-					) as HTMLElement;
+					);
 
 					if (img && overlay) {
 						img.crossOrigin = "Anonymous";
@@ -188,7 +244,7 @@ const posts = (
 			<section>
 				<ul>
 					{
-						posts.map((post, index) => (
+						posts.slice(0, 15).map((post, index) => (
 							<li class="post-item">
 								<a
 									href={translatePath(
@@ -224,6 +280,8 @@ const posts = (
 						))
 					}
 				</ul>
+				<div id='load-more-trigger' style='height: 1px;'></div>
+				<div id='loading-indicator' style='display: none; text-align: center; padding: 2rem; color: var(--on-surface-variant);'>Cargando...</div>
 			</section>
 		</main>
 		<Footer />

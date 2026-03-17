@@ -1,0 +1,55 @@
+---
+export const partial = true;
+import { getCollection } from "astro:content";
+import { Image } from "astro:assets";
+import { getDynamicImage } from "../../../../utils/images";
+import FormattedDate from "../../../../components/FormattedDate.astro";
+import { useTranslatedPath } from "../../../../i18n/utils";
+
+export async function getStaticPaths({ paginate }: { paginate: any }) {
+	const allPosts = await getCollection("blog");
+	const esPosts = allPosts
+		.filter((p) => p.id.startsWith("es/"))
+		.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+	const enPosts = allPosts
+		.filter((p) => p.id.startsWith("en/"))
+		.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+	return [
+		...paginate(esPosts, { params: { lang: "es" }, pageSize: 15 }),
+		...paginate(enPosts, { params: { lang: "en" }, pageSize: 15 }),
+	];
+}
+
+const { page } = Astro.props;
+const { lang } = Astro.params;
+const translatePath = useTranslatedPath(lang as any);
+---
+
+{
+	page.data.map((post: any) => (
+		<li class="post-item">
+			<a href={translatePath(`/blog/${post.id.split("/").slice(1).join("/")}/`)}>
+				<div class="image-container">
+					{getDynamicImage(post.data.image) && (
+						<Image
+							width={720}
+							height={480}
+							src={getDynamicImage(post.data.image)!}
+							alt=""
+							loading="lazy"
+						/>
+					)}
+					<div class="overlay" />
+				</div>
+				<div class="content">
+					<h4 class="title">{post.data.title}</h4>
+					<p class="date">
+						<FormattedDate date={post.data.date} locale={lang} />
+					</p>
+				</div>
+			</a>
+		</li>
+	))
+}
