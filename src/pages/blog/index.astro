@@ -25,58 +25,44 @@ const posts = (
 <html lang={lang}>
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-				<script>
+		<script>
 			import { FastAverageColor } from "fast-average-color";
 			const fac = new FastAverageColor();
 
 			let currentPage = 1;
 			let isLoading = false;
-			let hasMore = true;
 
-			document.addEventListener("astro:page-load", () => {
+			document.addEventListener("astro:page-load", init);
+			document.addEventListener("DOMContentLoaded", init);
+
+			function init() {
 				runColorExtraction();
-				setupInfiniteScroll();
-			});
-
-			document.addEventListener("DOMContentLoaded", () => {
-				runColorExtraction();
-				setupInfiniteScroll();
-			});
-
-			function setupInfiniteScroll() {
-				const trigger = document.getElementById("load-more-trigger");
-				if (!trigger) return;
-
-				const observer = new IntersectionObserver(async (entries) => {
-					if (entries[0].isIntersecting && !isLoading && hasMore) {
-						await loadMorePosts();
-					}
-				}, { rootMargin: "400px" });
-				
-				observer.observe(trigger);
+				const btn = document.getElementById("load-more-btn");
+				if (btn) btn.addEventListener("click", loadMorePosts);
 			}
 
 			async function loadMorePosts() {
+				if (isLoading) return;
 				isLoading = true;
 				const lang = document.documentElement.lang || "es";
-				const indicator = document.getElementById("loading-indicator");
-				const trigger = document.getElementById("load-more-trigger");
-				if (indicator) indicator.style.display = "block";
+				const btn = document.getElementById("load-more-btn") as HTMLButtonElement;
+				if (btn) {
+					btn.disabled = true;
+					btn.textContent = btn.dataset.loading || "Cargando...";
+				}
 
 				try {
 					const res = await fetch(`/api/posts/${lang}/${currentPage + 1}/`);
 					if (!res.ok) {
-						hasMore = false;
-						if (trigger) trigger.remove();
+						if (btn) btn.closest(".load-more-wrapper")?.remove();
 						return;
 					}
 					const html = await res.text();
 					if (!html || html.trim() === "" || html.includes("<html")) {
-						hasMore = false;
-						if (trigger) trigger.remove();
+						if (btn) btn.closest(".load-more-wrapper")?.remove();
 						return;
 					}
-					
+
 					currentPage++;
 					const ul = document.querySelector("main section ul");
 					if (ul) {
@@ -84,10 +70,13 @@ const posts = (
 						runColorExtraction(true);
 					}
 				} catch (e) {
-					hasMore = false;
+					if (btn) btn.closest(".load-more-wrapper")?.remove();
 				} finally {
 					isLoading = false;
-					if (indicator) indicator.style.display = "none";
+					if (btn) {
+						btn.disabled = false;
+						btn.textContent = btn.dataset.label || "VER MÁS";
+					}
 				}
 			}
 
@@ -97,29 +86,23 @@ const posts = (
 				items.forEach((item) => {
 					item.classList.add("color-processed");
 					const img = item.querySelector("img");
-					const overlay = item.querySelector(
-						".overlay",
-					);
+					const overlay = item.querySelector(".overlay");
 
 					if (img && overlay) {
 						img.crossOrigin = "Anonymous";
-
-						// Use 'dominant' algorithm
 						fac.getColorAsync(img, { algorithm: "dominant" })
 							.then((color) => {
 								const [r, g, b] = color.value;
 								overlay.style.backgroundColor = `rgba(${r}, ${g}, ${b}, 0.6)`;
 							})
-							.catch((e) => {
-								console.error("Color extraction failed:", e);
-								overlay.style.backgroundColor =
-									"rgba(0,0,0,0.6)";
+							.catch(() => {
+								overlay.style.backgroundColor = "rgba(0,0,0,0.6)";
 							});
 					}
 				});
 			}
 		</script>
-		<style>
+		<style is:global>
 			main {
 				width: 100%;
 				max-width: 1200px;
@@ -236,6 +219,33 @@ const posts = (
 				}
 			}
 		</style>
+		<style is:global>
+			.load-more-wrapper {
+				display: flex;
+				justify-content: center;
+				padding: 2rem 0 3rem;
+			}
+			#load-more-btn {
+				background: var(--primary, #6750a4);
+				color: var(--on-primary, #fff);
+				border: none;
+				border-radius: 50px;
+				padding: 0.75rem 2.5rem;
+				font-size: 1rem;
+				font-weight: 600;
+				cursor: pointer;
+				transition: opacity 0.2s ease, transform 0.2s ease;
+				letter-spacing: 0.03em;
+			}
+			#load-more-btn:hover:not(:disabled) {
+				opacity: 0.85;
+				transform: translateY(-2px);
+			}
+			#load-more-btn:disabled {
+				opacity: 0.5;
+				cursor: not-allowed;
+			}
+		</style>
 	</head>
 	<body>
 		<Header isOverlay={true} />
@@ -280,8 +290,13 @@ const posts = (
 						))
 					}
 				</ul>
-				<div id='load-more-trigger' style='height: 1px;'></div>
-				<div id='loading-indicator' style='display: none; text-align: center; padding: 2rem; color: var(--on-surface-variant);'>Cargando...</div>
+				<div class="load-more-wrapper">
+					<button
+						id="load-more-btn"
+						data-label="VER MÁS"
+						data-loading="Cargando..."
+					>VER MÁS</button>
+				</div>
 			</section>
 		</main>
 		<Footer />
