@@ -7,6 +7,8 @@ import { glob } from 'astro/loaders';
 // Absolute path to src/ so we can probe files on disk
 const srcDir = fileURLToPath(new URL('.', import.meta.url));
 
+import { pathToFileURL } from 'url';
+
 // This function will be used at build time to resolve image paths.
 // It probes disk for the actual extension so it works with .jpg originals
 // in development and with CI/CD-converted .webp files in production.
@@ -25,7 +27,7 @@ function resolveImagePath(imagePath: string): string {
 	const currentExt = path.extname(assetSubPath).toLowerCase();
 	if (currentExt && extensions.includes(currentExt.slice(1))) {
 		const fullPath = path.join(assetsBaseDir, assetSubPath);
-		if (existsSync(fullPath)) return fullPath;
+		if (existsSync(fullPath)) return pathToFileURL(fullPath).href;
 	}
 
 	// Probe disk for the real extension
@@ -33,12 +35,12 @@ function resolveImagePath(imagePath: string): string {
 		const fullPath = path.join(assetsBaseDir, `${assetSubPath}.${ext}`);
 		if (existsSync(fullPath)) {
 			// Returning an absolute path works perfectly with Astro's image()
-			return fullPath;
+			return pathToFileURL(fullPath).href;
 		}
 	}
 
 	// Fallback (this might still break, but it's consistent with existing behavior)
-	return path.join(assetsBaseDir, `${assetSubPath}.webp`);
+	return pathToFileURL(path.join(assetsBaseDir, `${assetSubPath}.webp`)).href;
 }
 
 const commonSchema = ({ image }: SchemaContext) => z.object({
@@ -46,10 +48,7 @@ const commonSchema = ({ image }: SchemaContext) => z.object({
 	description: z.string(),
 	date: z.coerce.date(),
 	updatedDate: z.coerce.date().optional(),
-	image: z.string()
-		.transform(resolveImagePath)
-		.pipe(image())
-		.optional(),
+	image: z.string().optional(),
 	location: z.union([z.string(), z.array(z.string())])
 		.transform((val) => (Array.isArray(val) ? val : [val]))
 		.optional(),

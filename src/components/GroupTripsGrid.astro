@@ -1,4 +1,5 @@
 ---
+import { getDynamicImage } from '../utils/images';
 import { getCollection } from "astro:content";
 import { Image } from "astro:assets";
 import { getLangFromUrl } from "../i18n/utils";
@@ -68,11 +69,11 @@ const categories = [
                             href={`/viajes-en-grupo/${post.id.split("/").slice(1).join("/")}/`}
                         >
                             <div class="image-container">
-                                {post.data.image && (
+                                {getDynamicImage(post.data.image) && (
                                     <Image
                                         width={720}
                                         height={480}
-                                        src={post.data.image}
+                                        src={getDynamicImage(post.data.image)!}
                                         alt=""
                                         loading={index === 0 ? "eager" : "lazy"}
                                     />

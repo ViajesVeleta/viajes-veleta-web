@@ -1,9 +1,9 @@
 import type { ImageMetadata } from "astro";
 
-const images = import.meta.glob<{ default: ImageMetadata }>(
-  "../assets/*.{png,jpg,jpeg,webp,svg}",
-  { eager: true }
-);
+const images = import.meta.glob<{ default: ImageMetadata }>([
+  "../assets/**/*.{png,jpg,jpeg,webp,svg}",
+  "!../assets/TODO/**"
+], { eager: true });
 
 export function getDynamicImage(imagePath: string | ImageMetadata | undefined | null): ImageMetadata | null {
   if (!imagePath) return null;

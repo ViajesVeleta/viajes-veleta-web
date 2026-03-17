@@ -3,7 +3,6 @@ id: 'alps'
 title: 'Trip to the Alps'
 description: 'Join us on this incredible adventure through the Swiss Alps.'
 date: 'Jul 08 2024'
-image: 'assets/blog-placeholder-1'
 ---
 
 Welcome to our first organized group trip!

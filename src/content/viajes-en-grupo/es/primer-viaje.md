@@ -3,7 +3,6 @@ id: 'alps'
 title: 'Viaje a los Alpes'
 description: 'Únete a nosotros en esta increíble aventura por los Alpes suizos.'
 date: 'Jul 08 2024'
-image: 'assets/blog-placeholder-1'
 ---
 
 ¡Bienvenidos a nuestro primer viaje en grupo organizado!

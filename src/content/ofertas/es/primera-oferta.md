@@ -3,7 +3,6 @@ id: 'bali-offer'
 title: '¡Oferta Especial a Bali!'
 description: 'Disfruta de una semana en Bali con todo incluido.'
 date: 'Jul 27 2026'
-image: 'assets/blog-placeholder-1'
 tags: ['oferta', 'bali', 'relax']
 ---
 

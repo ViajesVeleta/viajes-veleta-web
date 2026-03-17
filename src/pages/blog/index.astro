@@ -1,4 +1,5 @@
 ---
+import { getDynamicImage } from '../../utils/images';
 import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
 import BaseHead from "../../components/BaseHead.astro";
@@ -195,11 +196,11 @@ const posts = (
 									)}
 								>
 									<div class="image-container">
-										{post.data.image && (
+										{getDynamicImage(post.data.image) && (
 											<Image
 												width={720}
 												height={480}
-												src={post.data.image}
+												src={getDynamicImage(post.data.image)!}
 												alt=""
 												loading={
 													index === 0

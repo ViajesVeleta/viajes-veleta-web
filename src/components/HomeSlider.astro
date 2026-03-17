@@ -1,4 +1,5 @@
 ---
+import { getDynamicImage } from '../utils/images';
 import { getCollection } from "astro:content";
 import { Image } from "astro:assets";
 import "swiper/css";
@@ -38,9 +39,9 @@ const formatDate = (date: Date) => {
                 slides.map((slide) => (
                     <div class="swiper-slide">
                         <div class="slide-bg">
-                            {slide.data.image && (
+                            {getDynamicImage(slide.data.image) && (
                                 <Image
-                                    src={slide.data.image}
+                                    src={getDynamicImage(slide.data.image)!}
                                     alt={slide.data.title}
                                     width={1920}
                                     height={1080}
