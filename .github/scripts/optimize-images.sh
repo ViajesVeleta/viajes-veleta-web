@@ -4,11 +4,13 @@ set -e
 # Temporary files for tracking
 SUMMARY_FILE=$(mktemp)
 PROCESSED_LIST=$(mktemp)
+TOTALS_FILE=$(mktemp)
 HAS_CHANGES=false
 
 # Ensure we start with empty files
 > "$SUMMARY_FILE"
 > "$PROCESSED_LIST"
+> "$TOTALS_FILE"
 
 echo "Starting image optimization..."
 QUALITY=${QUALITY:-80}
@@ -79,6 +81,9 @@ find . -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" \) \
             src_size=$(stat -c%s "$file")
             dest_size=$(stat -c%s "$webp_file")
             
+            # Accumulate totals (in bytes)
+            echo "$src_size $dest_size" >> "$TOTALS_FILE"
+            
             # Format sizes
             src_fmt=$(format_size "$src_size")
             dest_fmt=$(format_size "$dest_size")
@@ -148,6 +153,9 @@ find . -type f -iname "*.webp" \
         if [ "$accept_changes" = true ]; then
             mv "${file}.tmp" "$file"
             
+            # Accumulate totals (in bytes)
+            echo "$original_size $new_size" >> "$TOTALS_FILE"
+            
             src_fmt=$(format_size "$original_size")
             dest_fmt=$(format_size "$new_size")
             
@@ -171,12 +179,32 @@ fi
 if [ "$HAS_CHANGES" = true ]; then
     echo "has_changes=true" >> "$GITHUB_OUTPUT"
     
+    # Calculate totals from accumulated file
+    total_src_bytes=0
+    total_dest_bytes=0
+    while read -r src dest; do
+        total_src_bytes=$(( total_src_bytes + src ))
+        total_dest_bytes=$(( total_dest_bytes + dest ))
+    done < "$TOTALS_FILE"
+    
+    total_src_kb=$(( (total_src_bytes + 512) / 1024 ))
+    total_dest_kb=$(( (total_dest_bytes + 512) / 1024 ))
+    total_saved_kb=$(( total_src_kb - total_dest_kb ))
+    
+    echo "total_src_kb=$total_src_kb" >> "$GITHUB_OUTPUT"
+    echo "total_dest_kb=$total_dest_kb" >> "$GITHUB_OUTPUT"
+    echo "total_saved_kb=$total_saved_kb" >> "$GITHUB_OUTPUT"
+    
     echo "summary<<EOF" >> "$GITHUB_OUTPUT"
     cat "$SUMMARY_FILE" >> "$GITHUB_OUTPUT"
     echo "EOF" >> "$GITHUB_OUTPUT"
     
     # Also output to job summary for visibility in UI
     echo "### Image Optimization Summary" >> $GITHUB_STEP_SUMMARY
+    echo "| Before | After | Saved |" >> $GITHUB_STEP_SUMMARY
+    echo "| --- | --- | --- |" >> $GITHUB_STEP_SUMMARY
+    echo "| ${total_src_kb} KB | ${total_dest_kb} KB | ${total_saved_kb} KB |" >> $GITHUB_STEP_SUMMARY
+    echo "" >> $GITHUB_STEP_SUMMARY
     cat "$SUMMARY_FILE" >> $GITHUB_STEP_SUMMARY
 else
     echo "has_changes=false" >> "$GITHUB_OUTPUT"
@@ -185,3 +213,4 @@ fi
 
 rm "$SUMMARY_FILE"
 rm "$PROCESSED_LIST"
+rm "$TOTALS_FILE"

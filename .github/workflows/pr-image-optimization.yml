@@ -41,11 +41,25 @@ jobs:
         uses: actions/github-script@v8
         env:
           SUMMARY: ${{ steps.optimize.outputs.summary }}
+          TOTAL_SRC_KB: ${{ steps.optimize.outputs.total_src_kb }}
+          TOTAL_DEST_KB: ${{ steps.optimize.outputs.total_dest_kb }}
+          TOTAL_SAVED_KB: ${{ steps.optimize.outputs.total_saved_kb }}
         with:
           script: |
             const summary = process.env.SUMMARY;
             const author = '${{ github.event.pull_request.user.login }}';
-            const body = `### Image Optimization Report\n\n${summary}\n\n@${author} I have pushed a new commit with optimized images. Please pull the changes before making new commits!`;
+            const srcKb = parseInt(process.env.TOTAL_SRC_KB);
+            const destKb = parseInt(process.env.TOTAL_DEST_KB);
+            const savedKb = parseInt(process.env.TOTAL_SAVED_KB);
+            const toMb = kb => (kb / 1024).toFixed(2);
+            const table = [
+              `| | Size |`,
+              `| --- | --- |`,
+              `| **Original** | ${srcKb} KB (${toMb(srcKb)} MB) |`,
+              `| **Optimized** | ${destKb} KB (${toMb(destKb)} MB) |`,
+              `| **Saved** | ${savedKb} KB (${toMb(savedKb)} MB) |`,
+            ].join('\n');
+            const body = `# Image Optimization Report\n\n${table}\n\n## Detailed images optimization\n\n${summary}\n\n@${author} I have pushed a new commit with optimized images. Please pull the changes before making new commits!`;
             
             await github.rest.issues.createComment({
               issue_number: context.issue.number,
