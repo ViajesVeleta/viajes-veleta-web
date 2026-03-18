@@ -17,12 +17,18 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
           token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
-      - name: Install webp
-        run: sudo apt-get update && sudo apt-get install -y webp imagemagick
+      - name: Install webp and imagemagick (cached)
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: webp imagemagick
+          version: 1.0
 
       - name: Run Optimization Script
         id: optimize
+        env:
+          BASE_REF: ${{ github.base_ref }}
         run: |
           chmod +x .github/scripts/optimize-images.sh
           .github/scripts/optimize-images.sh

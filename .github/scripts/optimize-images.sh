@@ -14,7 +14,8 @@ HAS_CHANGES=false
 
 echo "Starting image optimization..."
 QUALITY=${QUALITY:-80}
-echo "Using quality: $QUALITY"
+SCAN_ALL=${SCAN_ALL:-false}  # true = scan entire repo (weekly), false = git diff only (PR)
+echo "Using quality: $QUALITY, scan all: $SCAN_ALL"
 
 # Function to get max width resize args
 get_resize_args() {
@@ -41,18 +42,47 @@ format_size() {
     if [ "$size" -lt 1024 ]; then
         echo "${size} B"
     else
-        # Calculate KB with simple integer division, or use bc for decimals if available
-        # Using integer math for simplicity: (size + 512) / 1024 rounds to nearest
         echo "$(( (size + 512) / 1024 )) KB"
     fi
 }
 
-# 1. Convert non-webp images to webp
-find . -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" \) \
-    -not -path "*/node_modules/*" \
-    -not -path "*/dist/*" \
-    -not -path "*/.git/*" \
-    -print0 | while IFS= read -r -d '' file; do
+# ---------------------------------------------------------------------------
+# Build the list of files to process
+# SCAN_ALL=true  → entire repo under src/assets (weekly run)
+# SCAN_ALL=false → only added/modified files in src/assets from git diff (PR run)
+# ---------------------------------------------------------------------------
+
+if [ "$SCAN_ALL" = "true" ]; then
+    echo "Scanning all image files in src/assets..."
+    IMAGE_FILES=$(find ./src/assets -type f \( \
+        -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \
+    \) 2>/dev/null || true)
+else
+    echo "Scanning only changed image files in src/assets (git diff)..."
+    BASE_REF=${BASE_REF:-main}
+    # Fetch base branch so the diff is available
+    git fetch origin "$BASE_REF" --depth=1 2>/dev/null || true
+    IMAGE_FILES=$(git diff --name-only --diff-filter=AM "origin/$BASE_REF" \
+        | grep -i '^src/assets/.*\.\(jpg\|jpeg\|png\|webp\)$' \
+        | sed 's|^|./|' || true)
+fi
+
+if [ -z "$IMAGE_FILES" ]; then
+    echo "No image files to process."
+    echo "has_changes=false" >> "$GITHUB_OUTPUT"
+    echo "summary=No images optimized." >> "$GITHUB_OUTPUT"
+    rm "$SUMMARY_FILE" "$PROCESSED_LIST" "$TOTALS_FILE"
+    exit 0
+fi
+
+echo "Files to process:"
+echo "$IMAGE_FILES"
+
+# ---------------------------------------------------------------------------
+# 1. Convert non-webp images (jpg/png/jpeg) to webp
+# ---------------------------------------------------------------------------
+echo "$IMAGE_FILES" | grep -i '\.\(jpg\|jpeg\|png\)$' | while IFS= read -r file; do
+    [ -f "$file" ] || continue
 
     filename="${file%.*}"
     webp_file="${filename}.webp"
@@ -106,13 +136,12 @@ find . -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" \) \
 
 done
 
-# 2. Resize existing large WebP files (ONLY if they are too large)
-find . -type f -iname "*.webp" \
-    -not -path "*/node_modules/*" \
-    -not -path "*/dist/*" \
-    -not -path "*/.git/*" \
-    -print0 | while IFS= read -r -d '' file; do
-    
+# ---------------------------------------------------------------------------
+# 2. Optimize existing WebP files
+# ---------------------------------------------------------------------------
+echo "$IMAGE_FILES" | grep -i '\.webp$' | while IFS= read -r file; do
+    [ -f "$file" ] || continue
+
     if grep -Fxq "$file" "$PROCESSED_LIST"; then
         continue
     fi
@@ -120,9 +149,7 @@ find . -type f -iname "*.webp" \
     resize_args=$(get_resize_args "$file")
     
     if [ -n "$resize_args" ]; then
-        # Force resize
         should_process=true
-        force_action="resized"
     else
         should_process=false
     fi
@@ -167,9 +194,7 @@ find . -type f -iname "*.webp" \
     fi
 done
 
-# Check if any "changed" marker exists in the processed list logic
-# (Actually, simpler to check if summary file is non-empty)
-
+# Check if summary file is non-empty
 if [ -s "$SUMMARY_FILE" ]; then
     HAS_CHANGES=true
 else
