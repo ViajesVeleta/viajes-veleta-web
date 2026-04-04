@@ -15,11 +15,10 @@ import {
 import { languages } from "../../i18n/ui";
 
 export async function getStaticPaths() {
-    const blogPosts = await getCollection("blog");
     const groupTrips = await getCollection("groups");
     const offers = await getCollection("offers");
 
-    const allContent = [...blogPosts, ...groupTrips, ...offers];
+    const allContent = [...groupTrips, ...offers];
 
     // Create paths for each tag in each language
     const paths: Array<{
@@ -50,10 +49,6 @@ const lang = (propLang || getLangFromUrl(Astro.url)) as keyof typeof languages;
 const t = useTranslations(lang);
 const translatePath = useTranslatedPath(lang);
 
-const blogPosts = await getCollection(
-    "blog",
-    ({ id, data }) => id.startsWith(`${lang}/`) && data.tags?.includes(tag),
-);
 const groupTrips = await getCollection(
     "groups",
     ({ id, data }) => id.startsWith(`${lang}/`) && data.tags?.includes(tag),
@@ -65,11 +60,6 @@ const offers = await getCollection(
 
 // Map all content to a common format for display
 const allTaggedContent = [
-    ...blogPosts.map((p) => ({
-        ...p,
-        type: "blog",
-        url: translatePath(`/blog/${p.id.split("/").slice(1).join("/")}/`),
-    })),
     ...groupTrips.map((p) => ({
         ...p,
         type: "groups",
