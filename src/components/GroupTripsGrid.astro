@@ -5,8 +5,10 @@ import { getLangFromUrl } from "../i18n/utils";
 import FormattedDate from "./FormattedDate.astro";
 
 interface Props {
-    // Optional props if needed
+    showTitle?: boolean;
 }
+
+const { showTitle = true } = Astro.props;
 
 const lang = getLangFromUrl(Astro.url);
 const isSpanish = lang === "es";
@@ -34,15 +36,17 @@ const categories = [
 
 <section class="group-trips-section">
     <div class="container-wide">
-        <h2 class="section-title text-center text-3xl font-serif">
-            VIAJES EN GRUPO
-        </h2>
+        {showTitle && (
+            <h2 class="section-title text-center text-3xl font-serif">
+                VIAJES EN GRUPO
+            </h2>
 
-        <div class="separator-container">
-            <span class="line"></span>
-            <i class="fas fa-paper-plane icon"></i>
-            <span class="line"></span>
-        </div>
+            <div class="separator-container">
+                <span class="line"></span>
+                <i class="fas fa-paper-plane icon"></i>
+                <span class="line"></span>
+            </div>
+        )}
 
         <div class="filters-container">
             {
@@ -333,6 +337,13 @@ const categories = [
         margin: 0 auto;
     }
 
+    @media (max-width: 768px) {
+        .group-trips-section {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+    }
+
     .section-title {
         font-family: "Lato", sans-serif;
         font-weight: 300;
@@ -371,7 +382,7 @@ const categories = [
         display: flex;
         justify-content: center;
         gap: 3rem;
-        margin-bottom: 3rem;
+        margin-bottom: 2rem;
         flex-wrap: wrap;
     }
 
@@ -509,8 +520,22 @@ const categories = [
             grid-template-columns: 1fr;
             gap: 1rem;
         }
+        li.post-item {
+            aspect-ratio: 16/10;
+        }
         .content {
+            /* Fix visibility */
+            bottom: 0 !important;
+            transform: none !important;
+            padding: 1.5rem;
             justify-content: flex-end;
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+        }
+        .overlay {
+            display: none;
+        }
+        .title {
+            font-size: 1.15rem; /* Smaller title on very small screens */
         }
         .filters-container {
             justify-content: flex-start;
