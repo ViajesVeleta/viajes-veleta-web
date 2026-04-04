@@ -191,20 +191,11 @@ const { title, price, subtitle, highlight = false, badge } = Astro.props;
 
 
     .pricing-content :global(.pricing-button) {
-        display: inline-block;
-        margin-top: auto;
-        padding: 1rem;
-        text-align: center;
-        background: var(--primary, #0056b3); /* Primary blue */
-        color: var(--on-primary, #ffffff);
-        border-radius: 1rem;
-        text-decoration: none;
-        font-weight: 600;
-        transition: background 0.2s ease, transform 0.2s ease;
-        border: none;
-        cursor: pointer;
         width: 100%;
+        margin-top: 1.5rem;
     }
+
+
 
     .pricing-content :global(.pricing-button:hover) {
         background: color-mix(in srgb, var(--primary, #0056b3), #000 15%);

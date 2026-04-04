@@ -1,0 +1,107 @@
+---
+interface Props {
+  title: string;
+  icon?: string;
+  color?: string;
+  link?: string;
+  className?: string;
+}
+
+const { 
+  title, 
+  icon, 
+  color = "var(--primary)", 
+  link, 
+  className = "" 
+} = Astro.props;
+
+// Step 1: Normalize the link
+let href = link;
+let isExternal = false;
+let isAsset = false;
+
+if (link) {
+  if (link.startsWith('http')) {
+    isExternal = true;
+  } else if (link.startsWith('assets/')) {
+    isAsset = true;
+    href = '/' + link; // Ensure leading slash for root relative
+  } else if (!link.startsWith('/') && !link.startsWith('#')) {
+    href = '/' + link;
+  }
+}
+
+// Determine the tag and target depending on if it has a link
+const Tag = href ? 'a' : 'button';
+const target = isExternal || isAsset ? '_blank' : undefined;
+const rel = isExternal || isAsset ? 'noopener noreferrer' : undefined;
+---
+
+<Tag 
+  href={href} 
+  class:list={["veleta-button", className]} 
+  style={`--btn-bg: ${color};`}
+  target={target}
+  rel={rel}
+>
+  {icon && <i class:list={[icon, "btn-icon"]}></i>}
+  <span class="btn-text">{title}</span>
+</Tag>
+
+<style>
+  .veleta-button {
+    /* Layout */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.2rem;
+    padding: 0.9rem 2.2rem;
+    
+    /* Styling */
+    background-color: var(--btn-bg);
+    color: #ffffff; /* We assume white text on primary colors */
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-decoration: none;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    
+    /* Animation & Feedback */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px 0 color-mix(in srgb, var(--btn-bg), transparent 60%);
+    
+    /* Typography */
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .veleta-button:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px -6px color-mix(in srgb, var(--btn-bg), transparent 50%);
+    filter: brightness(1.1);
+  }
+
+  .veleta-button:active {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px -2px color-mix(in srgb, var(--btn-bg), transparent 60%);
+  }
+
+  .btn-icon {
+    font-size: 1.1rem;
+  }
+
+  .btn-text {
+    line-height: 1;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 480px) {
+    .veleta-button {
+      padding: 0.8rem 1.6rem;
+      font-size: 0.85rem;
+    }
+  }
+</style>
+
