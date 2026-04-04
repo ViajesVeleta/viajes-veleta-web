@@ -5,6 +5,7 @@ import Timeline from "../../components/Timeline.astro";
 import TimelineItem from "../../components/TimelineItem.astro";
 import PricingGrid from "../../components/PricingGrid.astro";
 import PricingItem from "../../components/PricingItem.astro";
+import IncludeExclude from "../../components/IncludeExclude.astro";
 
 export async function getStaticPaths() {
     const posts = await getCollection("groups", ({ id }) =>
@@ -23,7 +24,7 @@ type Props = CollectionEntry<"groups">;
 
 const post = Astro.props;
 const { Content } = await render(post);
-const components = { Timeline, TimelineItem, PricingGrid, PricingItem };
+const components = { Timeline, TimelineItem, PricingGrid, PricingItem, IncludeExclude };
 
 // Find translations
 const allPosts = await getCollection("groups");

@@ -1,0 +1,206 @@
+---
+export interface Props {
+    includedTabLabel?: string;
+    excludedTabLabel?: string;
+    includedTitle?: string;
+    excludedTitle?: string;
+}
+
+const { 
+    includedTabLabel = "INCLUIDO", 
+    excludedTabLabel = "NO INCLUIDO",
+    includedTitle = "El precio incluye",
+    excludedTitle = "El precio no incluye"
+} = Astro.props;
+---
+
+<div class="ie-container">
+    <div class="ie-tabs">
+        <button class="ie-tab active" data-tab="included">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            {includedTabLabel}
+        </button>
+        <button class="ie-tab" data-tab="excluded">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            {excludedTabLabel}
+        </button>
+    </div>
+    
+    <div class="ie-panels">
+        <div class="ie-panel active" data-panel="included">
+            <h3 class="title-included">{includedTitle}</h3>
+            <div class="ie-content">
+                <slot name="included" />
+            </div>
+        </div>
+        <div class="ie-panel" data-panel="excluded">
+            <h3 class="title-excluded">{excludedTitle}</h3>
+            <div class="ie-content">
+                <slot name="excluded" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .ie-container {
+        background-color: #ffffff;
+        border: 1px solid color-mix(in srgb, var(--outline-variant, #ccc), transparent 50%);
+        border-radius: 1rem;
+        overflow: hidden;
+        margin: 3rem 0;
+        font-family: inherit;
+        box-shadow: 0 4px 12px color-mix(in srgb, var(--shadow, #000), transparent 97%);
+    }
+
+    .ie-tabs {
+        display: flex;
+        border-bottom: 1px solid color-mix(in srgb, var(--outline-variant, #ccc), transparent 50%);
+        background-color: #fafafa;
+    }
+
+    .ie-tab {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 1.25rem 1rem;
+        background: transparent;
+        border: none;
+        border-bottom: 3px solid transparent;
+        color: var(--on-surface-variant, #6c757d);
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .ie-tab:hover {
+        background-color: color-mix(in srgb, var(--primary, #0056b3), transparent 95%);
+        color: var(--primary, #0056b3);
+    }
+
+    .ie-tab.active {
+        background-color: #ffffff;
+        color: var(--primary, #0056b3);
+        border-bottom-color: var(--primary, #0056b3);
+    }
+
+    .ie-panels {
+        padding: 2.5rem;
+    }
+
+    .ie-panel {
+        display: none;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .ie-panel.active {
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .title-included {
+        color: #159b72; /* User's green */
+        font-size: 1.75rem;
+        font-weight: 400;
+        margin-top: 0;
+        margin-bottom: 1.5rem;
+    }
+
+    .title-excluded {
+        color: #e53935; /* Nice readable red */
+        font-size: 1.75rem;
+        font-weight: 400;
+        margin-top: 0;
+        margin-bottom: 1.5rem;
+    }
+
+    .ie-content :global(ul) {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .ie-content :global(li) {
+        position: relative;
+        padding-left: 1.5rem;
+        color: var(--on-surface, #333);
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    .ie-content :global(li::before) {
+        content: "•";
+        position: absolute;
+        left: 0;
+        color: var(--on-surface-variant, #6c757d);
+        font-size: 1.25rem;
+        line-height: 1.2;
+    }
+
+    /* Sub-lists styling */
+    .ie-content :global(li ul) {
+        margin-top: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .ie-content :global(li li::before) {
+        content: "◦";
+    }
+    
+    @media (max-width: 640px) {
+        .ie-panels {
+            padding: 1.5rem;
+        }
+        .ie-tab {
+            font-size: 0.85rem;
+            padding: 1rem 0.5rem;
+        }
+    }
+</style>
+
+<script>
+    function setupTabs() {
+        document.querySelectorAll('.ie-container').forEach(container => {
+            const tabs = container.querySelectorAll('.ie-tab');
+            const panels = container.querySelectorAll('.ie-panel');
+            
+            tabs.forEach(tab => {
+                // To prevent multiple bindings if script runs again
+                const newTab = tab.cloneNode(true);
+                tab.parentNode.replaceChild(newTab, tab);
+                
+                newTab.addEventListener('click', () => {
+                    // Update tabs
+                    container.querySelectorAll('.ie-tab').forEach(t => t.classList.remove('active'));
+                    newTab.classList.add('active');
+                    
+                    // Update panels
+                    panels.forEach(p => p.classList.remove('active'));
+                    const target = newTab.getAttribute('data-tab');
+                    const targetPanel = container.querySelector(`.ie-panel[data-panel="${target}"]`);
+                    if (targetPanel) {
+                        targetPanel.classList.add('active');
+                    }
+                });
+            });
+        });
+    }
+
+    // Run on init
+    setupTabs();
+    
+    // Support Astro View Transitions if enabled
+    document.addEventListener('astro:page-load', setupTabs);
+</script>
