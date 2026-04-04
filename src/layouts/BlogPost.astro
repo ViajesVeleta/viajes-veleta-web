@@ -50,9 +50,19 @@ if (collection && id) {
 }
 
 const isEs = lang === "es";
-const prevLabel = isEs ? "ENTRADA ANTERIOR" : "PREVIOUS ENTRY";
-const nextLabel = isEs ? "ENTRADA SIGUIENTE" : "NEXT ENTRY";
-const relatedLabel = isEs ? "Entradas relacionadas" : "Related entries";
+const isGroups = collection === "groups";
+
+const prevLabel = isEs 
+	? (isGroups ? "VIAJE ANTERIOR" : "ENTRADA ANTERIOR") 
+	: (isGroups ? "PREVIOUS TRIP" : "PREVIOUS ENTRY");
+
+const nextLabel = isEs 
+	? (isGroups ? "VIAJE SIGUIENTE" : "ENTRADA SIGUIENTE") 
+	: (isGroups ? "NEXT TRIP" : "NEXT ENTRY");
+
+const relatedLabel = isEs 
+	? (isGroups ? "Otros viajes en grupo" : "Entradas relacionadas") 
+	: (isGroups ? "Other group trips" : "Related entries");
 ---
 
 <html lang={lang} dir="ltr">
