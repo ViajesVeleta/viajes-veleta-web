@@ -1,10 +1,12 @@
 ---
-/**
- * Timeline Container Component
- */
+interface Props {
+    mode?: 'left' | 'alternate';
+}
+
+const { mode = 'left' } = Astro.props;
 ---
 
-<div class="timeline-wrapper">
+<div class={`timeline-wrapper mode-${mode}`}>
     <div class="timeline-container">
         <div class="timeline-gradient-line"></div>
         <div class="timeline-content-area">
@@ -23,12 +25,48 @@
 
     .timeline-container {
         position: relative;
+    }
+
+    /* mode-left (Default) */
+    .mode-left .timeline-container {
         padding-left: 40px;
+    }
+    .mode-left .timeline-gradient-line {
+        left: 20px;
+    }
+
+    /* mode-alternate */
+    @media (min-width: 1025px) {
+        .mode-alternate .timeline-container {
+            padding-left: 0;
+        }
+        .mode-alternate .timeline-gradient-line {
+            left: 50%;
+        }
+        .mode-alternate .timeline-content-area {
+            display: block; /* Use block for floating children */
+            gap: 0;
+        }
+        /* Clearfix for floating items */
+        .mode-alternate .timeline-content-area::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+    }
+
+    /* mobile/tablet behavior - always left mode below desktop */
+    @media (max-width: 1024px) {
+        .timeline-container {
+            padding-left: 40px !important;
+        }
+        .timeline-gradient-line {
+            left: 20px !important;
+        }
     }
 
     .timeline-gradient-line {
         position: absolute;
-        left: 20px;
         transform: translateX(-50%);
         top: 5px;
         bottom: -20px;
@@ -41,6 +79,7 @@
         );
         border-radius: 4px;
         opacity: 0.5;
+        z-index: 1;
     }
 
     .timeline-content-area {
@@ -50,14 +89,8 @@
     }
 
     @media (max-width: 640px) {
-        .timeline-container {
-            padding-left: 30px;
-        }
-        .timeline-gradient-line {
-            left: 15px;
-        }
         .timeline-wrapper {
-            padding: 0 0.5rem;
+            padding: 0;
         }
     }
 </style>

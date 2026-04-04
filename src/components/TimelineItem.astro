@@ -6,9 +6,10 @@ interface Props {
     date?: string;
     title?: string;
     image?: string;
+    side?: 'left' | 'right';
 }
 
-const { date, title, image } = Astro.props;
+const { date, title, image, side } = Astro.props;
 
 import { Image } from "astro:assets";
 import { getDynamicImage } from "../utils/images";
@@ -16,7 +17,7 @@ import { getDynamicImage } from "../utils/images";
 const dynamicImage = getDynamicImage(image);
 ---
 
-<div class="timeline-item">
+<div class="timeline-item" data-side={side}>
     <!-- Marker -->
     <div class="timeline-marker">
         <div class="marker-inner"></div>
@@ -63,6 +64,55 @@ const dynamicImage = getDynamicImage(image);
         position: relative;
         width: 100%;
         animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        display: flex;
+        justify-content: flex-start;
+    }
+
+    /* Alternate Mode logic (Masonry-lite with floats) */
+    @media (min-width: 1025px) {
+        :global(.mode-alternate) .timeline-item {
+            width: 50%;
+            display: block;
+            margin: 0;
+            padding: 1.5rem 0; /* Vertical spacing between markers */
+        }
+
+        /* Float Left items */
+        :global(.mode-alternate) .timeline-item:nth-child(odd),
+        :global(.mode-alternate) .timeline-item[data-side="left"] {
+            float: left;
+            clear: left;
+            padding-right: 40px;
+        }
+
+        /* Float Right items */
+        :global(.mode-alternate) .timeline-item:nth-child(even),
+        :global(.mode-alternate) .timeline-item[data-side="right"] {
+            float: right;
+            clear: right;
+            padding-left: 40px;
+            margin-top: 4rem; /* Initial offset for the first right item */
+        }
+
+        /* Subsequent Right items don't need extra top margin or they might use it for spacing */
+        :global(.mode-alternate) .timeline-item:nth-child(even) ~ .timeline-item:nth-child(even) {
+            margin-top: 0;
+        }
+
+        :global(.mode-alternate) .timeline-item .timeline-card {
+            width: 100%;
+        }
+
+        /* Marker Positioning - they must meet exactly at the 50% line */
+        :global(.mode-alternate) .timeline-item:nth-child(odd) .timeline-marker,
+        :global(.mode-alternate) .timeline-item[data-side="left"] .timeline-marker {
+            left: 100%;
+        }
+
+        :global(.mode-alternate) .timeline-item:nth-child(even) .timeline-marker,
+        :global(.mode-alternate) .timeline-item[data-side="right"] .timeline-marker {
+            left: 0;
+        }
     }
 
     @keyframes slideUp {
@@ -78,7 +128,7 @@ const dynamicImage = getDynamicImage(image);
 
     .timeline-marker {
         position: absolute;
-        left: -20px; /* Aligned with the central axis */
+        left: -20px; /* Default for mode-left */
         transform: translateX(-50%);
         top: 2.7rem; /* Better alignment with the card title area */
         width: 32px;
@@ -122,6 +172,7 @@ const dynamicImage = getDynamicImage(image);
     }
 
     .timeline-card {
+        width: 100%;
         background: color-mix(in srgb, var(--surface), transparent 15%);
         backdrop-filter: blur(12px);
         border: 1px solid
@@ -135,7 +186,7 @@ const dynamicImage = getDynamicImage(image);
     }
 
     .timeline-card:hover {
-        transform: translateX(8px);
+        transform: translateY(-5px);
         border-color: var(--primary-hover);
         box-shadow: 0 20px 40px -12px
             color-mix(in srgb, var(--primary), transparent 85%);
@@ -210,10 +261,17 @@ const dynamicImage = getDynamicImage(image);
         transform: scale(1.04);
     }
 
-    @media (max-width: 640px) {
+    @media (max-width: 1024px) {
         .timeline-marker {
-            left: -15px; /* Half of parent's 30px padding on mobile */
+            left: -20px !important;
         }
+        .timeline-card {
+            width: 100% !important;
+            margin: 0 !important;
+        }
+    }
+
+    @media (max-width: 640px) {
         .timeline-card {
             padding: 1.5rem;
         }
