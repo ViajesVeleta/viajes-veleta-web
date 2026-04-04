@@ -1,0 +1,83 @@
+---
+/**
+ * Column Item Component
+ * An individual item to be placed inside a Columns container.
+ */
+---
+<div class="column-item">
+    <slot />
+</div>
+
+<style>
+    .column-item {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Style for Headers and Text inside the slots for better consistency */
+    .column-item :global(h1),
+    .column-item :global(h2),
+    .column-item :global(h3) {
+        margin-top: 0;
+        margin-bottom: 1.5rem;
+        color: var(--on-surface, #1a1a1a);
+        font-weight: 700;
+        line-height: 1.25;
+        font-size: 1.75rem; /* Standard Heading size */
+    }
+
+    .column-item :global(p) {
+        margin-bottom: 1.25rem;
+        font-size: 1.05rem;
+        line-height: 1.8;
+        color: var(--on-surface-variant, #4a4a4a);
+    }
+
+    .column-item :global(p:last-child) {
+        margin-bottom: 0;
+    }
+
+    /* List and Link Styling */
+    .column-item :global(ul) {
+        list-style: none;
+        padding-left: 0;
+        margin-bottom: 1.5rem;
+    }
+    
+    .column-item :global(li) {
+        position: relative;
+        padding-left: 1.5rem;
+        margin-bottom: 0.75rem;
+        color: var(--on-surface-variant);
+        line-height: 1.6;
+    }
+
+    .column-item :global(li::before) {
+        content: "→";
+        position: absolute;
+        left: 0;
+        color: var(--primary);
+        font-weight: bold;
+    }
+
+    /* Support for emphasis and imagery */
+    .column-item :global(strong) {
+        color: var(--on-surface);
+        font-weight: 700;
+    }
+
+    .column-item :global(img) {
+        border-radius: 1rem;
+        width: 100%;
+        height: auto;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 12px color-mix(in srgb, var(--shadow), transparent 95%);
+    }
+</style>
