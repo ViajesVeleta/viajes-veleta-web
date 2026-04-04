@@ -131,9 +131,38 @@ const relatedLabel = isEs
 				z-index: 2;
 				text-align: center;
 				color: white;
-				width: 100%;
-				max-width: 1000px;
-				padding: 0 2rem;
+				width: 90%;
+				max-width: 1200px;
+				padding-bottom: 0;
+			}
+			@media (max-width: 768px) {
+				.hero-image {
+					height: 45vh;
+					padding-bottom: 1.5rem !important;
+				}
+				.hero-content {
+					padding-top: 60px;
+				}
+				.hero-content h1 {
+					font-size: 1.6rem !important;
+					line-height: 1.2;
+					margin-bottom: 0.75rem;
+				}
+				.hero-content .date {
+					font-size: 0.8rem;
+					margin-bottom: 0.25rem;
+				}
+				.hero-content .location {
+					font-size: 0.85rem;
+					margin-bottom: 1rem;
+				}
+				.hero-content .tags {
+					gap: 0.5rem;
+				}
+				.hero-content .tag {
+					padding: 0.2rem 0.6rem !important;
+					font-size: 0.75rem !important;
+				}
 			}
 			.hero-content h1 {
 				margin: 0.5rem 0 1.5rem 0;
@@ -188,9 +217,19 @@ const relatedLabel = isEs
 			.prose {
 				width: 720px;
 				max-width: calc(100% - 2em);
-				margin: 3rem auto;
+				margin: 0 auto 3rem auto;
 				padding: 1em;
 				color: var(--on-surface);
+			}
+			.prose > :first-child {
+				margin-top: 0 !important;
+				padding-top: 0 !important;
+			}
+			@media (max-width: 768px) {
+				.prose {
+					margin-top: -2.5rem !important;
+					padding-top: 0 !important;
+				}
 			}
 			.prose.prose-wide {
 				width: 1080px;
