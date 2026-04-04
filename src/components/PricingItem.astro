@@ -103,7 +103,7 @@ const { title, price, subtitle, highlight = false, badge } = Astro.props;
         display: flex;
         align-items: baseline;
         gap: 0.5rem;
-        margin-bottom: 2rem;
+        margin-bottom: 1.25rem;
     }
 
     .pricing-price {
@@ -135,15 +135,29 @@ const { title, price, subtitle, highlight = false, badge } = Astro.props;
         flex-direction: column;
     }
 
+    .pricing-content :global(p) {
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+        line-height: 1.4;
+    }
+
     /* Style the bullet list and button inside slot */
     .pricing-content :global(ul) {
         list-style: none;
         padding: 0;
-        margin: 0 0 2rem 0;
+        margin: 0.25rem 0 1.5rem 0;
         display: flex;
         flex-direction: column;
-        gap: 0.75rem;
+        gap: 0.5rem;
     }
+
+    /* Solo indentamos si la lista viene después de algo (un párrafo, un h5, etc) */
+    .pricing-content :global(* + ul) {
+        padding-left: 2.25rem;
+    }
+
+
+
 
     .pricing-content :global(li) {
         position: relative;
@@ -158,7 +172,23 @@ const { title, price, subtitle, highlight = false, badge } = Astro.props;
         left: 0;
         color: #159b72;
         font-weight: 800;
+        transition: all 0.2s ease;
     }
+
+    .pricing-content :global(li:has(del)) {
+        color: color-mix(in srgb, var(--on-surface-variant, #444), transparent 40%);
+        text-decoration: none; /* We handle the "excluded" look ourselves */
+    }
+
+    .pricing-content :global(li:has(del) del) {
+        text-decoration: none; /* Remove default strikethrough if we want a cleaner look, or keep it */
+    }
+
+    .pricing-content :global(li:has(del)::before) {
+        content: "✕";
+        color: #e53935;
+    }
+
 
     .pricing-content :global(.pricing-button) {
         display: inline-block;

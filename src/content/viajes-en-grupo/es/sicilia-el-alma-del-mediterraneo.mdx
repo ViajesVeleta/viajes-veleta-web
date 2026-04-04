@@ -63,62 +63,86 @@ location: ["Catania", "Palermo", "Siracusa", "Agrigento"]
 
 <PricingGrid>
   <PricingItem title="Circuito" price="2.240 €" subtitle="por persona" highlight={true}>
-    <ul>
-      <li>Circuito completo guiado</li>
-      <li>Vuelos y traslados</li>
-      <li>Hoteles con desayuno</li>
-      <li>Media pensión</li>
-    </ul>
+    
+    ##### 🛡️ Incluye Seguro Básico
+      - Gastos médicos: 4.500 €
+      - Gastos anulación: 500 €
+      - ~~No cubre enfermedades preexistentes~~  
+    
   </PricingItem>
 
   <PricingItem title="Suplemento individual" price="350 €" subtitle="bajo petición">
-    <ul>
-      <li>Habitación de uso individual</li>
-      <li>Sujeto a disponibilidad</li>
-    </ul>
+
+      - Habitación de uso individual
+      - Sujeto a disponibilidad
+    
   </PricingItem>
 
-  <PricingItem title="Seguro de anulación" price="40 €" subtitle="Modular">
-    <ul>
-      <li>Cobertura básica</li>
-      <li>Cancelación por fuerza mayor</li>
-    </ul>
+  <PricingItem title="Seguro de anulación (Opcional)" price="40 €" subtitle="Modular">
+   
+    - Cubre enfermedades preexistentes
+    - Gastos médicos: 15.000 €
+    - Gastos de anulación: 2.400 €
+    
   </PricingItem>
 
-  <PricingItem title="Seguro de anulación" price="65 €" subtitle="Prime Preexistencias">
-    <ul>
-      <li>Cobertura premium</li>
-      <li>Enfermedades preexistentes</li>
-    </ul>
+  <PricingItem title="Seguro de anulación (Opcional)" price="65 €" subtitle="Prime Preexistencias">
+
+    - Cubre enfermedades preexistentes
+    - Gastos médicos: 500.000  €
+    - Gastos de anulación: 3.000 €
+    
   </PricingItem>
 </PricingGrid>
 
 <IncludeExclude>
-  <ul slot="included">
-    <li>Autocar **Guadix – Aeropuerto de Granada – Guadix**.</li>
-    <li>Billete aéreo con **Vueling** desde Granada (incluye tasas).</li>
-    <li>**Equipaje**: 1 maleta de hasta 25 kg y equipaje de mano debajo del asiento.</li>
-    <li>Alojamiento en hoteles indicados con **desayuno incluido**.</li>
-    <li>**Guía local de habla española** durante todas las visitas.</li>
-    <li>**Entradas incluidas** a los monumentos mencionados: Teatro Griego, Parque Arqueológico de Siracusa, Valle de los Templos, Villa Romana del Casale, Capilla Palatina, Templo de Segesta, Claustro de Monreale, etc.</li>
-    <li>Régimen de **media pensión** (bebida no incluida) desde la cena del primer día hasta el desayuno del último.</li>
-    <li>**Guía Acompañante** desde España: **Kris Ubach**.</li>
-    <li>Seguro básico de viaje.</li>
-  </ul>
-  <ul slot="excluded">
-    <li>Comidas y cenas no mencionadas.</li>
-    <li>Bebidas en las comidas y cenas.</li>
-    <li>Maleteros, extras personales y propinas.</li>
-    <li>Servicios no especificados.</li>
-  </ul>
+  <div slot="included">
+    - Autocar **Guadix – Aeropuerto de Granada – Guadix**.
+    - Billete aéreo de línea regular con la compañía aérea **Vueling**, con salida desde **Granada**.
+    - **Tasas aéreas**.
+    - **Equipaje**: 1 maleta facturada de hasta 25 kg y 1 pieza de equipaje de mano (máximo 40x20x30cm), situado debajo del asiento.
+    - Asistencia en el aeropuerto a la llegada.
+    - Alojamiento en los hoteles indicados en el programa o similares, con **desayuno incluido**.
+    - **Guía local de habla española** a disposición:
+      - Día 1: Medio día en Catania
+      - Día 2: Medio día Etna (con guía acompañante) – Taormina
+      - Día 3. Día completo: Siracusa – Noto (Modica con parada técnica sin guía)
+      - Día 4. Medio día: Piazza Armerina – Agrigento
+      - Día 5. Medio día: Agrigento – Cefalú – Palermo
+      - Día 6. Día completo: Palermo – Erice – Segesta – Palermo
+      - Día 7. Medio día: Palermo – Monreale – Palermo
+    - **Entradas a**:
+      - Antiguo Teatro Griego
+      - Catedral de Noto
+      - Parque arqueológico de Siracusa, Neapolis y Duomo de Ortigia
+      - Valle de los Templos en Agrigento
+      - Villa Romana del Casale
+      - Capilla Palatina y Catedral de Palermo
+      - Iglesia de la Martorana en Palermo y de Santa Caterina con terraza y Monasterio
+      - Templo Dorico de Segesta
+      - Claustro benedictino y Catedral de Monreale
+      - Catedral Normana (NO TORRES) y Lavadero Medieval en Cefalù
+    - Régimen de **media pensión** (bebida no incluida) a partir de la cena del primer día hasta el desayuno del último día.
+    - Auriculares para los días de las visitas.
+    - **Guía Acompañante** de habla hispana desde España: **Kris Ubach**.
+  </div>
+  <div slot="excluded">
+    - Comidas y cenas no mencionadas en el programa.
+    - Bebidas en las comidas y cenas.
+    - Maleteros en los aeropuertos, hoteles y estaciones de tren.
+    - Extras personales, como teléfono, comidas y bebidas no descritas, lavandería, etc.
+    - Propinas.
+    - Seguros opcionales de cancelación.
+    - Servicios no especificados en el apartado EL PRECIO INCLUYE.
+  </div>
 </IncludeExclude>
 
-## Hoteles previstos
+## Hoteles previstos o similares
 
-*   **Catania**: Katane
-*   **Ragusa**: Mediterráneo
-*   **Agrigento**: Grand Hotel Mosé
-*   **Palermo**: Plaza Opera Hotel
+- **Catania**: Katane
+- **Ragusa**: Mediterráneo
+- **Agrigento**: Grand Hotel Mosé
+- **Palermo**: Plaza Opera Hotel
 
 ## Vuelos
 
@@ -165,8 +189,24 @@ location: ["Catania", "Palermo", "Siracusa", "Agrigento"]
 | 10 de diciembre | 750 € |
 | 20 de marzo | Resto pendiente |
 
-## Observaciones y Pagos
+## Gastos de anulación según fecha de salida
 
-*   Se ha establecido un pago inicial de **750 €** para confirmar la reserva.
-*   Los pagos se pueden realizar mediante transferencia a la cuenta de **Viajes Veleta**: **ES95 3023 0148 2955 1682 4504**.
-*   Imprescindible comunicar alergias o intolerancias alimentarias.
+| Desde | Hasta | Importe |
+| --- | --- | --- |
+| Fecha de reserva | Día de salida | 100 € |
+| 45 días | 16 días | 50 % |
+| 15 días | 0 días | 100 % |
+| Seguro de viaje | | No reembolsable |
+
+## Observaciones
+
+- Se ha establecido un pago inicial de **750 €** para confirmar la reserva.
+- Si alguien tiene alergia o intolerancia a algún tipo de alimento, deberá comunicarlo a la agencia.
+- El precio final del viaje puede ser revisado al alza o a la baja por variaciones en el cambio de moneda, carburante, tasas e impuestos, debiendo ser comunicado al usuario con 21 días o más de antelación a la salida. (Art. 157.2 del R.D. 1/2007 por el que se aprueba el texto refundido de la Ley General para la Defensa de los Consumidores y Usuarios, según establece la cláusula 3.2 de nuestras Condiciones Generales del Contrato de Viajes Combinados).
+- La organización se reserva el derecho de modificar el itinerario, si fuese necesario para un mejor desarrollo del viaje.
+
+## Pagos
+
+- Los pagos se podrán realizar en la oficina de Viajes Veleta o mediante transferencia a la siguiente cuenta de **Caja Rural**:
+- Titular: **Viajes Veleta**
+- Cuenta: **ES95 3023 0148 2955 1682 4504**
