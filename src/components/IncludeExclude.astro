@@ -177,9 +177,12 @@ const {
             const panels = container.querySelectorAll('.ie-panel');
             
             tabs.forEach(tab => {
+                const parent = tab.parentNode;
+                if (!parent) return;
+
                 // To prevent multiple bindings if script runs again
-                const newTab = tab.cloneNode(true);
-                tab.parentNode.replaceChild(newTab, tab);
+                const newTab = tab.cloneNode(true) as HTMLElement;
+                parent.replaceChild(newTab, tab);
                 
                 newTab.addEventListener('click', () => {
                     // Update tabs
