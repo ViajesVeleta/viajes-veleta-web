@@ -79,13 +79,15 @@ const { mode = 'left' } = Astro.props;
         );
         border-radius: 4px;
         opacity: 0.5;
-        z-index: 1;
+        z-index: 1; /* Behind the content */
     }
 
     .timeline-content-area {
         display: flex;
         flex-direction: column;
         gap: 3.5rem;
+        position: relative; /* Create stacking context */
+        z-index: 2; /* In front of the line */
     }
 
     @media (max-width: 640px) {
