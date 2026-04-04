@@ -115,6 +115,9 @@ const relatedLabel = isEs ? "Entradas relacionadas" : "Related entries";
 				padding: 1em;
 				color: var(--on-surface);
 			}
+			.prose.prose-wide {
+				width: 1080px;
+			}
 			.title {
 				margin-bottom: 1em;
 				padding: 1em 0;
@@ -277,7 +280,7 @@ const relatedLabel = isEs ? "Entradas relacionadas" : "Related entries";
 						)
 					}
 				</div>
-				<div class="prose">
+				<div class={`prose ${collection === "groups" ? "prose-wide" : ""}`}>
 					<div class="title">
 						<div class="date">
 							<FormattedDate date={date} locale={lang} />
