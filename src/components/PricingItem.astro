@@ -1,0 +1,183 @@
+---
+interface Props {
+    title: string;
+    price: string;
+    subtitle?: string;
+    highlight?: boolean;
+    badge?: string;
+}
+
+const { title, price, subtitle, highlight = false, badge } = Astro.props;
+---
+<div class={`pricing-card-wrapper ${highlight ? 'highlight' : ''}`}>
+    {highlight && <div class="highlight-glow"></div>}
+    <div class="pricing-card">
+        {badge && <div class="pricing-badge">{badge}</div>}
+        <h3 class="pricing-title">{title}</h3>
+        <div class="pricing-price-container">
+            <div class="pricing-price">
+                <span style="white-space: nowrap;">{price}</span>
+            </div>
+            {subtitle && <span class="pricing-subtitle">{subtitle}</span>}
+        </div>
+        <div class="pricing-content">
+            <slot />
+        </div>
+    </div>
+</div>
+
+<style>
+    .pricing-card-wrapper {
+        position: relative;
+        display: flex;
+        width: 100%;
+        border-radius: 1.5rem;
+    }
+    
+    .highlight-glow {
+        position: absolute;
+        top: -4px;
+        left: -4px;
+        right: -4px;
+        bottom: -4px;
+        background: linear-gradient(135deg, #12c2e9, #c471ed, #f64f59, #12c2e9);
+        background-size: 300% 300%;
+        border-radius: 1.6rem;
+        z-index: 0;
+        animation: glowAnimation 4s ease infinite;
+        opacity: 0.8;
+        filter: blur(14px);
+    }
+
+    @keyframes glowAnimation {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    .pricing-card {
+        background: var(--surface, #ffffff);
+        border: 1px solid color-mix(in srgb, var(--outline-variant, #ccc), transparent 50%);
+        border-radius: 1.5rem;
+        padding: 2.5rem;
+        width: 100%;
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        color: var(--on-surface, #1a1a1a);
+        box-shadow: 0 4px 12px color-mix(in srgb, var(--shadow, #000), transparent 95%);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .pricing-card-wrapper.highlight .pricing-card {
+        border-color: transparent;
+    }
+
+    .pricing-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px color-mix(in srgb, var(--shadow, #000), transparent 90%);
+    }
+
+    .pricing-badge {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        background: color-mix(in srgb, var(--primary, #0056b3), transparent 90%);
+        color: var(--primary, #0056b3);
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .pricing-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 0 0 1rem 0;
+        color: var(--primary, #0056b3);
+    }
+
+    .pricing-price-container {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .pricing-price {
+        font-size: 3rem;
+        font-weight: 800;
+        line-height: 1;
+        color: var(--on-surface);
+        display: flex;
+        align-items: baseline;
+        gap: 0.25rem;
+    }
+
+    .pricing-card-wrapper:not(.highlight) .pricing-price {
+        font-size: 2rem;
+    }
+
+    .pricing-subtitle {
+        font-size: 1rem;
+        color: var(--on-surface-variant, #666);
+    }
+
+    .pricing-card-wrapper:not(.highlight) .pricing-subtitle {
+        font-size: 0.85rem;
+    }
+
+    .pricing-content {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Style the bullet list and button inside slot */
+    .pricing-content :global(ul) {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 2rem 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .pricing-content :global(li) {
+        position: relative;
+        padding-left: 1.75rem;
+        font-size: 0.95rem;
+        color: var(--on-surface-variant, #444);
+    }
+
+    .pricing-content :global(li::before) {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: #159b72;
+        font-weight: 800;
+    }
+
+    .pricing-content :global(.pricing-button) {
+        display: inline-block;
+        margin-top: auto;
+        padding: 1rem;
+        text-align: center;
+        background: var(--primary, #0056b3); /* Primary blue */
+        color: var(--on-primary, #ffffff);
+        border-radius: 1rem;
+        text-decoration: none;
+        font-weight: 600;
+        transition: background 0.2s ease, transform 0.2s ease;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+    }
+
+    .pricing-content :global(.pricing-button:hover) {
+        background: color-mix(in srgb, var(--primary, #0056b3), #000 15%);
+        transform: scale(1.02);
+    }
+</style>

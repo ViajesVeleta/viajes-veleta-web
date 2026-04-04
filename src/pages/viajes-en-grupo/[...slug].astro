@@ -3,6 +3,8 @@ import { type CollectionEntry, getCollection, render } from "astro:content";
 import BlogPost from "../../layouts/BlogPost.astro";
 import Timeline from "../../components/Timeline.astro";
 import TimelineItem from "../../components/TimelineItem.astro";
+import PricingGrid from "../../components/PricingGrid.astro";
+import PricingItem from "../../components/PricingItem.astro";
 
 export async function getStaticPaths() {
     const posts = await getCollection("groups", ({ id }) =>
@@ -21,7 +23,7 @@ type Props = CollectionEntry<"groups">;
 
 const post = Astro.props;
 const { Content } = await render(post);
-const components = { Timeline, TimelineItem };
+const components = { Timeline, TimelineItem, PricingGrid, PricingItem };
 
 // Find translations
 const allPosts = await getCollection("groups");
@@ -39,6 +41,6 @@ translations.forEach((p) => {
 });
 ---
 
-<BlogPost {...post.data} translatedPaths={translatedPaths}>
+<BlogPost {...post.data} translatedPaths={translatedPaths} id={post.id} collection={post.collection}>
     <Content components={components} />
 </BlogPost>

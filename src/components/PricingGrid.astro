@@ -1,0 +1,48 @@
+---
+---
+<div class="pricing-grid">
+    <slot />
+</div>
+
+<style>
+    .pricing-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+        margin: 3rem 0;
+        align-items: stretch;
+    }
+
+    /* Principal: 100% width siempre */
+    .pricing-grid > :global(:first-child) {
+        flex: 1 1 100%;
+        width: 100%;
+    }
+
+    /* Suplementos por defecto en móviles ocupan todo */
+    .pricing-grid > :global(:not(:first-child)) {
+        flex: 1 1 100%;
+        width: 100%;
+    }
+
+    /* A partir de Tablet (>640px): 
+       Si el número de SUPLEMENTOS es PAR (es decir, el Total de hijos es IMPAR), 
+       forzamos que vayan de a 2 columnas. */
+    @media (min-width: 640px) {
+        .pricing-grid > :global(:first-child:nth-last-child(odd)) ~ :global(*) {
+            flex: 0 0 calc((100% - 2rem) / 2);
+            width: calc((100% - 2rem) / 2);
+        }
+    }
+
+    /* Escritorio Grande (>=1000px):
+       Si el número de SUPLEMENTOS es IMPAR (es decir, el Total de hijos es PAR),
+       forzamos que vayan en 3 columnas. 
+       (Se exceptúa el caso exacto de 1 solo suplemento, que queda en 100%). */
+    @media (min-width: 1000px) {
+        .pricing-grid > :global(:first-child:nth-last-child(even):not(:nth-last-child(2))) ~ :global(*) {
+            flex: 0 0 calc((100% - 4rem) / 3);
+            width: calc((100% - 4rem) / 3);
+        }
+    }
+</style>
