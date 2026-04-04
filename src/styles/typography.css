@@ -30,23 +30,23 @@ h6 {
 }
 
 h1 {
-    font-size: 3.052em;
+    font-size: 2.75rem;
 }
 
 h2 {
-    font-size: 2.441em;
+    font-size: 2rem;
 }
 
 h3 {
-    font-size: 1.953em;
+    font-size: 1.6rem;
 }
 
 h4 {
-    font-size: 1.563em;
+    font-size: 1.35rem;
 }
 
 h5 {
-    font-size: 1.25em;
+    font-size: 1.15rem;
 }
 
 strong,
@@ -72,7 +72,52 @@ p {
 }
 
 .prose p {
-    margin-bottom: 2em;
+    margin-bottom: 1.5em;
+}
+
+.prose h2,
+.prose h3 {
+    margin-top: 3.5rem;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+}
+
+.prose h2:first-child,
+.prose h3:first-child {
+    margin-top: 0;
+}
+
+.prose h4 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.prose table {
+    width: 100%;
+    margin: 2.5rem 0;
+    border-collapse: collapse;
+    font-size: 1rem;
+}
+
+.prose table th {
+    text-align: left;
+    padding: 0.75rem 0;
+    border-bottom: 2px solid var(--outline-variant);
+    color: var(--on-surface);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+}
+
+.prose table td {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--outline-variant);
+}
+
+.prose table tr:last-child td {
+    border-bottom: none;
 }
 
 /* Code Styles */
@@ -107,5 +152,20 @@ blockquote {
 @media (max-width: 720px) {
     body {
         font-size: 18px;
+    }
+
+    .prose h2,
+    .prose h3 {
+        margin-top: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .prose table {
+        margin: 1.5rem 0;
+        font-size: 0.85rem;
+    }
+
+    .prose table td {
+        padding: 0.75rem 0;
     }
 }

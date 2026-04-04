@@ -1,0 +1,107 @@
+---
+interface Props {
+    date: string;
+    origin: string;
+    destination: string;
+    airline: string;
+    times: string;
+    type?: 'takeoff' | 'landing';
+}
+
+const { date, origin, destination, airline, times, type = 'takeoff' } = Astro.props;
+---
+
+<div class="flight-item">
+    <div class="flight-icon">
+        {type === 'takeoff' ? (
+            <i class="fa-solid fa-plane-departure"></i>
+        ) : (
+            <i class="fa-solid fa-plane-arrival"></i>
+        )}
+    </div>
+    <div class="flight-details">
+        <h4 class="flight-route">
+            <span class="flight-date">{date}</span>
+            <span class="flight-separator">|</span>
+            {origin} - {destination}
+        </h4>
+        <p class="flight-info">
+            <span class="flight-airline">{airline}</span>
+            <span class="flight-separator">|</span>
+            {times}
+        </p>
+    </div>
+</div>
+
+<style>
+    .flight-item {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        padding: 1rem 0;
+    }
+
+    .flight-icon {
+        width: 4.5rem;
+        height: 4.5rem;
+        background-color: var(--primary, #0056b3);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .flight-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .flight-route {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 300;
+        color: var(--on-surface, #333);
+        letter-spacing: -0.02em;
+    }
+
+    .flight-date {
+        font-weight: 500;
+        color: var(--on-surface-variant, #666);
+    }
+
+    .flight-separator {
+        color: color-mix(in srgb, var(--outline-variant, #ccc), transparent 20%);
+        font-weight: 300;
+        margin: 0 0.5rem;
+    }
+
+    .flight-info {
+        margin: 0;
+        font-size: 1rem;
+        color: var(--on-surface-variant, #666);
+    }
+
+    .flight-airline {
+        font-weight: 600;
+        color: var(--on-surface, #333);
+    }
+
+    @media (max-width: 640px) {
+        .flight-item {
+            gap: 1rem;
+        }
+        .flight-icon {
+            width: 3.5rem;
+            height: 3.5rem;
+        }
+        .flight-route {
+            font-size: 1.15rem;
+        }
+        .flight-info {
+            font-size: 0.9rem;
+        }
+    }
+</style>
