@@ -215,8 +215,12 @@ const translatePath = useTranslatedPath(currentLang);
 			const drawer = document.getElementById("mobile-menu-drawer");
 			const mobileLinks = document.querySelectorAll(".mobile-nav-link");
 
-			if (!menuButton || !drawer || menuButton.dataset.initialized)
-				return;
+			// If no menu button or already setup, return
+			if (!menuButton || !drawer) return;
+
+			// Always re-bind exactly, so we clean old dataset if any
+			// But since it's a new DOM after swap, this shouldn't duplicate.
+			if (menuButton.dataset.initialized) return;
 
 			function openMenu() {
 				drawer?.classList.add("open");
@@ -262,12 +266,13 @@ const translatePath = useTranslatedPath(currentLang);
 			});
 		}
 
-		// Initialize
+		// Initialize on first load
 		initMobileMenu();
 		updateActiveLinks();
 
-		// Handle navigation for links
+		// Handle navigation (view transitions)
 		document.addEventListener("astro:after-swap", () => {
+			initMobileMenu();
 			updateActiveLinks();
 		});
 	</script>
