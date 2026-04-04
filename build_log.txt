@@ -1,0 +1,70 @@
+(node:22268) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2m19:26:32[22m [34m[@astrojs/cloudflare][39m Enabling sessions with Cloudflare KV with the "SESSION" KV binding.
+[2m19:26:32[22m [34m[@astrojs/cloudflare][39m If you see the error "Invalid binding `SESSION`" in your build output, you need to add the binding to your wrangler config file.
+[2m19:26:32[22m [34m[content][39m Syncing content
+[2m19:26:32[22m [34m[content][39m Synced content
+[2m19:26:32[22m [34m[types][39m Generated [2m246ms[22m
+[2m19:26:32[22m [34m[build][39m output: [34m"static"[39m
+[2m19:26:32[22m [34m[build][39m mode: [34m"server"[39m
+[2m19:26:32[22m [34m[build][39m directory: [34mD:\repo\organizations\viajes-veleta\viajes-veleta-web\dist\[39m
+[2m19:26:32[22m [34m[build][39m adapter: [32m@astrojs/cloudflare[39m
+[2m19:26:32[22m [34m[build][39m Collecting build info...
+[2m19:26:32[22m [34m[build][39m [32mΓ£ô Completed in 266ms.[39m
+[2m19:26:32[22m [34m[build][39m Building server entrypoints...
+[2m19:26:32[22m [34m[vite][39m [36mvite v6.4.1 [32mbuilding SSR bundle for dev...[36m[39m
+[2m19:26:33[22m [34m[vite][39m [32mΓ£ô built in 1.23s[39m
+[2m19:26:33[22m [34m[build][39m [32mΓ£ô Completed in 1.24s.[39m
+
+[42m[30m building client (vite) [39m[49m
+[2m19:26:33[22m [34m[vite][39m [36mvite v6.4.1 [32mbuilding for dev...[36m[39m
+[2m19:26:33[22m [34m[vite][39m transforming...
+[2m19:26:33[22m [34m[vite][39m [32mΓ£ô[39m 65 modules transformed.
+[2m19:26:33[22m [34m[vite][39m rendering chunks...
+[2m19:26:33[22m [34m[vite][39m computing gzip size...
+[2m19:26:33[22m [34m[vite][39m [2mdist/[22m[35m_astro/ui.CXOjeUv_.css                                                  [39m[1m[2m14.48 kB[22m[1m[22m[2m Γöé gzip:  2.60 kB[22m
+[2m19:26:33[22m [34m[vite][39m [2mdist/[22m[36m_astro/page.ZXyU73wm.js                                                 [39m[1m[2m 0.05 kB[22m[1m[22m[2m Γöé gzip:  0.07 kB[22m
+[2m19:26:33[22m [34m[vite][39m [2mdist/[22m[36m_astro/index.astro_astro_type_script_index_0_lang.BC7hmHTH.js           [39m[1m[2m 0.56 kB[22m[1m[22m[2m Γöé gzip:  0.37 kB[22m
+[2m19:26:33[22m [34m[vite][39m [2mdist/[22m[36m_astro/index.astro_astro_type_script_index_0_lang.CmxG-9X7.js           [39m[1m[2m 0.56 kB[22m[1m[22m[2m Γöé gzip:  0.37 kB[22m
+[2m19:26:33[22m [34m[vite][39m [2mdist/[22m[36m_astro/index.astro_astro_type_script_index_0_lang.CPB_dIS5.js           [39m[1m[2m 0.56 kB[22m[1m[22m[2m Γöé gzip:  0.37 kB[22m
+[2m19:26:33[22m [34m[vite][39m [2mdist/[22m[36m_astro/_tag_.astro_astro_type_script_index_0_lang.BC7hmHTH.js           [39m[1m[2m 0.56 kB[22m[1m[22m[2m Γöé gzip:  0.37 kB[22m
+[2m19:26:33[22m [34m[vite][39m [2mdist/[22m[36m_astro/index.astro_astro_type_script_index_0_lang.DMOIHbG7.js           [39m[1m[2m 0.56 kB[22m[1m[22m[2m Γöé gzip:  0.37 kB[22m
+[2m19:26:33[22m [34m[vite][39m [2mdist/[22m[36m_astro/Search.astro_astro_type_script_index_0_lang.819cLmki.js          [39m[1m[2m 2.19 kB[22m[1m[22m[2m Γöé gzip:  1.11 kB[22m
+[2m19:26:33[22m [34m[vite][39m [2mdist/[22m[36m_astro/index.KOfHF6jZ.js                                                [39m[1m[2m 2.31 kB[22m[1m[22m[2m Γöé gzip:  1.05 kB[22m
+[2m19:26:33[22m [34m[vite][39m [2mdist/[22m[36m_astro/GroupTripsGrid.astro_astro_type_script_index_0_lang.Bsa8n_wA.js  [39m[1m[2m 2.88 kB[22m[1m[22m[2m Γöé gzip:  1.16 kB[22m
+[2m19:26:33[22m [34m[vite][39m [2mdist/[22m[36m_astro/index.esm.XmLcqY08.js                                            [39m[1m[2m 6.66 kB[22m[1m[22m[2m Γöé gzip:  2.58 kB[22m
+[2m19:26:33[22m [34m[vite][39m [2mdist/[22m[36m_astro/ClientRouter.astro_astro_type_script_index_0_lang.Bh4wqtPV.js    [39m[1m[2m13.11 kB[22m[1m[22m[2m Γöé gzip:  4.54 kB[22m
+[2m19:26:33[22m [34m[vite][39m [2mdist/[22m[36m_astro/ui-core.DqoGt5aW.js                                              [39m[1m[2m72.93 kB[22m[1m[22m[2m Γöé gzip: 22.86 kB[22m
+[2m19:26:33[22m [34m[vite][39m [2mdist/[22m[36m_astro/HomeSlider.astro_astro_type_script_index_0_lang.C32kjrHd.js      [39m[1m[2m78.61 kB[22m[1m[22m[2m Γöé gzip: 24.26 kB[22m
+[2m19:26:33[22m [34m[vite][39m [32mΓ£ô built in 233ms[39m
+
+[42m[30m prerendering static routes [39m[49m
+[2m19:26:33[22m [32mΓû╢[39m src/pages/condiciones-generales.astro
+[2m19:26:33[22m   [34mΓööΓöÇ[39m [2m/condiciones-generales/index.html[22m [2m(+12ms)[22m 
+[2m19:26:33[22m [32mΓû╢[39m src/pages/contacto.astro
+[2m19:26:33[22m   [34mΓööΓöÇ[39m [2m/contacto/index.html[22m [2m(+3ms)[22m 
+[2m19:26:33[22m [32mΓû╢[39m src/pages/contrato-viaje-combinado.astro
+[2m19:26:33[22m   [34mΓööΓöÇ[39m [2m/contrato-viaje-combinado/index.html[22m [2m(+2ms)[22m 
+[2m19:26:33[22m [32mΓû╢[39m src/pages/en/404.astro
+[2m19:26:33[22m   [34mΓööΓöÇ[39m [2m/en/404/index.html[22m [2m(+1ms)[22m 
+[2m19:26:33[22m [32mΓû╢[39m src/pages/en/contacto.astro
+[2m19:26:33[22m   [34mΓööΓöÇ[39m [2m/en/contacto/index.html[22m [2m(+2ms)[22m 
+[2m19:26:33[22m [32mΓû╢[39m src/pages/en/ofertas/index.astro
+[2m19:26:33[22m   [34mΓööΓöÇ[39m [2m/en/ofertas/index.html[22m [2m(+3ms)[22m 
+[2m19:26:33[22m [32mΓû╢[39m src/pages/en/ofertas/[...slug].astro
+[2m19:26:33[22m   [34mΓööΓöÇ[39m [2m/en/ofertas/primera-oferta/index.html[22m [2m(+2ms)[22m 
+[2m19:26:33[22m [32mΓû╢[39m src/pages/en/tags/index.astro
+[2m19:26:33[22m   [34mΓööΓöÇ[39m [2m/en/tags/index.html[22m [2m(+2ms)[22m 
+[2m19:26:33[22m [32mΓû╢[39m src/pages/en/viajes-en-grupo/index.astro
+[2m19:26:33[22m   [34mΓööΓöÇ[39m [2m/en/viajes-en-grupo/index.html[22m [2m(+3ms)[22m 
+[2m19:26:33[22m [32mΓû╢[39m src/pages/en/viajes-en-grupo/[...slug].astro
+Expected component `Button` to be defined: you likely forgot to import, pass, or provide it.
+  Hint:
+    This issue often occurs when your MDX component encounters runtime errors.
+  Stack trace:
+    at _missingMdxReference (file:///D:/repo/organizations/viajes-veleta/viajes-veleta-web/dist/_worker.js/chunks/sicilia-el-alma-del-mediterraneo_DsfEeJsh.mjs:685:9)
+    at MDXContent (file:///D:/repo/organizations/viajes-veleta/viajes-veleta-web/dist/_worker.js/chunks/sicilia-el-alma-del-mediterraneo_DsfEeJsh.mjs:682:8)
+    at renderJSXVNode (file:///D:/repo/organizations/viajes-veleta/viajes-veleta-web/dist/_worker.js/chunks/astro/server_hA6TV08e.mjs:6757:39)
+    at Object.renderToStaticMarkup (file:///D:/repo/organizations/viajes-veleta/viajes-veleta-web/dist/_worker.js/renderers.mjs?time=1775323593854:28:24)
+    at async renderComponentToString (file:///D:/repo/organizations/viajes-veleta/viajes-veleta-web/dist/_worker.js/chunks/astro/server_hA6TV08e.mjs:6646:28)
+[2m19:26:33[22m   [34mΓö£ΓöÇ[39m [2m/en/viajes-en-grupo/sicilia-el-alma-del-mediterraneo/index.html[22m
