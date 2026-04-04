@@ -3,7 +3,7 @@ id: 'cadiz'
 title: 'Sabores y Paisajes Gaditanos'
 description: 'Circuito cultural y gastronómico en autocar de cuatro días / tres noches por las tierras de Cádiz y la sierra de Grazalema.'
 date: 'Feb 26 2026'
-image: 'assets/cadiz'
+image: 'assets/spain/cadiz/ayuntamiento-de-cadiz'
 category: 'spain'
 tags: ['gastronomia', 'andalucia', 'cultura']
 ---
