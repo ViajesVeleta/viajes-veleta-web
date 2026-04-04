@@ -1,24 +1,43 @@
 import { defineCollection, z, type SchemaContext } from 'astro:content';
 import { glob } from 'astro/loaders';
+import fs from 'node:fs';
+import nodePath from 'node:path';
 
-// This function will be used at build time to resolve image paths
-function resolveImagePath(path: string): string {
-	if (!path) return path;
+const SUPPORTED_EXTENSIONS = ['.webp', '.jpg', '.jpeg', '.png', '.svg', '.gif', '.avif'];
 
-	// Normalize the path to remove 'assets/' prefix if present
-	// This allows using 'assets/image-name' instead of '../../../assets/image-name'
-	let normalizedPath = path;
-	if (path.startsWith('assets/')) {
-		normalizedPath = path.replace('assets/', '../../../assets/');
+// This function is used at build time to resolve image paths without extensions.
+// It searches for the actual file on disk trying all supported extensions.
+// Uses node:path (cross-platform) and always returns forward-slash URLs for Vite.
+function resolveImagePath(imagePath: string): string {
+	if (!imagePath) return imagePath;
+
+	// If it already has a known extension, just normalise the prefix and return
+	if (SUPPORTED_EXTENSIONS.some(ext => imagePath.toLowerCase().endsWith(ext))) {
+		if (imagePath.startsWith('assets/')) {
+			return '../../../assets/' + imagePath.slice('assets/'.length);
+		}
+		return imagePath;
 	}
 
-	// If it already has an extension, return as-is
-	if (normalizedPath.match(/\.(png|jpg|jpeg|webp|svg)$/i)) {
-		return normalizedPath;
+	// Strip the 'assets/' shorthand prefix to get the relative path inside src/assets/
+	if (imagePath.startsWith('assets/')) {
+		const relativeToAssets = imagePath.slice('assets/'.length); // e.g. "europa/italia/sicilia/segesta"
+		const assetsDir = nodePath.join(process.cwd(), 'src', 'assets');
+		const candidateBase = nodePath.join(assetsDir, relativeToAssets);
+
+		for (const ext of SUPPORTED_EXTENSIONS) {
+			if (fs.existsSync(candidateBase + ext)) {
+				// Always use forward slashes — Vite requires them on all platforms
+				return '../../../assets/' + relativeToAssets.split(nodePath.sep).join('/') + ext;
+			}
+		}
+
+		// File not found with any extension — return a .webp path so the error is explicit
+		console.warn(`[content.config] Image not found for: ${imagePath}`);
+		return '../../../assets/' + relativeToAssets + '.webp';
 	}
 
-	// Otherwise, append .webp (since all images are now webp)
-	return `${normalizedPath}.webp`;
+	return imagePath;
 }
 
 const commonSchema = ({ image }: SchemaContext) => z.object({
