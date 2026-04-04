@@ -140,13 +140,14 @@ const dynamicImage = getDynamicImage(image);
     }
 
     .marker-inner {
-        width: 14px;
-        height: 14px;
-        background: var(--surface);
+        width: 16px;
+        height: 16px;
+        background-color: #ffffff !important; /* Force solid white */
         border: 3px solid var(--primary);
         border-radius: 50%;
         box-shadow: 0 0 12px color-mix(in srgb, var(--primary), transparent 50%);
-        z-index: 2;
+        z-index: 50;
+        position: relative;
         flex-shrink: 0;
     }
 
