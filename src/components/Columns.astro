@@ -1,0 +1,59 @@
+---
+/**
+ * Columns Container Component
+ * A flexible grid wrapper for ColumnItem components.
+ */
+interface Props {
+    columns?: number;
+    gap?: string;
+    collapseBelow?: 'mobile' | 'tablet' | 'none';
+}
+
+const { 
+    columns = 2, 
+    gap = "3rem", 
+    collapseBelow = 'tablet' 
+} = Astro.props;
+---
+
+<div 
+    class={`columns-container collapse-${collapseBelow}`} 
+    style={`--column-count: ${columns}; --column-gap: ${gap};`}
+>
+    <slot />
+</div>
+
+<style>
+    .columns-container {
+        display: grid;
+        grid-template-columns: repeat(var(--column-count), 1fr);
+        gap: var(--column-gap);
+        width: 100%;
+        margin: 3.5rem 0;
+        align-items: start;
+    }
+
+    /* Responsive Behaviors */
+    @media (max-width: 1024px) {
+        .collapse-tablet {
+            grid-template-columns: 1fr;
+            gap: 2.5rem;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .collapse-mobile, 
+        .collapse-tablet {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+    }
+
+    /* If no collapse is specified but it's very small, we should still stack for usability */
+    @media (max-width: 480px) {
+        .columns-container {
+            grid-template-columns: 1fr !important;
+            gap: 2rem !important;
+        }
+    }
+</style>
