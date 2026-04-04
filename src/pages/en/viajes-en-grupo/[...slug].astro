@@ -8,6 +8,8 @@ import PricingItem from "../../../components/PricingItem.astro";
 import IncludeExclude from "../../../components/IncludeExclude.astro";
 import FlightGrid from "../../../components/FlightGrid.astro";
 import FlightItem from "../../../components/FlightItem.astro";
+import Columns from "../../../components/Columns.astro";
+import ColumnItem from "../../../components/ColumnItem.astro";
 
 export async function getStaticPaths() {
     const posts = await getCollection("groups", ({ id }) =>
@@ -26,7 +28,7 @@ type Props = CollectionEntry<"groups">;
 
 const post = Astro.props;
 const { Content } = await render(post);
-const components = { Timeline, TimelineItem, PricingGrid, PricingItem, IncludeExclude, FlightGrid, FlightItem };
+const components = { Timeline, TimelineItem, PricingGrid, PricingItem, IncludeExclude, FlightGrid, FlightItem, Columns, ColumnItem };
 
 // Find translations
 const allPosts = await getCollection("groups");
