@@ -15,25 +15,25 @@ const {
 ---
 
 <div class="ie-container">
-    <div class="ie-tabs">
-        <button class="ie-tab active" data-tab="included">
+    <div class="ie-tabs" role="tablist">
+        <button class="ie-tab active" data-tab="included" role="tab" aria-selected="true" aria-controls="panel-included" id="tab-included">
             <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
             {includedTabLabel}
         </button>
-        <button class="ie-tab" data-tab="excluded">
-            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        <button class="ie-tab" data-tab="excluded" role="tab" aria-selected="false" aria-controls="panel-excluded" id="tab-excluded">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 18l12 12"/></svg>
             {excludedTabLabel}
         </button>
     </div>
     
     <div class="ie-panels">
-        <div class="ie-panel active" data-panel="included">
+        <div class="ie-panel active" data-panel="included" role="tabpanel" id="panel-included" aria-labelledby="tab-included">
             <h3 class="title-included">{includedTitle}</h3>
             <div class="ie-content">
                 <slot name="included" />
             </div>
         </div>
-        <div class="ie-panel" data-panel="excluded">
+        <div class="ie-panel" data-panel="excluded" role="tabpanel" id="panel-excluded" aria-labelledby="tab-excluded">
             <h3 class="title-excluded">{excludedTitle}</h3>
             <div class="ie-content">
                 <slot name="excluded" />
@@ -44,7 +44,7 @@ const {
 
 <style>
     .ie-container {
-        background-color: #ffffff;
+        background-color: var(--surface, #ffffff);
         border: 1px solid color-mix(in srgb, var(--outline-variant, #ccc), transparent 50%);
         border-radius: 1rem;
         overflow: hidden;
@@ -56,7 +56,7 @@ const {
     .ie-tabs {
         display: flex;
         border-bottom: 1px solid color-mix(in srgb, var(--outline-variant, #ccc), transparent 50%);
-        background-color: #fafafa;
+        background-color: var(--surface-variant, #fafafa);
     }
 
     .ie-tab {
@@ -84,7 +84,7 @@ const {
     }
 
     .ie-tab.active {
-        background-color: #ffffff;
+        background-color: var(--surface, #ffffff);
         color: var(--primary, #0056b3);
         border-bottom-color: var(--primary, #0056b3);
     }
@@ -108,7 +108,7 @@ const {
     }
 
     .title-included {
-        color: #159b72; /* User's green */
+        color: var(--success, #159b72); /* User's green */
         font-size: 1.75rem;
         font-weight: 400;
         margin-top: 0;
@@ -116,7 +116,7 @@ const {
     }
 
     .title-excluded {
-        color: #e53935; /* Nice readable red */
+        color: var(--error, #e53935); /* Nice readable red */
         font-size: 1.75rem;
         font-weight: 400;
         margin-top: 0;
@@ -186,8 +186,12 @@ const {
                 
                 newTab.addEventListener('click', () => {
                     // Update tabs
-                    container.querySelectorAll('.ie-tab').forEach(t => t.classList.remove('active'));
+                    container.querySelectorAll('.ie-tab').forEach(t => {
+                        t.classList.remove('active');
+                        t.setAttribute('aria-selected', 'false');
+                    });
                     newTab.classList.add('active');
+                    newTab.setAttribute('aria-selected', 'true');
                     
                     // Update panels
                     panels.forEach(p => p.classList.remove('active'));

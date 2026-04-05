@@ -3,11 +3,11 @@ import { glob } from 'astro/loaders';
 import fs from 'node:fs';
 import nodePath from 'node:path';
 
-const SUPPORTED_EXTENSIONS = ['.webp', '.jpg', '.jpeg', '.png', '.svg', '.gif', '.avif'];
-
 // This function is used at build time to resolve image paths without extensions.
 // It searches for the actual file on disk trying all supported extensions.
 // Uses node:path (cross-platform) and always returns forward-slash URLs for Vite.
+import { resolveAssetPath, SUPPORTED_EXTENSIONS } from './utils/resolveAsset.mjs';
+
 function resolveImagePath(imagePath: string): string {
 	if (!imagePath) return imagePath;
 
@@ -23,13 +23,12 @@ function resolveImagePath(imagePath: string): string {
 	if (imagePath.startsWith('assets/')) {
 		const relativeToAssets = imagePath.slice('assets/'.length); // e.g. "europa/italia/sicilia/segesta"
 		const assetsDir = nodePath.join(process.cwd(), 'src', 'assets');
-		const candidateBase = nodePath.join(assetsDir, relativeToAssets);
-
-		for (const ext of SUPPORTED_EXTENSIONS) {
-			if (fs.existsSync(candidateBase + ext)) {
-				// Always use forward slashes — Vite requires them on all platforms
-				return '../../../assets/' + relativeToAssets.split(nodePath.sep).join('/') + ext;
-			}
+		
+		const absoluteAssetPath = resolveAssetPath(assetsDir, relativeToAssets);
+		if (absoluteAssetPath) {
+			const relToAssetsDir = nodePath.relative(assetsDir, absoluteAssetPath);
+			// Always use forward slashes — Vite requires them on all platforms
+			return '../../../assets/' + relToAssetsDir.split(nodePath.sep).join('/');
 		}
 
 		// File not found with any extension — return a .webp path so the error is explicit
