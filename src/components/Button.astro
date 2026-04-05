@@ -31,22 +31,32 @@ if (link) {
   }
 }
 
-// Determine the tag and target depending on if it has a link
-const Tag = href ? 'a' : 'button';
+// Determine the target depending on if it has a link
 const target = isExternal || isAsset ? '_blank' : undefined;
 const rel = isExternal || isAsset ? 'noopener noreferrer' : undefined;
 ---
 
-<Tag 
-  href={href} 
-  class:list={["veleta-button", className]} 
-  style={`--btn-bg: ${color};`}
-  target={target}
-  rel={rel}
->
-  {icon && <i class:list={[icon, "btn-icon"]}></i>}
-  <span class="btn-text">{title}</span>
-</Tag>
+{href ? (
+  <a 
+    href={href} 
+    class:list={["veleta-button", className]} 
+    style={`--btn-bg: ${color};`}
+    target={target}
+    rel={rel}
+  >
+    {icon && <i class:list={[icon, "btn-icon"]}></i>}
+    <span class="btn-text">{title}</span>
+  </a>
+) : (
+  <button
+    type="button"
+    class:list={["veleta-button", className]}
+    style={`--btn-bg: ${color};`}
+  >
+    {icon && <i class:list={[icon, "btn-icon"]}></i>}
+    <span class="btn-text">{title}</span>
+  </button>
+)}
 
 <style>
   .veleta-button {
