@@ -1,0 +1,17 @@
+---
+description: Use group trip MDX template for new group trips
+globs: src/content/viajes-en-grupo/**/*.mdx
+alwaysApply: false
+---
+
+# Viajes en grupo: usar plantilla base
+
+Cuando se cree un nuevo viaje en grupo, usar siempre como base `.templates/plantilla-viaje-en-grupo.mdx`.
+
+## Instrucciones
+
+- Copiar la plantilla completa y crear el nuevo archivo en `src/content/viajes-en-grupo/`.
+- Mantener la misma estructura de secciones y componentes (itinerario, precios, incluye/excluye, vuelos, pagos, observaciones).
+- Reemplazar todos los placeholders por contenido real del viaje antes de finalizar.
+- Verificar que el `id` del frontmatter sea unico y coherente con el slug.
+- No publicar la plantilla dentro de `src/content/viajes-en-grupo/`; la plantilla vive en `.templates/`.
