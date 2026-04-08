@@ -1,0 +1,430 @@
+---
+/**
+ * Gallery Component
+ * Handles a grid of images and a full-screen lightbox dialog.
+ */
+import { Image } from "astro:assets";
+import { getDynamicImage } from "../utils/images";
+
+interface Props {
+  images: string[]; // List of image paths (e.g., ["assets/...", "assets/..."])
+  cols?: number;    // e.g., 3
+}
+
+const { images: imagePaths, cols = 3 } = Astro.props;
+
+const galleryImages = [];
+for (const path of imagePaths) {
+  const meta = getDynamicImage(path);
+  if (meta) {
+    galleryImages.push(meta);
+  }
+}
+
+// Prepare images for client-side JS (these are processed URLs)
+const imageUrls = JSON.stringify(galleryImages.map(img => img.src));
+---
+
+<div class="gallery-grid" style={`grid-template-columns: repeat(${cols}, 1fr);`}>
+  {galleryImages.map((img, idx) => (
+
+    <a 
+      href="#" 
+      class="gallery-item-link"
+      data-index={idx}
+      onclick={`openGallery(this, ${idx}); return false;`}
+    >
+      <Image 
+        src={img} 
+        alt={`Galería ${idx + 1}`} 
+        class="gallery-thumb"
+        draggable="false"
+      />
+    </a>
+  ))}
+</div>
+<dialog id="galeriaDialog" class="gallery-dialog">
+  <div class="dialog-overlay" id="dialogOverlay">
+    <div class="dialog-image-container" id="dialogImageContainer">
+      <button type="button" class="dialog-close" aria-label="Cerrar galería">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      
+      <img id="galeriaDialogImg" src="" alt="Imagen ampliada de la galería" draggable="false" />
+      
+      <div class="dialog-controls">
+        <button type="button" class="dialog-prev" aria-label="Imagen anterior">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <div class="dialog-info">
+          <span id="galeriaDialogCount"></span>
+        </div>
+        
+        <button type="button" class="dialog-next" aria-label="Imagen siguiente">
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<script is:inline define:vars={{ imageUrls }}>
+  // Parse processed URLs
+  const imgs = JSON.parse(imageUrls);
+  
+  function updateDialog(idx) {
+    const dialog = document.getElementById('galeriaDialog');
+    const imgElement = document.getElementById('galeriaDialogImg');
+    const countElement = document.getElementById('galeriaDialogCount');
+    
+    if (!dialog || !imgElement) return;
+    
+    // Switch animation: fade out, change image, fade in
+    imgElement.classList.remove('fade-in');
+    imgElement.classList.add('transitioning');
+    
+    setTimeout(() => {
+      dialog.dataset.index = idx;
+      imgElement.src = imgs[idx];
+      
+      if (countElement) {
+        countElement.textContent = (idx + 1) + ' de ' + imgs.length;
+      }
+      
+      // Allow browser to process src change before fading back in
+      imgElement.onload = () => {
+        imgElement.classList.remove('transitioning');
+        imgElement.classList.add('fade-in');
+      };
+      
+      // Fallback if onload doesn't fire (e.g. cached)
+      setTimeout(() => {
+        if (imgElement.classList.contains('transitioning')) {
+          imgElement.classList.remove('transitioning');
+          imgElement.classList.add('fade-in');
+        }
+      }, 300);
+      
+    }, 150);
+  }
+
+  window.openGallery = (el, idx) => {
+    updateDialog(idx);
+    const dialog = document.getElementById('galeriaDialog');
+    const imgElement = document.getElementById('galeriaDialogImg');
+    
+    if (dialog && imgElement) {
+      imgElement.src = imgs[idx]; // Initial set
+      imgElement.classList.remove('transitioning');
+      imgElement.classList.add('fade-in');
+      
+      dialog.showModal();
+      document.body.style.overflow = 'hidden';
+      // Reset animations
+      dialog.classList.remove('dialog-closing');
+    }
+  };
+
+  // Dialog listeners
+  document.addEventListener('DOMContentLoaded', () => {
+    const dialog = document.getElementById('galeriaDialog');
+    const overlay = document.getElementById('dialogOverlay');
+    if (!dialog) return;
+
+    function closeDialog() {
+      dialog.classList.add('dialog-closing');
+      document.body.style.overflow = '';
+      
+      // Wait for animation before actually closing
+      setTimeout(() => {
+        dialog.close();
+        dialog.classList.remove('dialog-closing');
+      }, 300);
+    }
+
+    dialog.querySelector('.dialog-close')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeDialog();
+    });
+    
+    dialog.querySelector('.dialog-prev')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      let idx = parseInt(dialog.dataset.index || '0', 10);
+      idx = (idx - 1 + imgs.length) % imgs.length;
+      updateDialog(idx);
+    });
+    
+    dialog.querySelector('.dialog-next')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      let idx = parseInt(dialog.dataset.index || '0', 10);
+      idx = (idx + 1) % imgs.length;
+      updateDialog(idx);
+    });
+
+    // Close on click outside
+    overlay?.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        closeDialog();
+      }
+    });
+
+    dialog.addEventListener('cancel', (e) => {
+        e.preventDefault(); // Control escape manually for animation
+        closeDialog();
+    });
+  });
+</script>
+
+<style>
+  .gallery-grid {
+    display: grid;
+    gap: 0;
+    margin: 1.5rem 0;
+  }
+
+  .gallery-item-link {
+    display: block;
+    aspect-ratio: 1/1;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+  }
+
+  .gallery-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .gallery-item-link:hover .gallery-thumb {
+    transform: scale(1.08);
+  }
+
+  /* --- LIGHTBOX ANIMATIONS --- */
+  
+  .gallery-dialog {
+    padding: 0;
+    border: none;
+    background: transparent;
+    width: 100vw;
+    max-width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
+    color: white;
+    
+    /* Unified transition for all states */
+    opacity: 0;
+    transform: scale(0.95);
+    transition: 
+      opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      display 0.3s cubic-bezier(0.4, 0, 0.2, 1) allow-discrete, 
+      overlay 0.3s cubic-bezier(0.4, 0, 0.2, 1) allow-discrete;
+  }
+
+  /* When open, go to full visibility */
+  .gallery-dialog[open] {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* Starting styles for the entry transition */
+  @starting-style {
+    .gallery-dialog[open] {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    .gallery-dialog[open]::backdrop {
+      background: rgba(0, 0, 0, 0);
+      backdrop-filter: blur(0px);
+    }
+  }
+
+  /* Backdrop logic */
+  .gallery-dialog::backdrop {
+    background: rgba(0, 0, 0, 0);
+    backdrop-filter: blur(0px);
+    transition: 
+      background 0.3s ease, 
+      backdrop-filter 0.3s ease, 
+      display 0.3s allow-discrete, 
+      overlay 0.3s allow-discrete;
+  }
+
+  .gallery-dialog[open]::backdrop {
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(12px);
+  }
+
+  /* Specific class for closing phase via JS */
+  .gallery-dialog.dialog-closing {
+    opacity: 0;
+    transform: scale(0.95);
+    pointer-events: none;
+  }
+
+  .gallery-dialog.dialog-closing::backdrop {
+    background: rgba(0, 0, 0, 0) !important;
+    backdrop-filter: blur(0px) !important;
+  }
+
+
+
+  /* Image Crossfade */
+  #galeriaDialogImg {
+    max-width: 100%;
+    max-height: 75vh;
+    object-fit: contain;
+    border-radius: 4px;
+    background: #000;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform: scale(0.98);
+  }
+
+  #galeriaDialogImg.fade-in {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  #galeriaDialogImg.transitioning {
+    opacity: 0;
+    transform: scale(1.02);
+  }
+
+  .dialog-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    cursor: default;
+  }
+
+
+  .dialog-image-container {
+    position: relative;
+    max-width: min(95vw, 1400px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: default;
+    background: rgba(0,0,0,0.4);
+    padding: 12px;
+    border-radius: 12px;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .dialog-close {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 20;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0;
+    line-height: 1;
+  }
+
+  .dialog-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: rotate(90deg) scale(1.1);
+    border-color: rgba(255,255,255,0.3);
+  }
+
+  #galeriaDialogImg {
+    max-width: 100%;
+    max-height: 75vh;
+    object-fit: contain;
+    border-radius: 4px;
+    background: #000;
+  }
+
+  .dialog-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 16px;
+    width: 100%;
+  }
+
+  .dialog-prev, .dialog-next {
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+    padding: 0;
+    line-height: 1;
+  }
+
+  .dialog-prev:hover, .dialog-next:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+    border-color: rgba(255,255,255,0.3);
+  }
+
+  .dialog-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    min-width: 150px;
+    text-align: center;
+  }
+
+  #galeriaDialogCount {
+    font-size: 0.95rem;
+    opacity: 0.9;
+  }
+
+
+
+  @media (max-width: 768px) {
+    .dialog-close {
+      top: -10px;
+      right: -10px;
+    }
+    .dialog-controls {
+      gap: 12px;
+    }
+    .dialog-prev, .dialog-next {
+      width: 40px;
+      height: 40px;
+    }
+  }
+</style>
+
