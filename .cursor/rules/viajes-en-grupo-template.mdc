@@ -15,7 +15,7 @@ Cuando se cree un nuevo viaje en grupo, usar siempre como base `.templates/plant
 - Copiar la plantilla completa y crear el nuevo archivo en `src/content/viajes-en-grupo/`.
 - Mantener la misma estructura de secciones y componentes (itinerario, precios, incluye/excluye, vuelos, pagos, observaciones).
 
-### Imagenes
+### Imágenes
 
 - Todas las imagenes del viaje deben guardarse en `src/assets/` siguiendo estructura `continente/pais/...`; no usar `public/`.
 - Nunca usar URLs remotas en el contenido final: cualquier imagen externa debe descargarse y guardarse en `src/assets/...` antes de referenciarla.
