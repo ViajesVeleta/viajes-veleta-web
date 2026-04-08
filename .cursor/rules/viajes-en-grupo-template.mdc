@@ -25,7 +25,7 @@ Cuando se cree un nuevo viaje en grupo, usar siempre como base `.templates/plant
 
 ### Contenido
 
-- No inventar datos del viaje durante el proceso de sustitucion de la plantilla.
+- No inventar datos del viaje durante el proceso de sustitución de la plantilla.
 - Si faltan datos, mantener placeholders de la plantilla sin cambios.
 - Sustituir solo los campos que el usuario indique explicitamente en cada paso.
 - Si el usuario no indica mantener contenido adicional de plantilla en un bloque ya editado, eliminar ese contenido residual.
