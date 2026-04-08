@@ -10,8 +10,37 @@ Cuando se cree un nuevo viaje en grupo, usar siempre como base `.templates/plant
 
 ## Instrucciones
 
+### Estructura base
+
 - Copiar la plantilla completa y crear el nuevo archivo en `src/content/viajes-en-grupo/`.
 - Mantener la misma estructura de secciones y componentes (itinerario, precios, incluye/excluye, vuelos, pagos, observaciones).
-- Reemplazar todos los placeholders por contenido real del viaje antes de finalizar.
+
+### Imagenes
+
+- Todas las imagenes del viaje deben guardarse en `src/assets/` siguiendo estructura `continente/pais/...`; no usar `public/`.
+- Nunca usar URLs remotas en el contenido final: cualquier imagen externa debe descargarse y guardarse en `src/assets/...` antes de referenciarla.
+- Si la imagen es un mapa, el nombre del archivo debe terminar en `-mapa` (ejemplo: `cantabria-infinita-mapa.png`).
+- Si hay varias imagenes del mismo sitio, usar sufijos numericos (por ejemplo `...-1`, `...-2`).
+- No convertir manualmente a `webp`; usar el formato original y dejar la conversion a CI.
+
+### Contenido
+
+- No inventar datos del viaje durante el proceso de sustitucion de la plantilla.
+- Si faltan datos, mantener placeholders de la plantilla sin cambios.
+- Sustituir solo los campos que el usuario indique explicitamente en cada paso.
+- Si el usuario no indica mantener contenido adicional de plantilla en un bloque ya editado, eliminar ese contenido residual.
+- Si el usuario indica que el viaje no tiene vuelos, eliminar por completo la seccion `## Vuelos` (no dejar texto de reemplazo).
+- Si el usuario pide "solo titulo", actualizar unicamente `title` y no modificar otros campos.
+- La introduccion y la descripcion son siempre el mismo texto: cualquier texto nuevo de `description` debe copiarse exactamente tambien en el primer `<ColumnItem>`.
+- Solo cuando el usuario indique explicitamente que el proceso se ha completado, completar campos tecnicos del frontmatter (`id`, `category`, `tags`, `location`) extrayendolos del contenido real ya definido del viaje, sin inventar informacion nueva.
+
+### Viajes de experiencia fotografica
+
+- Si el titulo del viaje contiene `Experiencia fotográfica`, se deben anadir tambien las secciones: `## Dirigido a`, `## Localizaciones`, `## Programa`, `## Equipo necesario` y `## A tener en cuenta`.
+- En viajes de `Experiencia fotográfica`, incluir tambien las secciones `## Miguel Gil León` y la galeria final de imagenes (sin necesidad de titulo visible si el usuario lo solicita).
+- Estas secciones son obligatorias en ese tipo de viaje, aunque su contenido se complete de forma progresiva segun la informacion que facilite el usuario.
+
+### Validaciones
+
 - Verificar que el `id` del frontmatter sea unico y coherente con el slug.
 - No publicar la plantilla dentro de `src/content/viajes-en-grupo/`; la plantilla vive en `.templates/`.
