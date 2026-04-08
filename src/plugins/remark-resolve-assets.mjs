@@ -2,38 +2,89 @@ import { visit } from 'unist-util-visit';
 import path from 'path';
 import { resolveAssetPath } from '../utils/resolveAsset.mjs';
 
+const srcRoot = () => path.join(process.cwd(), 'src');
+
+/**
+ * Path inside src/assets (no leading assets/), may omit extension.
+ */
+function resolveUnderAssets(assetsDir, assetRelativePath) {
+    return resolveAssetPath(assetsDir, assetRelativePath);
+}
+
+function relativeImportFromFile(fileDir, assetAbsolutePath) {
+    let relativePath = path.relative(fileDir, assetAbsolutePath);
+    return relativePath.split(path.sep).join('/');
+}
+
+/**
+ * `/src/assets/...` URL with real extension (for inline JS strings loaded at runtime).
+ */
+function absoluteSrcUrlFromFile(assetAbsolutePath) {
+    const rel = path.relative(srcRoot(), assetAbsolutePath).split(path.sep).join('/');
+    return `/src/${rel}`;
+}
+
+/**
+ * Replace extensionless `/src/assets/...` paths inside a JS string (e.g. onclick) with URLs that include the real file extension.
+ */
+function resolveExtensionlessStringsInJs(js, assetsDir) {
+    return js.replace(/(['"])(\/?src\/assets\/[^'"]+)\1/g, (full, quote, inner) => {
+        const normalized = inner.startsWith('/') ? inner : `/${inner}`;
+        if (!normalized.startsWith('/src/assets/')) return full;
+
+        const assetRelativePath = normalized.replace(/^\/src\/assets\//, '');
+        const assetAbsolutePath = resolveUnderAssets(assetsDir, assetRelativePath);
+        if (!assetAbsolutePath) return full;
+
+        return `${quote}${absoluteSrcUrlFromFile(assetAbsolutePath)}${quote}`;
+    });
+}
+
 export function remarkResolveAssets() {
     return function (tree, file) {
         if (!file.history || file.history.length === 0) return;
 
-        // file.history[0] is typically the absolute path to the file being processed
         const filePath = file.history[0];
         const fileDir = path.dirname(filePath);
-
-        // Define absolute path to assets.
-        // process.cwd() is the project root in Astro.
         const assetsDir = path.join(process.cwd(), 'src', 'assets');
 
         visit(tree, 'image', (node) => {
             if (node.url && node.url.startsWith('assets/')) {
-                // Remove 'assets/' prefix to get the relative file path inside assets dir
                 const assetRelativePath = node.url.replace(/^assets\//, '');
-
-                // Resolve the actual asset file (including finding the extension if omitted)
-                const assetAbsolutePath = resolveAssetPath(assetsDir, assetRelativePath);
+                const assetAbsolutePath = resolveUnderAssets(assetsDir, assetRelativePath);
 
                 if (!assetAbsolutePath) {
-                    // Asset not found — leave the URL as-is so the broken image is visible in dev
                     return;
                 }
 
-                // Calculate relative path from current file's directory to the asset
-                let relativePath = path.relative(fileDir, assetAbsolutePath);
+                node.url = relativeImportFromFile(fileDir, assetAbsolutePath);
+            }
+        });
 
-                // Normalize path separators for Windows → forward slashes (Markdown/Vite standard)
-                relativePath = relativePath.split(path.sep).join('/');
+        /**
+         * MDX: no reescribir `src` de `<img>` aquí: rutas relativas al .mdx rompen en el HTML estático.
+         * Los `<img>` JSX se normalizan en `rehype-resolve-mdx-img-src` + `rehypeImageToComponent` (Astro).
+         * Solo seguimos completando extensiones en strings JS (onclick, etc.).
+         */
+        visit(tree, (node) => {
+            if (node.type !== 'mdxJsxFlowElement' && node.type !== 'mdxJsxTextElement') {
+                return;
+            }
+            if (!node.attributes || !Array.isArray(node.attributes)) {
+                return;
+            }
 
-                node.url = relativePath;
+            for (const attr of node.attributes) {
+                if (attr.type !== 'mdxJsxAttribute' || typeof attr.value !== 'string') {
+                    continue;
+                }
+
+                if (
+                    attr.value.includes('/src/assets/') &&
+                    (attr.name === 'onclick' || attr.name === 'onClick' || attr.name?.startsWith('on'))
+                ) {
+                    attr.value = resolveExtensionlessStringsInJs(attr.value, assetsDir);
+                }
             }
         });
     };

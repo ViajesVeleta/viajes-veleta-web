@@ -18,8 +18,9 @@ Cuando se cree un nuevo viaje en grupo, usar siempre como base `.templates/plant
 ### Imágenes
 
 - Todas las imagenes del viaje deben guardarse en `src/assets/` siguiendo estructura `continente/pais/...`; no usar `public/`.
+- En el MDX, **todas las rutas a esas imágenes van sin extensión** (regla global `no-extensiones-en-markdown.mdc`): p. ej. `image="assets/.../hotel"` o `![...](assets/.../mapa)`, nunca `.jpg` / `.png` en el texto.
 - Nunca usar URLs remotas en el contenido final: cualquier imagen externa debe descargarse y guardarse en `src/assets/...` antes de referenciarla.
-- Si la imagen es un mapa, el nombre del archivo debe terminar en `-mapa` (ejemplo: `cantabria-infinita-mapa.png`).
+- Si la imagen es un mapa, el nombre del archivo en disco debe terminar en `-mapa` (p. ej. `cantabria-infinita-mapa.png`); en el MDX se referencia como `.../cantabria-infinita-mapa` **sin** `.png`.
 - Si hay varias imagenes del mismo sitio, usar sufijos numericos (por ejemplo `...-1`, `...-2`).
 - No convertir manualmente a `webp`; usar el formato original y dejar la conversion a CI.
 
