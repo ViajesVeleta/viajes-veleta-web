@@ -15,18 +15,33 @@ import Gallery from "../../../components/Gallery.astro";
 
 
 export async function getStaticPaths() {
-    const posts = await getCollection("groups", ({ id }) =>
-        id.startsWith("en/"),
-    );
-    return posts.map((post) => {
+    const allPosts = await getCollection("groups");
+    
+    // Group by logical content ID (defined in frontmatter)
+    const grouped = allPosts.reduce((acc, post) => {
+        const id = post.data.id;
+        if (!id) return acc;
+        if (!acc[id]) acc[id] = {};
+        const [lang] = post.id.split("/");
+        acc[id][lang] = post;
+        return acc;
+    }, {} as Record<string, Record<string, CollectionEntry<"groups">>>);
+
+    return Object.entries(grouped).map(([id, translations]) => {
+        // Preference for English version, fallback to Spanish
+        const post = translations.en || translations.es;
+        
+        // Extract slug from filename (always use filenames as slugs)
         const [_, ...idParts] = post.id.split("/");
         const slug = idParts.join("/");
+        
         return {
             params: { slug },
             props: post,
         };
     });
 }
+
 type Props = CollectionEntry<"groups">;
 
 const post = Astro.props;

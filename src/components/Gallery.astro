@@ -126,11 +126,14 @@ const imageUrls = JSON.stringify(galleryImages.map(img => img.src));
     }
   };
 
-  // Dialog listeners
-  document.addEventListener('DOMContentLoaded', () => {
+  // Dialog listeners initialization
+  function initGallery() {
     const dialog = document.getElementById('galeriaDialog');
     const overlay = document.getElementById('dialogOverlay');
     if (!dialog) return;
+
+    // Avoid duplicate listeners if script re-runs (less likely with is:inline define:vars, but safe)
+    if (dialog.dataset.initialized) return;
 
     function closeDialog() {
       dialog.classList.add('dialog-closing');
@@ -173,8 +176,15 @@ const imageUrls = JSON.stringify(galleryImages.map(img => img.src));
         e.preventDefault(); // Control escape manually for animation
         closeDialog();
     });
-  });
+
+    dialog.dataset.initialized = "true";
+  }
+
+  // Run on load and after navigations
+  initGallery();
+  document.addEventListener('astro:page-load', initGallery);
 </script>
+
 
 <style>
   .gallery-grid {

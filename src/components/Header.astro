@@ -30,30 +30,32 @@ const translatePath = useTranslatedPath(currentLang);
 	function setupLanguagePreference() {
 		const urlParams = new URLSearchParams(window.location.search);
 		const preferredLang = urlParams.get("lang");
+		const isFallback = urlParams.get("fallback") === "true";
 
 		// If URL has lang=en, store the preference
 		if (preferredLang === "en") {
 			sessionStorage.setItem("preferredLang", "en");
 		}
 
-		// Clean up URL (remove lang parameter)
-		if (preferredLang) {
-			const url = new URL(window.location.href);
-			url.searchParams.delete("lang");
-			url.searchParams.delete("fallback");
-			window.history.replaceState({}, "", url.pathname + url.search);
-		}
-
+		// If user prefers English but is on Spanish page, redirect to English equivalent
+		// BUT ONLY if we are NOT already in a fallback redirect cycle
 		const stored = sessionStorage.getItem("preferredLang");
 		const currentPath = window.location.pathname;
 		const isEnglishPath = currentPath.startsWith("/en/");
 		const isSpanishPath = !isEnglishPath;
 
-		// If user prefers English but is on Spanish page, redirect to English equivalent
-		if (stored === "en" && isSpanishPath) {
+		if (stored === "en" && isSpanishPath && !isFallback) {
 			// Try to go to English version
 			const englishPath = "/en" + currentPath;
 			window.location.href = englishPath;
+		}
+
+		// Clean up URL parameters after processing
+		if (preferredLang || isFallback) {
+			const url = new URL(window.location.href);
+			url.searchParams.delete("lang");
+			url.searchParams.delete("fallback");
+			window.history.replaceState({}, "", url.pathname + url.search);
 		}
 
 		// Clear preference when on English pages
