@@ -25,6 +25,7 @@ const t = useTranslations(currentLang);
 const translatePath = useTranslatedPath(currentLang);
 ---
 
+{/* Language Preference Redirect Disabled
 <script>
 	// Check if user prefers English but is on a Spanish page (fallback mode)
 	function setupLanguagePreference() {
@@ -67,6 +68,7 @@ const translatePath = useTranslatedPath(currentLang);
 	setupLanguagePreference();
 	document.addEventListener("astro:page-load", setupLanguagePreference);
 </script>
+*/}
 
 <header id="main-header" class:list={{ "is-overlay": isOverlay }}>
 	<div class="top-bar">
@@ -134,7 +136,7 @@ const translatePath = useTranslatedPath(currentLang);
 				{/* <div class="theme-toggle-wrapper">
 					<ThemeToggle />
 				</div> */}
-				<LanguagePicker translatedPaths={translatedPaths} />
+				{/* <LanguagePicker translatedPaths={translatedPaths} /> */}
 			</div>
 
 			<!-- Mobile Menu Button -->
@@ -178,7 +180,7 @@ const translatePath = useTranslatedPath(currentLang);
 					{/* <div class="mobile-theme-toggle-wrapper">
 						<ThemeToggle />
 					</div> */}
-					<LanguagePicker translatedPaths={translatedPaths} />
+					{/* <LanguagePicker translatedPaths={translatedPaths} /> */}
 				</div>
 			</nav>
 		</div>
