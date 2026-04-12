@@ -7,6 +7,7 @@ import { defineConfig } from 'astro/config';
 import path from 'path';
 
 import { remarkResolveAssets } from './src/plugins/remark-resolve-assets.mjs';
+import { rehypeResolveMdxImgSrc } from './src/plugins/rehype-resolve-mdx-img-src.mjs';
 
 import pagefind from 'astro-pagefind';
 
@@ -39,6 +40,7 @@ export default defineConfig({
     },
     markdown: {
         remarkPlugins: [remarkResolveAssets],
+        rehypePlugins: [rehypeResolveMdxImgSrc],
     },
     vite: {
         resolve: {

@@ -11,25 +11,42 @@ import FlightItem from "../../../components/FlightItem.astro";
 import Columns from "../../../components/Columns.astro";
 import ColumnItem from "../../../components/ColumnItem.astro";
 import Button from "../../../components/Button.astro";
+import Gallery from "../../../components/Gallery.astro";
+
 
 export async function getStaticPaths() {
-    const posts = await getCollection("groups", ({ id }) =>
-        id.startsWith("en/"),
-    );
-    return posts.map((post) => {
+    const allPosts = await getCollection("groups");
+    
+    // Group by logical content ID (defined in frontmatter)
+    const grouped = allPosts.reduce((acc, post) => {
+        const id = post.data.id;
+        if (!id) return acc;
+        if (!acc[id]) acc[id] = {};
+        const [lang] = post.id.split("/");
+        acc[id][lang] = post;
+        return acc;
+    }, {} as Record<string, Record<string, CollectionEntry<"groups">>>);
+
+    return Object.entries(grouped).map(([id, translations]) => {
+        // Preference for English version, fallback to Spanish
+        const post = translations.en || translations.es;
+        
+        // Extract slug from filename (always use filenames as slugs)
         const [_, ...idParts] = post.id.split("/");
         const slug = idParts.join("/");
+        
         return {
             params: { slug },
             props: post,
         };
     });
 }
+
 type Props = CollectionEntry<"groups">;
 
 const post = Astro.props;
 const { Content } = await render(post);
-const components = { Timeline, TimelineItem, PricingGrid, PricingItem, IncludeExclude, FlightGrid, FlightItem, Columns, ColumnItem, Button };
+const components = { Gallery, Timeline, TimelineItem, PricingGrid, PricingItem, IncludeExclude, FlightGrid, FlightItem, Columns, ColumnItem, Button };
 
 // Find translations
 const allPosts = await getCollection("groups");
