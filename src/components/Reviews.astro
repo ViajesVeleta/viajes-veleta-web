@@ -70,7 +70,7 @@ const sortedReviews = reviews.sort(
 
 <script>
     function initReviewsCarousel() {
-        const container = document.querySelector(".reviews-container");
+        const container = document.querySelector(".reviews-container") as HTMLElement;
         const cards = document.querySelectorAll(".review-card");
         const dots = document.querySelectorAll(".pagination-dots .dot");
 
@@ -83,17 +83,25 @@ const sortedReviews = reviews.sort(
             const maxVisible = 3; // Show max 3 cards at once
 
             cards.forEach((card, index) => {
-                const offset = index - currentIndex;
+                let offset = index - currentIndex;
+                
+                // Circular offset calculation
+                if (offset > totalCards / 2) offset -= totalCards;
+                if (offset < -totalCards / 2) offset += totalCards;
+                
                 const absOffset = Math.abs(offset);
 
                 // Only show cards within range
                 if (absOffset > Math.floor(maxVisible / 2)) {
                     (card as HTMLElement).style.opacity = "0";
+                    (card as HTMLElement).style.visibility = "hidden";
                     (card as HTMLElement).style.pointerEvents = "none";
                     (card as HTMLElement).style.transform =
-                        "translate3d(0, 0, -500px) scale(0.5)";
+                        "translate3d(0, 0, -1000px) scale(0)";
                     return;
                 }
+
+                (card as HTMLElement).style.visibility = "visible";
 
                 // Calculate horizontal position (spread cards horizontally)
                 const spacing = 420; // Space between cards
@@ -125,8 +133,7 @@ const sortedReviews = reviews.sort(
                 `;
                 (card as HTMLElement).style.opacity = opacity.toString();
                 (card as HTMLElement).style.zIndex = zIndex.toString();
-                (card as HTMLElement).style.pointerEvents =
-                    offset === 0 ? "auto" : "none";
+                (card as HTMLElement).style.pointerEvents = "auto";
             });
 
             // Update dots
@@ -148,6 +155,10 @@ const sortedReviews = reviews.sort(
 
         dots.forEach((dot, index) => {
             dot.addEventListener("click", () => goToSlide(index));
+        });
+
+        cards.forEach((card, index) => {
+            card.addEventListener("click", () => goToSlide(index));
         });
 
         // Auto-play logic with IntersectionObserver
@@ -190,6 +201,80 @@ const sortedReviews = reviews.sort(
                 startAutoplay();
             }
         });
+
+        // Unified Drag logic
+        let isDragging = false;
+        let startX = 0;
+        let dragOffset = 0;
+        let wasDragged = false;
+        const dragThreshold = 40;
+
+        function handleDragStart(e: MouseEvent | TouchEvent) {
+            isDragging = true;
+            wasDragged = false;
+            startX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+            dragOffset = 0;
+            
+            stopAutoplay();
+            container.style.cursor = "grabbing";
+            container.style.transition = "none";
+            
+            // Prevent default to avoid image dragging/text selection
+            if (e.type === 'mousedown') {
+                e.preventDefault();
+            }
+        }
+
+        function handleDragMove(e: MouseEvent | TouchEvent) {
+            if (!isDragging) return;
+            
+            const x = 'touches' in e ? e.touches[0].clientX : e.clientX;
+            dragOffset = x - startX;
+            
+            if (Math.abs(dragOffset) > 5) {
+                wasDragged = true;
+            }
+        }
+
+        function handleDragEnd() {
+            if (!isDragging) return;
+            isDragging = false;
+            container.style.cursor = "grab";
+
+            if (wasDragged && Math.abs(dragOffset) > dragThreshold) {
+                if (dragOffset > 0) {
+                    goToSlide(currentIndex - 1);
+                } else {
+                    goToSlide(currentIndex + 1);
+                }
+            } else {
+                updateCarousel(); 
+            }
+            
+            dragOffset = 0;
+            setTimeout(startAutoplay, 100);
+        }
+
+        // Prevent unwanted clicks if we dragged
+        container.addEventListener("click", (e) => {
+            if (wasDragged) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }, true);
+
+        // Events
+        container.addEventListener("mousedown", handleDragStart);
+        container.addEventListener("touchstart", handleDragStart, { passive: true });
+        
+        window.addEventListener("mousemove", handleDragMove);
+        window.addEventListener("touchmove", handleDragMove, { passive: true });
+        
+        window.addEventListener("mouseup", handleDragEnd);
+        window.addEventListener("touchend", handleDragEnd);
+
+        // Set initial cursor
+        container.style.cursor = "grab";
 
         // Initialize
         updateCarousel();
@@ -245,6 +330,7 @@ const sortedReviews = reviews.sort(
         justify-content: center;
         overflow: visible;
         flex-shrink: 0;
+        user-select: none; /* Prevents text selection while dragging */
     }
 
     .review-card {
@@ -262,6 +348,8 @@ const sortedReviews = reviews.sort(
         will-change: transform, opacity;
         display: flex;
         flex-direction: column;
+        cursor: pointer;
+        user-select: none;
     }
 
     [data-theme="dark"] .review-card {
