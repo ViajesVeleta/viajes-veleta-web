@@ -18,9 +18,9 @@ const groups = await getCollection("groups", ({ id }) => {
     return id.startsWith(`${lang}/`);
 });
 
-// Sort by date (descending)
+// Sort by date (ascending)
 const sortedGroups = groups.sort(
-    (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+    (a, b) => a.data.date.valueOf() - b.data.date.valueOf(),
 );
 
 const categories = [
