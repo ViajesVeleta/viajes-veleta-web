@@ -63,7 +63,10 @@ const blog = defineCollection({
 const groups = defineCollection({
 	loader: glob({ base: './src/content/viajes-en-grupo', pattern: '**/*.{md,mdx}' }),
 	schema: ({ image }: SchemaContext) => commonSchema({ image }).extend({
-		category: z.enum(['spain', 'europe', 'long-haul', 'photography']).optional(),
+		category: z.union([
+			z.enum(['spain', 'europe', 'long-haul', 'photography']),
+			z.array(z.enum(['spain', 'europe', 'long-haul', 'photography']))
+		]).optional().transform(val => Array.isArray(val) ? val : val ? [val] : []),
 	}),
 });
 
