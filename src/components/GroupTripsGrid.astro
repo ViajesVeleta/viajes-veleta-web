@@ -543,21 +543,10 @@ const categories = [
             font-size: 1.15rem; /* Smaller title on very small screens */
         }
         .filters-container {
-            justify-content: flex-start;
-            flex-wrap: nowrap;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            padding-bottom: 0.5rem;
-            gap: 1.25rem;
-            padding-left: 1.5rem;
-            padding-right: 2rem;
-            scrollbar-width: none; /* Firefox */
-            /* Difuminado a ambos lados */
-            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
-            mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
-        }
-        .filters-container::-webkit-scrollbar {
-            display: none; /* Chrome, Safari */
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 0 1rem;
         }
         .filter-btn {
             white-space: nowrap;
