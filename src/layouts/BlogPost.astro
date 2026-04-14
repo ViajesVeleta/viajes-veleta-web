@@ -180,27 +180,24 @@ const relatedLabel = isEs
 				letter-spacing: 0.1em;
 			}
 			.hero-content .location {
-				display: inline-flex;
-				align-items: flex-start;
-				justify-content: center;
-				gap: 0.5rem;
 				color: rgba(255, 255, 255, 0.9);
 				margin-bottom: 2rem;
 				font-size: 1.1rem;
 				max-width: 100%;
-				text-align: left;
+				text-align: center;
 			}
 			.hero-content .location-icon {
 				width: 1.1rem;
 				height: 1.1rem;
-				min-width: 1.1rem;
-				display: block;
+				display: inline-block;
+				vertical-align: middle;
 				opacity: 0.9;
-				transform: none;
-				margin-top: 0.2rem;
+				margin-top: -0.15rem;
+				margin-right: 0.3rem;
 			}
 			.hero-content .location span {
-				display: block;
+				display: inline;
+				vertical-align: middle;
 			}
 			.hero-content .tags {
 				display: flex;
@@ -392,9 +389,10 @@ const relatedLabel = isEs
 										<circle cx="12" cy="10" r="3" />
 									</svg>
 									<span>
-										{location.join(
-											"\u00A0\u00A0\u00A0•\u00A0\u00A0\u00A0",
-										)}
+										{location.length > 4
+											? location.slice(0, 4).join("\u00A0\u00A0\u00A0•\u00A0\u00A0\u00A0") + "\u00A0\u00A0\u00A0•\u00A0\u00A0\u00A0..."
+											: location.join("\u00A0\u00A0\u00A0•\u00A0\u00A0\u00A0")
+										}
 									</span>
 								</div>
 							)
