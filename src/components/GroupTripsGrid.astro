@@ -70,7 +70,7 @@ const categories = [
                 sortedGroups.map((post, index) => (
                     <li
                         class="post-item"
-                        data-category={post.data.category || "all"}
+                        data-category={post.data.category.join(" ") || "all"}
                     >
                         <a
                             href={`/viajes-en-grupo/${post.id.split("/").slice(1).join("/")}/`}
@@ -196,10 +196,11 @@ const categories = [
                 const staying: HTMLElement[] = [];
 
                 allItems.forEach((item) => {
-                    const category = item.getAttribute("data-category");
+                    const categoryAttr = item.getAttribute("data-category") || "";
+                    const itemCategories = categoryAttr.split(" ");
                     const isVisible = item.style.display !== "none";
                     const willBeVisible =
-                        filter === "all" || category === filter;
+                        filter === "all" || itemCategories.includes(filter!);
 
                     if (isVisible && !willBeVisible) leaving.push(item);
                     else if (!isVisible && willBeVisible) entering.push(item);
