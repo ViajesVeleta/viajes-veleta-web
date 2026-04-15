@@ -31,7 +31,13 @@ function resolveImagePath(imagePath: string): string {
 			return '../../../assets/' + relToAssetsDir.split(nodePath.sep).join('/');
 		}
 
-		// File not found with any extension — return a .webp path so the error is explicit
+		// File not found with any extension — try each extension to find the actual file
+		for (const ext of SUPPORTED_EXTENSIONS) {
+			const testPath = '../../../assets/' + relativeToAssets + ext;
+			if (fs.existsSync(nodePath.join(process.cwd(), 'src', 'assets', relativeToAssets + ext))) {
+				return testPath;
+			}
+		}
 		console.warn(`[content.config] Image not found for: ${imagePath}`);
 		return '../../../assets/' + relativeToAssets + '.webp';
 	}
