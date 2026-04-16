@@ -418,15 +418,16 @@ const formatDate = (date: Date) => {
         display: flex;
         flex-direction: column;
         justify-content: center;
-        width: 60px; /* Collapsed width */
-        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        width: max-content; /* Dynamically fit content */
+        max-width: 60px; /* Collapsed visual limit */
+        transition: max-width 0.5s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease;
         border-right: 1px solid
             color-mix(in srgb, var(--neutral-white), transparent 90%); /* Full height line */
         overflow: hidden;
     }
 
     .side-menu:hover {
-        width: 350px; /* Expanded width */
+        max-width: 900px; /* Expands visually up to natural text limit */
         background: color-mix(
             in srgb,
             var(--neutral-black),
@@ -447,6 +448,7 @@ const formatDate = (date: Date) => {
         align-items: center;
         height: 60px; /* Fixed height for interaction targets */
         padding-left: 0;
+        padding-right: 30px; /* Safety margin for long names */
         cursor: pointer;
         color: color-mix(in srgb, var(--neutral-white), transparent 50%);
         transition: all 0.3s ease;
