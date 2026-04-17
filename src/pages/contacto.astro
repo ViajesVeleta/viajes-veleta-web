@@ -3,10 +3,8 @@ import BaseHead from "../components/BaseHead.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import ContentFallback from "../components/ContentFallback.astro";
-import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
+import { SITE_TITLE } from "../consts";
 import { getLangFromUrl, useTranslations } from "../i18n/utils";
-import { Image } from "astro:assets";
-import logo from "../assets/logo.svg";
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
@@ -249,6 +247,7 @@ const isFallback = urlParams.get("lang") === "en";
                     <h1>Contacto</h1>
                     <p>Estamos siempre encantados de ayudarte. Hablemos de tu próximo viaje.</p>
                 </div>
+                <!-- TODO: Replace these picsum.photos images with local assets before production -->
                 <!-- Images matching the newly provided original Contact UI design -->
                 <div class="hero-images">
                     <img src="https://picsum.photos/400/500?random=11" alt="Meeting placeholder" class="hero-img hero-img-1" />
@@ -266,7 +265,7 @@ const isFallback = urlParams.get("lang") === "en";
                         <p>958 66 90 16</p>
                     </a>
                     
-                    <a href="https://wa.me/34653880210" target="_blank" class="contact-item">
+                    <a href="https://wa.me/34653880210" target="_blank" rel="noopener noreferrer" class="contact-item">
                         <div class="icon-circle"><i class="fa-brands fa-whatsapp"></i></div>
                         <h3>WhatsApp</h3>
                         <p>653 88 02 10</p>
@@ -278,19 +277,19 @@ const isFallback = urlParams.get("lang") === "en";
                         <p>guadix@viajesveleta.es</p>
                     </a>
 
-                    <a href="https://www.google.com/maps/search/?api=1&query=Viajes+Veleta,+Calle+Poetisa+Hafsa,+3,+Guadix" target="_blank" class="contact-item">
+                    <a href="https://www.google.com/maps/search/?api=1&query=Viajes+Veleta,+Calle+Poetisa+Hafsa,+3,+Guadix" target="_blank" rel="noopener noreferrer" class="contact-item">
                         <div class="icon-circle"><i class="fa-solid fa-location-dot"></i></div>
                         <h3>Dirección física</h3>
                         <p>Poetisa Hafsa, nº 3<br/>Guadix (Granada)</p>
                     </a>
 
-                    <a href="https://instagram.com/viajesveletaguadix" target="_blank" class="contact-item">
+                    <a href="https://instagram.com/viajesveletaguadix" target="_blank" rel="noopener noreferrer" class="contact-item">
                         <div class="icon-circle"><i class="fa-brands fa-instagram"></i></div>
                         <h3>Instagram</h3>
                         <p>@viajesveletaguadix</p>
                     </a>
 
-                    <a href="https://www.facebook.com/people/Viajes-Veleta/61564838170871/" target="_blank" class="contact-item">
+                    <a href="https://www.facebook.com/people/Viajes-Veleta/61564838170871/" target="_blank" rel="noopener noreferrer" class="contact-item">
                         <div class="icon-circle"><i class="fa-brands fa-facebook-f"></i></div>
                         <h3>Facebook</h3>
                         <p>Viajes Veleta</p>
@@ -313,4 +312,4 @@ const isFallback = urlParams.get("lang") === "en";
 
         <Footer />
     </body>
-</html>l>
+</html>

@@ -78,7 +78,7 @@ const translatePath = useTranslatedPath(currentLang);
 				<a href="tel:958669016">
 					<i class="fa-solid fa-phone"></i> 958 66 90 16
 				</a>
-				<a href="https://wa.me/34653880210" target="_blank">
+				<a href="https://wa.me/34653880210" target="_blank" rel="noopener noreferrer">
 					<i class="fa-brands fa-whatsapp"></i> 653 88 02 10
 				</a>
 				<a href="mailto:guadix@viajesveleta.es">
@@ -86,11 +86,11 @@ const translatePath = useTranslatedPath(currentLang);
 				</a>
 			</div>
 			<div class="social-links">
-				<a href="https://www.facebook.com/people/Viajes-Veleta/61564838170871/" target="_blank">
+				<a href="https://www.facebook.com/people/Viajes-Veleta/61564838170871/" target="_blank" rel="noopener noreferrer">
 					<span class="sr-only">Síguenos en Facebook</span>
 					<i class="fa-brands fa-facebook-f"></i>
 				</a>
-				<a href="https://instagram.com/viajesveletaguadix" target="_blank">
+				<a href="https://instagram.com/viajesveletaguadix" target="_blank" rel="noopener noreferrer">
 					<span class="sr-only">Síguenos en Instagram</span>
 					<i class="fa-brands fa-instagram"></i>
 				</a>
@@ -330,8 +330,7 @@ const translatePath = useTranslatedPath(currentLang);
 			border-bottom: 1px solid transparent;
 		}
 
-		/* Prevent mobile drawer from taking the black text since it has a dark bg */
-		header.is-overlay.light-overlay:not(.scrolled) .mobile-menu-content,
+		/* Mobile menu always has dark bg, keep text white */
 		header.is-overlay.light-overlay:not(.scrolled) .mobile-menu-button {
 			--on-bg-nav: var(--neutral-black);
 		}
