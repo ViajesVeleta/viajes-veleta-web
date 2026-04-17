@@ -4,7 +4,7 @@ import Footer from "../../components/Footer.astro";
 import Header from "../../components/Header.astro";
 import PageHero from "../../components/PageHero.astro";
 import GroupTripsGrid from "../../components/GroupTripsGrid.astro";
-import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
+import { SITE_TITLE } from "../../consts";
 import { getLangFromUrl, useTranslations } from "../../i18n/utils";
 
 const lang = getLangFromUrl(Astro.url);
@@ -21,7 +21,7 @@ const translatedPaths = {
 	<head>
 		<BaseHead
 			title={`Viajes en grupo - ${SITE_TITLE}`}
-			description={SITE_DESCRIPTION}
+			description="Únete a nuestros viajes en grupo con Viajes Veleta. Experiencias fotográficas, rutas culturales divertidas y escapadas exclusivas por España y toda Europa."
 			translatedPaths={translatedPaths}
 		/>
 	</head>

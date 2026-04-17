@@ -14,10 +14,11 @@ import {
 
 interface Props {
 	isOverlay?: boolean;
+	lightOverlay?: boolean;
 	translatedPaths?: Record<string, string>;
 }
 
-const { isOverlay = false, translatedPaths } = Astro.props;
+const { isOverlay = false, lightOverlay = false, translatedPaths } = Astro.props;
 
 const currentLang = getLangFromUrl(Astro.url);
 
@@ -70,14 +71,14 @@ const translatePath = useTranslatedPath(currentLang);
 </script>
 */}
 
-<header id="main-header" class:list={{ "is-overlay": isOverlay }}>
+<header id="main-header" class:list={{ "is-overlay": isOverlay, "light-overlay": lightOverlay }}>
 	<div class="top-bar">
 		<div class="header-content">
 			<div class="contact-info">
 				<a href="tel:958669016">
 					<i class="fa-solid fa-phone"></i> 958 66 90 16
 				</a>
-				<a href="https://wa.me/34653880210" target="_blank">
+				<a href="https://wa.me/34653880210" target="_blank" rel="noopener noreferrer">
 					<i class="fa-brands fa-whatsapp"></i> 653 88 02 10
 				</a>
 				<a href="mailto:guadix@viajesveleta.es">
@@ -85,17 +86,13 @@ const translatePath = useTranslatedPath(currentLang);
 				</a>
 			</div>
 			<div class="social-links">
-				<a href="https://m.webtoo.ls/@astro" target="_blank">
-					<span class="sr-only">Follow Astro on Mastodon</span>
-					<i class="fa-brands fa-mastodon"></i>
+				<a href="https://www.facebook.com/people/Viajes-Veleta/61564838170871/" target="_blank" rel="noopener noreferrer">
+					<span class="sr-only">Síguenos en Facebook</span>
+					<i class="fa-brands fa-facebook-f"></i>
 				</a>
-				<a href="https://twitter.com/astrodotbuild" target="_blank">
-					<span class="sr-only">Follow Astro on Twitter</span>
-					<i class="fa-brands fa-x-twitter"></i>
-				</a>
-				<a href="https://github.com/withastro/astro" target="_blank">
-					<span class="sr-only">Go to Astro's GitHub repo</span>
-					<i class="fa-brands fa-github"></i>
+				<a href="https://instagram.com/viajesveletaguadix" target="_blank" rel="noopener noreferrer">
+					<span class="sr-only">Síguenos en Instagram</span>
+					<i class="fa-brands fa-instagram"></i>
 				</a>
 			</div>
 		</div>
@@ -300,7 +297,7 @@ const translatePath = useTranslatedPath(currentLang);
 			--on-bg-nav: var(--neutral-white);
 		}
 
-		/* Specific overlay styles when NOT scrolled */
+		/* Specific overlay styles when NOT scrolled (default dark styles) */
 		header.is-overlay:not(.scrolled) .top-bar {
 			background: color-mix(
 				in srgb,
@@ -315,6 +312,30 @@ const translatePath = useTranslatedPath(currentLang);
 		header.is-overlay:not(.scrolled) #main-nav {
 			background: transparent;
 			backdrop-filter: none;
+		}
+
+		/* Optional light overlay styles when NOT scrolled */
+		header.is-overlay.light-overlay:not(.scrolled) {
+			--on-bg-nav: var(--neutral-black);
+		}
+
+		header.is-overlay.light-overlay:not(.scrolled) .top-bar {
+			background: color-mix(
+				in srgb,
+				var(--neutral-white),
+				transparent 50%
+			);
+			color: var(--neutral-black);
+			backdrop-filter: blur(8px);
+			border-bottom: 1px solid transparent;
+		}
+
+		/* Mobile menu always has dark bg, keep text white */
+		header.is-overlay.light-overlay:not(.scrolled) .mobile-menu-button {
+			--on-bg-nav: var(--neutral-black);
+		}
+		header.is-overlay.light-overlay:not(.scrolled) .mobile-menu-drawer {
+			--on-bg-nav: var(--neutral-white);
 		}
 
 		header.scrolled {
@@ -364,7 +385,7 @@ const translatePath = useTranslatedPath(currentLang);
 			align-items: center;
 			gap: 0.5rem;
 			opacity: 0.9;
-			transition: opacity 0.2s;
+			transition: opacity 0.2s, color 0.3s ease;
 		}
 
 		.contact-info a:hover {
@@ -403,6 +424,7 @@ const translatePath = useTranslatedPath(currentLang);
 			display: flex;
 			align-items: center;
 			gap: 1.5rem;
+			transition: color 0.3s ease;
 		}
 
 		#main-nav a {
@@ -410,7 +432,7 @@ const translatePath = useTranslatedPath(currentLang);
 			color: var(--on-bg-nav);
 			text-decoration: none;
 			opacity: 0.9;
-			transition: opacity 0.2s ease;
+			transition: opacity 0.2s ease, color 0.3s ease, background-color 0.3s ease;
 			border-radius: 0.5em;
 		}
 
@@ -418,7 +440,7 @@ const translatePath = useTranslatedPath(currentLang);
 			opacity: 1;
 			background: color-mix(
 				in srgb,
-				var(--neutral-white),
+				var(--neutral-gray-dark, gray),
 				transparent 90%
 			);
 		}
@@ -446,6 +468,7 @@ const translatePath = useTranslatedPath(currentLang);
 			display: flex;
 			color: var(--on-bg-nav);
 			padding: 0;
+			transition: color 0.3s ease;
 		}
 
 		.social-links i {
