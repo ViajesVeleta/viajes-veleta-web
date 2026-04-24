@@ -77,14 +77,14 @@ p {
 
 .prose h2,
 .prose h3 {
-    margin-top: 2rem;
+    margin-top: 3rem;
     margin-bottom: 1.5rem;
     font-weight: 700;
 }
 
 .prose h2:first-child,
 .prose h3:first-child {
-    margin-top: 0;
+    margin-top: 2rem;
 }
 
 .prose h4 {
