@@ -89,7 +89,7 @@ p {
 
 .prose .columns-container ~ h2,
 .prose .columns-container + h2 {
-    margin-top: 1.5rem;
+    margin-top: 0.5rem;
 }
 
 .prose h2:first-child,
