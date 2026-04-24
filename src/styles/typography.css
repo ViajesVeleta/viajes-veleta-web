@@ -87,8 +87,23 @@ p {
     margin-top: 2rem;
 }
 
+.prose .columns-container ~ h2,
+.prose .columns-container + h2 {
+    margin-top: 1.5rem;
+}
+
+.prose h2:first-child,
+.prose h3:first-child {
+    margin-top: 2rem;
+}
+
 .prose h2 + .timeline-wrapper {
     margin-top: 1.5rem;
+}
+
+.prose .columns-container + h2,
+.prose > h2:nth-of-type(2) {
+    margin-top: 2rem;
 }
 
 .prose h4 {
