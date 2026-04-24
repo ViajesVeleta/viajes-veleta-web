@@ -87,6 +87,10 @@ p {
     margin-top: 2rem;
 }
 
+.prose h2 + .timeline-wrapper {
+    margin-top: 1.5rem;
+}
+
 .prose h4 {
     margin-top: 2rem;
     margin-bottom: 1rem;
