@@ -1,18 +1,28 @@
 ---
 import { getCollection } from "astro:content";
+import { Image } from "astro:assets";
+import { getLangFromUrl } from "../i18n/utils";
+
+const lang = getLangFromUrl(Astro.url);
 
 // Get current year for copyright
 const currentYear = new Date().getFullYear();
 
-// Get latest blog posts (limit to 4)
-const allPosts = await getCollection("blog");
-const latestPosts = allPosts
-	.filter((post) => post.id.startsWith("es/"))
-	.sort(
-		(a, b) =>
-			new Date(b.data.date).getTime() - new Date(a.data.date).getTime(),
-	)
-	.slice(0, 4);
+// Get upcoming trip
+const allGroups = await getCollection("groups", ({ id }) => {
+    return id.startsWith(`${lang}/`);
+});
+
+const sortedGroups = allGroups.sort(
+    (a, b) => a.data.date.valueOf() - b.data.date.valueOf(),
+);
+
+const today = new Date();
+const upcomingTrips = sortedGroups.filter((trip) => trip.data.date >= today);
+let nextTrips = upcomingTrips.slice(0, 2);
+if (nextTrips.length === 0) {
+    nextTrips = sortedGroups.slice(-2).reverse();
+}
 ---
 
 <footer transition:persist>
@@ -45,18 +55,23 @@ const latestPosts = allPosts
 			</div>
 
 			<div class="footer-section">
-				<h3>Últimas entradas</h3>
-				<ul class="latest-posts">
-					{
-						latestPosts.map((post) => (
-							<li>
-								<a href={`/blog/${post.id.replace("es/", "")}`}>
-									{post.data.title}
-								</a>
-							</li>
-						))
-					}
-				</ul>
+				<h3>{lang === "es" ? "Próximos viajes" : "Upcoming Trips"}</h3>
+				<div class="next-trips-container">
+					{nextTrips.map((trip) => (
+						<a href={`/${lang === "es" ? "" : "en/"}viajes-en-grupo/${trip.id.split("/").slice(1).join("/")}/`} class="next-trip-card">
+							{trip.data.image && (
+								<Image
+									src={trip.data.image}
+									alt={trip.data.title}
+									width={400}
+									height={300}
+									class="next-trip-img"
+								/>
+							)}
+							<span class="next-trip-title">{trip.data.title}</span>
+						</a>
+					))}
+				</div>
 			</div>
 		</div>
 	</div>
@@ -82,13 +97,13 @@ const latestPosts = allPosts
 	}
 
 	.footer-upper {
-		background-color: #003d7a;
+		background-color: #1a1a1a;
 		color: #ffffff;
 		padding: 3rem 1.5rem;
 	}
 
 	.footer-lower {
-		background-color: #002952;
+		background-color: #000000;
 		color: #ffffff;
 		padding: 1.5rem 1.5rem;
 	}
@@ -97,7 +112,7 @@ const latestPosts = allPosts
 		max-width: 1200px;
 		margin: 0 auto;
 		display: flex;
-		justify-content: space-between;
+		justify-content: space-evenly;
 		align-items: flex-start;
 		gap: 3rem;
 		flex-wrap: wrap;
@@ -109,7 +124,6 @@ const latestPosts = allPosts
 	}
 
 	.footer-section {
-		flex: 1;
 		min-width: 250px;
 	}
 
@@ -130,8 +144,8 @@ const latestPosts = allPosts
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		width: 40px;
-		height: 40px;
+		width: 64px;
+		height: 64px;
 		border-radius: 50%;
 		text-decoration: none;
 		color: #ffffff;
@@ -154,7 +168,7 @@ const latestPosts = allPosts
 	}
 
 	.social-links i {
-		font-size: 1.1rem;
+		font-size: 2rem;
 	}
 
 	.cif {
@@ -163,27 +177,50 @@ const latestPosts = allPosts
 		color: #ffffff;
 	}
 
-	.latest-posts {
-		list-style: none;
-		padding: 0;
-		margin: 0;
+	.next-trips-container {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1rem;
+		max-width: 450px;
 	}
 
-	.latest-posts li {
-		margin-bottom: 0.75rem;
-	}
-
-	.latest-posts a {
-		color: #4fc3f7;
+	.next-trip-card {
+		display: block;
 		text-decoration: none;
-		transition: color 0.2s ease;
-		font-size: 0.95rem;
-		line-height: 1.4;
+		border-radius: 16px;
+		overflow: hidden;
+		position: relative;
+		transition: transform 0.2s ease, box-shadow 0.2s ease;
+		width: 100%;
+		box-shadow: 0 2px 8px rgba(255, 255, 255, 0.05);
 	}
 
-	.latest-posts a:hover {
+	.next-trip-card:hover {
+		transform: scale(1.03);
+		box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+	}
+
+	.next-trip-img {
+		width: 100%;
+		height: auto;
+		aspect-ratio: 4/3;
+		object-fit: cover;
+		display: block;
+	}
+
+	.next-trip-title {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 60%, transparent 100%);
 		color: #ffffff;
-		text-decoration: underline;
+		padding: 2rem 0.5rem 0.5rem;
+		font-size: 0.85rem;
+		font-weight: 600;
+		text-align: center;
+		text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+		line-height: 1.2;
 	}
 
 	.copyright {
@@ -198,14 +235,15 @@ const latestPosts = allPosts
 	}
 
 	.footer-links a {
-		color: #4fc3f7;
+		color: #ffffff;
 		text-decoration: none;
 		font-size: 0.9rem;
-		transition: color 0.2s ease;
+		transition: opacity 0.2s ease;
+		opacity: 0.85;
 	}
 
 	.footer-links a:hover {
-		color: #ffffff;
+		opacity: 1;
 		text-decoration: underline;
 	}
 
@@ -224,7 +262,21 @@ const latestPosts = allPosts
 
 		.footer-section {
 			min-width: 100%;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
 			text-align: center;
+		}
+
+		.footer-section h3 {
+			text-align: center;
+			width: 100%;
+		}
+
+		.next-trips-container {
+			margin: 0 auto;
+			width: 100%;
+			justify-content: center;
 		}
 
 		.social-links {
