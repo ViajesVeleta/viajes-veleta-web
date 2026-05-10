@@ -1,5 +1,7 @@
 ---
+
 ---
+
 <div class="pricing-grid">
     <slot />
 </div>
@@ -41,7 +43,9 @@
        forzamos que vayan en 3 columnas. 
        (Se exceptúa el caso exacto de 1 solo suplemento, que queda en 100%). */
     @media (min-width: 1000px) {
-        .pricing-grid > :global(:first-child:nth-last-child(even):not(:nth-last-child(2))) ~ :global(*) {
+        .pricing-grid
+            > :global(:first-child:nth-last-child(even):not(:nth-last-child(2)))
+            ~ :global(*) {
             flex: 0 0 calc((100% - 4rem) / 3);
             width: calc((100% - 4rem) / 3);
         }
