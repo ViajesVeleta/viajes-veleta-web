@@ -18,7 +18,11 @@ interface Props {
 	translatedPaths?: Record<string, string>;
 }
 
-const { isOverlay = false, lightOverlay = false, translatedPaths } = Astro.props;
+const {
+	isOverlay = false,
+	lightOverlay = false,
+	translatedPaths,
+} = Astro.props;
 
 const currentLang = getLangFromUrl(Astro.url);
 
@@ -26,7 +30,8 @@ const t = useTranslations(currentLang);
 const translatePath = useTranslatedPath(currentLang);
 ---
 
-{/* Language Preference Redirect Disabled
+{
+	/* Language Preference Redirect Disabled
 <script>
 	// Check if user prefers English but is on a Spanish page (fallback mode)
 	function setupLanguagePreference() {
@@ -69,16 +74,24 @@ const translatePath = useTranslatedPath(currentLang);
 	setupLanguagePreference();
 	document.addEventListener("astro:page-load", setupLanguagePreference);
 </script>
-*/}
+*/
+}
 
-<header id="main-header" class:list={{ "is-overlay": isOverlay, "light-overlay": lightOverlay }}>
+<header
+	id="main-header"
+	class:list={{ "is-overlay": isOverlay, "light-overlay": lightOverlay }}
+>
 	<div class="top-bar">
 		<div class="header-content">
 			<div class="contact-info">
 				<a href="tel:958669016">
 					<i class="fa-solid fa-phone"></i> 958 66 90 16
 				</a>
-				<a href="https://wa.me/34653880210" target="_blank" rel="noopener noreferrer">
+				<a
+					href="https://wa.me/34653880210"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
 					<i class="fa-brands fa-whatsapp"></i> 653 88 02 10
 				</a>
 				<a href="mailto:guadix@viajesveleta.es">
@@ -86,11 +99,19 @@ const translatePath = useTranslatedPath(currentLang);
 				</a>
 			</div>
 			<div class="social-links">
-				<a href="https://www.facebook.com/people/Viajes-Veleta/61564838170871/" target="_blank" rel="noopener noreferrer">
+				<a
+					href="https://www.facebook.com/people/Viajes-Veleta/61564838170871/"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
 					<span class="sr-only">Síguenos en Facebook</span>
 					<i class="fa-brands fa-facebook-f"></i>
 				</a>
-				<a href="https://instagram.com/viajesveletaguadix" target="_blank" rel="noopener noreferrer">
+				<a
+					href="https://instagram.com/viajesveletaguadix"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
 					<span class="sr-only">Síguenos en Instagram</span>
 					<i class="fa-brands fa-instagram"></i>
 				</a>
@@ -120,9 +141,11 @@ const translatePath = useTranslatedPath(currentLang);
 				<HeaderLink href={translatePath("/viajes-en-grupo")}
 					>{t("nav.trips")}</HeaderLink
 				>
-				{/* <HeaderLink href={translatePath("/ofertas")}
+				{
+					/* <HeaderLink href={translatePath("/ofertas")}
 					>{t("nav.offers")}</HeaderLink
-				> */}
+				> */
+				}
 				<HeaderLink href={translatePath("/contacto")}
 					>{t("nav.contact")}</HeaderLink
 				>
@@ -130,9 +153,11 @@ const translatePath = useTranslatedPath(currentLang);
 
 			<div class="nav-actions">
 				{/* <Search id="search" /> */}
-				{/* <div class="theme-toggle-wrapper">
+				{
+					/* <div class="theme-toggle-wrapper">
 					<ThemeToggle />
-				</div> */}
+				</div> */
+				}
 				{/* <LanguagePicker translatedPaths={translatedPaths} /> */}
 			</div>
 
@@ -166,17 +191,21 @@ const translatePath = useTranslatedPath(currentLang);
 					href={translatePath("/viajes-en-grupo")}
 					class="mobile-nav-link">{t("nav.trips")}</a
 				>
-				{/* <a href={translatePath("/ofertas")} class="mobile-nav-link"
+				{
+					/* <a href={translatePath("/ofertas")} class="mobile-nav-link"
 					>{t("nav.offers")}</a
-				> */}
+				> */
+				}
 				<a href={translatePath("/contacto")} class="mobile-nav-link"
 					>{t("nav.contact")}</a
 				>
 
 				<div class="mobile-actions" style="margin-top: 2rem;">
-					{/* <div class="mobile-theme-toggle-wrapper">
+					{
+						/* <div class="mobile-theme-toggle-wrapper">
 						<ThemeToggle />
-					</div> */}
+					</div> */
+					}
 					{/* <LanguagePicker translatedPaths={translatedPaths} /> */}
 				</div>
 			</nav>
@@ -369,8 +398,19 @@ const translatePath = useTranslatedPath(currentLang);
 
 		/* Scrolled styling for top bar */
 		header.scrolled .top-bar {
-			background-color: var(--primary-fixed-dim);
-			border-bottom-color: transparent;
+			background-color: color-mix(
+				in srgb,
+				var(--neutral-white),
+				transparent 25%
+			);
+			color: var(--neutral-black);
+			border-bottom-color: color-mix(
+				in srgb,
+				var(--neutral-black),
+				transparent 90%
+			);
+			backdrop-filter: blur(12px);
+			-webkit-backdrop-filter: blur(12x);
 		}
 
 		.contact-info {
@@ -385,7 +425,9 @@ const translatePath = useTranslatedPath(currentLang);
 			align-items: center;
 			gap: 0.5rem;
 			opacity: 0.9;
-			transition: opacity 0.2s, color 0.3s ease;
+			transition:
+				opacity 0.2s,
+				color 0.3s ease;
 		}
 
 		.contact-info a:hover {
@@ -401,7 +443,18 @@ const translatePath = useTranslatedPath(currentLang);
 
 		/* Scrolled styling for main nav */
 		header.scrolled #main-nav {
-			background-color: var(--primary-fixed);
+			background-color: color-mix(
+				in srgb,
+				#f5f6f8,
+				transparent 25%
+			); /* Gris como el fondo de contacto, con transparencia */
+			backdrop-filter: blur(12px);
+			-webkit-backdrop-filter: blur(12px);
+		}
+
+		/* When scrolled, ensure text is dark on the light backgrounds */
+		header.scrolled {
+			--on-bg-nav: var(--neutral-black);
 		}
 
 		.nav-actions {
@@ -432,7 +485,10 @@ const translatePath = useTranslatedPath(currentLang);
 			color: var(--on-bg-nav);
 			text-decoration: none;
 			opacity: 0.9;
-			transition: opacity 0.2s ease, color 0.3s ease, background-color 0.3s ease;
+			transition:
+				opacity 0.2s ease,
+				color 0.3s ease,
+				background-color 0.3s ease;
 			border-radius: 0.5em;
 		}
 

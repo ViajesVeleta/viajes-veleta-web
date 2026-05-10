@@ -48,8 +48,8 @@
     --outline-variant: #c2c7cf;
 
     /* Utility */
-    --bg-nav: var(--primary);
-    --on-bg-nav: var(--on-primary);
+    --bg-nav: #f5f6f8;
+    --on-bg-nav: var(--neutral-black);
     --shadow: #000000;
     --surface-gradient: color-mix(in srgb, var(--surface-variant), transparent 50%), transparent;
     --header-shadow: 0 2px 8px color-mix(in srgb, var(--on-surface), transparent 95%);
@@ -97,8 +97,8 @@
     --outline-variant: #43474e;
 
     /* Utility */
-    --bg-nav: #001d36;
-    --on-bg-nav: #d1e4ff;
+    --bg-nav: #14181f; /* matching surface-container-low for dark mode */
+    --on-bg-nav: var(--on-surface);
     --shadow: #000000;
     --surface-gradient: #0b0d0f, transparent;
     --header-shadow: 0 4px 12px color-mix(in srgb, var(--shadow), transparent 20%);
