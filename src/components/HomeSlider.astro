@@ -10,7 +10,7 @@ const allGroups = await getCollection("groups", ({ id }) =>
 );
 // Filter only future trips and sort by date
 const slides = allGroups
-    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()) // Sort descending (newest first)
+    .sort((a, b) => a.data.date.valueOf() - b.data.date.valueOf()) // Sort ascending (soonest first)
     .slice(0, 5); // Limit to 5 for the slider to keep it performant and relevant
 
 // Format date helper
