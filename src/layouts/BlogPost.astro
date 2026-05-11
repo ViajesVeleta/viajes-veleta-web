@@ -241,6 +241,30 @@ const relatedLabel = isEs
 			.prose.prose-wide {
 				width: 1080px;
 			}
+			:global(.group-trip-prose.group-trip-sections-ready) {
+				padding: 0;
+			}
+			:global(.group-trip-section) {
+				width: 100vw;
+				margin-left: calc(50% - 50vw);
+				padding: 1rem 0 3rem;
+			}
+			:global(.group-trip-section-inner) {
+				width: 1080px;
+				max-width: calc(100% - 2rem);
+				margin-left: auto;
+				margin-right: auto;
+			}
+			:global(.group-trip-section:nth-of-type(odd)) {
+				background: var(--surface);
+			}
+			:global(.group-trip-section:nth-of-type(even)) {
+				background: var(--surface-container-low);
+			}
+			:global(.group-trip-section h2:first-child) {
+				margin-top: 0;
+				padding-top: 2rem;
+			}
 
 			.post-navigation-wrapper {
 				max-width: 1000px;
@@ -416,10 +440,46 @@ const relatedLabel = isEs
 					</div>
 				</div>
 				<div
-					class={`prose ${collection === "groups" ? "prose-wide" : ""}`}
+					class={`prose ${collection === "groups" ? "prose-wide group-trip-prose" : ""}`}
 				>
 					<slot />
 				</div>
+				{
+					collection === "groups" && (
+						<script is:inline>
+							function buildGroupTripSections() {
+								const prose = document.querySelector(".group-trip-prose");
+								if (!prose || prose.classList.contains("group-trip-sections-ready")) return;
+
+								const nodes = Array.from(prose.children);
+								let section = null;
+
+								for (const node of nodes) {
+									if (node.tagName === "H2") {
+										section = document.createElement("section");
+										section.className = "group-trip-section";
+										const inner = document.createElement("div");
+										inner.className = "group-trip-section-inner";
+										section.appendChild(inner);
+										prose.insertBefore(section, node);
+									}
+
+									if (section) {
+										section.firstElementChild.appendChild(node);
+									}
+								}
+
+								prose.classList.add("group-trip-sections-ready");
+							}
+
+							if (document.readyState === "loading") {
+								document.addEventListener("DOMContentLoaded", buildGroupTripSections);
+							} else {
+								buildGroupTripSections();
+							}
+						</script>
+					)
+				}
 
 				{
 					collection && id && (

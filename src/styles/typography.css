@@ -152,10 +152,56 @@ pre>code {
 }
 
 blockquote {
-    border-left: 4px solid var(--primary);
-    padding: 0 0 0 20px;
-    margin: 0;
-    font-size: 1.333em;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    border: 1px solid color-mix(in srgb, #f6b23a, transparent 78%);
+    border-radius: 8px;
+    background: #fff7e8;
+    padding: 0.8rem 1.25rem;
+    margin: 1.5rem 0;
+    font-size: inherit;
+    color: var(--on-surface);
+    box-shadow: 0 1px 3px color-mix(in srgb, var(--shadow), transparent 94%);
+}
+
+blockquote::before {
+    content: "";
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: 0 0 1.75rem;
+    transform: rotate(45deg);
+    border-radius: 4px;
+    background: #f6a800;
+    box-shadow: 0 1px 2px color-mix(in srgb, #9f6b00, transparent 70%);
+}
+
+blockquote::after {
+    content: "!";
+    position: absolute;
+    left: calc(1.25rem + 0.875rem);
+    top: 50%;
+    width: 1.75rem;
+    height: 1.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translate(-50%, -50%);
+    color: #ffffff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1;
+    pointer-events: none;
+}
+
+.prose blockquote p,
+blockquote p {
+    margin-right: 8px;
+    margin-left: 8px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    line-height: 1.5;
 }
 
 /* Responsive Typography */
