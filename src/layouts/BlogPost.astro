@@ -94,7 +94,7 @@ const relatedLabel = isEs
 			}
 			.hero-image {
 				width: 100%;
-				height: 45vh;
+				min-height: 45vh;
 				position: relative;
 				margin-bottom: 0;
 				display: flex;
@@ -102,6 +102,7 @@ const relatedLabel = isEs
 				justify-content: center;
 				overflow: hidden;
 				padding-bottom: 7rem;
+				padding-top: 100px;
 			}
 			.hero-image::before {
 				content: "";
@@ -137,11 +138,13 @@ const relatedLabel = isEs
 			}
 			@media (max-width: 768px) {
 				.hero-image {
-					height: 45vh;
+					min-height: 45vh;
+					height: auto;
 					padding-bottom: 1.5rem !important;
+					padding-top: 100px;
 				}
 				.hero-content {
-					padding-top: 60px;
+					padding-top: 0;
 				}
 				.hero-content h1 {
 					font-size: 1.6rem !important;
@@ -236,6 +239,9 @@ const relatedLabel = isEs
 				.prose {
 					margin-top: -2.5rem !important;
 					padding-top: 0 !important;
+				}
+				.prose.group-trip-prose {
+					margin-top: 0 !important;
 				}
 			}
 			.prose.prose-wide {
