@@ -288,7 +288,11 @@ const translatePath = useTranslatedPath(currentLang);
 				const href =
 					link.getAttribute("href")?.replace(/\/$/, "") || "/";
 				// Exact match for home, startsWith for others
-				if (pathname === href) {
+				const isActive = (href === "/" || href === "/en") 
+					? pathname === href 
+					: pathname === href || pathname.startsWith(href + "/");
+
+				if (isActive) {
 					link.classList.add("active");
 				} else {
 					link.classList.remove("active");
@@ -599,6 +603,7 @@ const translatePath = useTranslatedPath(currentLang);
 
 		.mobile-menu-content {
 			background: var(--bg-nav);
+			--on-bg-nav: var(--neutral-white);
 			width: 100%;
 			height: 100vh;
 			padding: 2rem 1.5rem;

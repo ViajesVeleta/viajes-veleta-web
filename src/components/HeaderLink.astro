@@ -18,7 +18,9 @@ const normalizedHref =
 		: hrefString;
 
 // Check if current page matches the link
-const isActive = normalizedPathname === normalizedHref;
+const isActive = (normalizedHref === "/" || normalizedHref === "/en") 
+    ? normalizedPathname === normalizedHref 
+    : normalizedPathname === normalizedHref || normalizedPathname.startsWith(normalizedHref + "/");
 ---
 
 <a href={href} class:list={[className, { active: isActive }]} {...props}>

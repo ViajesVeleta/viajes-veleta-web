@@ -6,8 +6,8 @@ import ContentFallback from "../components/ContentFallback.astro";
 import { SITE_TITLE } from "../consts";
 import { getLangFromUrl, useTranslations } from "../i18n/utils";
 import { Image } from "astro:assets";
-import imgFachada from "../assets/contacto-fachada.jpg";
-import imgInterior from "../assets/contacto-interior.jpg";
+import imgFachada from "../assets/contacto-fachada.webp";
+import imgInterior from "../assets/contacto-interior.webp";
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
