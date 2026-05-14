@@ -5,6 +5,9 @@ import Footer from "../components/Footer.astro";
 import ContentFallback from "../components/ContentFallback.astro";
 import { SITE_TITLE } from "../consts";
 import { getLangFromUrl, useTranslations } from "../i18n/utils";
+import { Image } from "astro:assets";
+import imgFachada from "../assets/contacto-fachada.jpg";
+import imgInterior from "../assets/contacto-interior.jpg";
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
@@ -247,11 +250,9 @@ const isFallback = urlParams.get("lang") === "en";
                     <h1>Contacto</h1>
                     <p>Estamos siempre encantados de ayudarte. Hablemos de tu próximo viaje.</p>
                 </div>
-                <!-- TODO: Replace these picsum.photos images with local assets before production -->
-                <!-- Images matching the newly provided original Contact UI design -->
                 <div class="hero-images">
-                    <img src="https://picsum.photos/400/500?random=11" alt="Meeting placeholder" class="hero-img hero-img-1" />
-                    <img src="https://picsum.photos/500/600?random=12" alt="Working placeholder" class="hero-img hero-img-2" />
+                    <Image src={imgFachada} alt="Exterior de Viajes Veleta" class="hero-img hero-img-1" />
+                    <Image src={imgInterior} alt="Interior de Viajes Veleta" class="hero-img hero-img-2" />
                 </div>
             </section>
 

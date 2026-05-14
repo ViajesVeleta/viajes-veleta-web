@@ -184,19 +184,19 @@ const translatePath = useTranslatedPath(currentLang);
 				<i class="fa-solid fa-xmark"></i>
 			</button>
 			<nav class="mobile-nav">
-				<a href={translatePath("/")} class="mobile-nav-link"
+				<a href={translatePath("/")} class="mobile-nav-link" data-astro-reload
 					>{t("nav.home")}</a
 				>
 				<a
 					href={translatePath("/viajes-en-grupo")}
-					class="mobile-nav-link">{t("nav.trips")}</a
+					class="mobile-nav-link" data-astro-reload>{t("nav.trips")}</a
 				>
 				{
-					/* <a href={translatePath("/ofertas")} class="mobile-nav-link"
+					/* <a href={translatePath("/ofertas")} class="mobile-nav-link" data-astro-reload
 					>{t("nav.offers")}</a
 				> */
 				}
-				<a href={translatePath("/contacto")} class="mobile-nav-link"
+				<a href={translatePath("/contacto")} class="mobile-nav-link" data-astro-reload
 					>{t("nav.contact")}</a
 				>
 
