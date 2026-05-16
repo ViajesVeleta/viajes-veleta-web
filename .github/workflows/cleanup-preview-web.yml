@@ -9,6 +9,8 @@ on:
     - cron: '0 3 1 * *'
   workflow_dispatch:
 
+permissions: {}
+
 jobs:
   delete:
     runs-on: ubuntu-latest
@@ -48,11 +50,18 @@ jobs:
           fi
 
           API_BASE="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID"
-          SCRIPTS=$(curl -fsSL \
+          LIST_RESPONSE=$(curl -sS \
             -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
             -H "Content-Type: application/json" \
-            "$API_BASE/workers/scripts" \
-            | jq -r '.result[].id | select(contains("-pr-"))')
+            "$API_BASE/workers/scripts")
+
+          if ! echo "$LIST_RESPONSE" | jq -e '.success == true' >/dev/null; then
+            echo "Failed to list Cloudflare workers." >&2
+            echo "$LIST_RESPONSE" | jq -c '.errors // []' >&2
+            exit 1
+          fi
+
+          SCRIPTS=$(echo "$LIST_RESPONSE" | jq -r '.result[].id | select(contains("-pr-"))')
 
           if [ -z "$SCRIPTS" ]; then
             echo "No PR preview workers found."
@@ -63,15 +72,30 @@ jobs:
           fi
 
           DELETED=0
+          FAILED=0
           while IFS= read -r script; do
             [ -z "$script" ] && continue
             echo "Deleting worker: $script"
-            curl -fsSL -X DELETE \
+            DELETE_RESPONSE=$(curl -sS -X DELETE \
               -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-              "$API_BASE/workers/scripts/$script" >/dev/null
+              "$API_BASE/workers/scripts/$script")
+
+            if ! echo "$DELETE_RESPONSE" | jq -e '.success == true' >/dev/null; then
+              echo "Failed deleting worker: $script" >&2
+              echo "$DELETE_RESPONSE" | jq -c '.errors // []' >&2
+              FAILED=1
+              continue
+            fi
+
             DELETED=$((DELETED + 1))
           done <<< "$SCRIPTS"
 
           echo "## 🧹 Monthly/Manual PR Cleanup" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "Deleted $DELETED PR preview worker(s)." >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "$FAILED" -eq 1 ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "Some workers could not be deleted. Check logs for details." >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
