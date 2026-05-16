@@ -30,6 +30,13 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           command: delete --name viajes-veleta-web-pr-${{ github.event.number }}
 
+      - name: Add Job Summary
+        run: |
+          echo "## 🗑️ Preview Cleanup Successful" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The preview environment for PR #${{ github.event.number }} has been successfully removed from Cloudflare Workers." >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** 🛑 Deleted" >> $GITHUB_STEP_SUMMARY
+
   list-prs:
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
@@ -72,3 +79,10 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           command: delete --name viajes-veleta-web-pr-${{ matrix.pr_number }}
+
+      - name: Add Job Summary
+        run: |
+          echo "## 🗑️ Preview Cleanup Successful" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The preview environment for PR #${{ matrix.pr_number }} has been successfully removed from Cloudflare Workers." >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** 🛑 Deleted" >> $GITHUB_STEP_SUMMARY
