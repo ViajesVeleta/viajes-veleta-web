@@ -1,6 +1,10 @@
 name: Cleanup Preview Web
 
 on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
   schedule:
     # Runs at 03:00 UTC on the first day of every month
     - cron: '0 3 1 * *'
@@ -11,11 +15,27 @@ permissions:
   pull-requests: read
 
 jobs:
+  delete-single-pr:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    name: Delete Preview for Closed PR
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Delete Worker
+        uses: cloudflare/wrangler-action@v3
+        continue-on-error: true
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          command: delete --name viajes-veleta-web-pr-${{ github.event.number }}
+
   list-prs:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     outputs:
       pr_numbers: ${{ steps.collect.outputs.pr_numbers }}
-      pr_count: ${{ steps.collect.outputs.pr_count }}
+      has_prs: ${{ steps.collect.outputs.has_prs }}
     steps:
       - name: Collect PR numbers
         id: collect
@@ -25,17 +45,17 @@ jobs:
             const pulls = await github.paginate(github.rest.pulls.list, {
               owner: context.repo.owner,
               repo: context.repo.repo,
-              state: 'all',
+              state: 'closed',
               per_page: 100
             });
 
-            const prNumbers = [...new Set(pulls.map((pr) => pr.number))];
+            const prNumbers = pulls.map((pr) => pr.number);
             core.setOutput('pr_numbers', JSON.stringify(prNumbers));
-            core.setOutput('pr_count', prNumbers.length.toString());
+            core.setOutput('has_prs', prNumbers.length > 0 ? 'true' : 'false');
 
   delete:
     needs: list-prs
-    if: needs.list-prs.outputs.pr_count != '0'
+    if: github.event_name != 'pull_request' && needs.list-prs.outputs.has_prs == 'true'
     runs-on: ubuntu-latest
     name: Delete Preview PR Deployments
     strategy:
