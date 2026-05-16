@@ -10,7 +10,8 @@ on:
     - cron: '0 3 1 * *'
   workflow_dispatch:
 
-permissions: {}
+permissions:
+  contents: read
 
 jobs:
   delete:
@@ -44,6 +45,7 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # Worker names matching this pattern are considered PR preview deployments
           PR_WORKER_PATTERN: -pr-
         run: |
           if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
@@ -85,7 +87,7 @@ jobs:
             if ! echo "$DELETE_RESPONSE" | jq -e '.success == true' >/dev/null; then
               echo "Failed deleting worker: $script" >&2
               echo "$DELETE_RESPONSE" | jq -c '.errors // []' >&2
-              FAILED=1
+              FAILED=$((FAILED + 1))
               continue
             fi
 
@@ -96,8 +98,8 @@ jobs:
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "Deleted $DELETED PR preview worker(s)." >> "$GITHUB_STEP_SUMMARY"
 
-          if [ "$FAILED" -eq 1 ]; then
+          if [ "$FAILED" -gt 0 ]; then
             echo "" >> "$GITHUB_STEP_SUMMARY"
-            echo "Some workers could not be deleted. Check logs for details." >> "$GITHUB_STEP_SUMMARY"
+            echo "$FAILED worker(s) could not be deleted. Check logs for details." >> "$GITHUB_STEP_SUMMARY"
             exit 1
           fi
