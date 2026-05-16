@@ -1,15 +1,42 @@
 name: Cleanup Preview Web
 
 on:
-  pull_request:
-    types: [closed]
-    branches:
-      - main
+  schedule:
+    - cron: '0 3 1 * *'
+  workflow_dispatch:
 
 jobs:
-  delete:
+  list-prs:
     runs-on: ubuntu-latest
-    name: Delete Preview
+    outputs:
+      pr_numbers: ${{ steps.collect.outputs.pr_numbers }}
+      pr_count: ${{ steps.collect.outputs.pr_count }}
+    steps:
+      - name: Collect PR numbers
+        id: collect
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const pulls = await github.paginate(github.rest.pulls.list, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'all',
+              per_page: 100
+            });
+
+            const prNumbers = [...new Set(pulls.map((pr) => pr.number))];
+            core.setOutput('pr_numbers', JSON.stringify(prNumbers));
+            core.setOutput('pr_count', prNumbers.length.toString());
+
+  delete:
+    needs: list-prs
+    if: needs.list-prs.outputs.pr_count != '0'
+    runs-on: ubuntu-latest
+    name: Delete Preview PR Deployments
+    strategy:
+      fail-fast: false
+      matrix:
+        pr_number: ${{ fromJson(needs.list-prs.outputs.pr_numbers) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -19,11 +46,4 @@ jobs:
         continue-on-error: true
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          command: delete --name viajes-veleta-web-pr-${{ github.event.number }}
-
-      - name: Add Job Summary
-        run: |
-          echo "## 🗑️ Preview Cleanup Successful" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "The preview environment for PR #${{ github.event.number }} has been successfully removed from Cloudflare Workers." >> $GITHUB_STEP_SUMMARY
-          echo "**Status:** 🛑 Deleted" >> $GITHUB_STEP_SUMMARY
+          command: delete --name viajes-veleta-web-pr-${{ matrix.pr_number }}
