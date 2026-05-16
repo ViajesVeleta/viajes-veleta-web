@@ -2,8 +2,13 @@ name: Cleanup Preview Web
 
 on:
   schedule:
+    # Runs at 03:00 UTC on the first day of every month
     - cron: '0 3 1 * *'
   workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
 
 jobs:
   list-prs:
