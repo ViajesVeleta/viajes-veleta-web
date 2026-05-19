@@ -33,7 +33,7 @@ export default defineConfig({
     adapter: cloudflare({
         imageService: 'passthrough',
     }),
-    site: 'https://example.com',
+    site: 'https://viajesveleta.es',
     prefetch: {
         prefetchAll: true,
         defaultStrategy: 'viewport',

@@ -132,16 +132,16 @@ When creating multilanguage content:
 When you create content with the same `id` in multiple languages:
 
 1. **URLs are generated:**
-   - Spanish: `https://yoursite.com/blog/my-amazing-trip/`
-   - English: `https://yoursite.com/en/blog/my-amazing-trip/`
+   - Spanish: `https://viajesveleta.es/blog/my-amazing-trip/`
+   - English: `https://viajesveleta.es/en/blog/my-amazing-trip/`
 
 2. **Language switcher works automatically:**
    - Visitors can switch between Spanish and English versions
    - The site remembers which version they prefer
 
 3. **RSS feeds are separated:**
-   - Spanish posts: `https://yoursite.com/rss.xml`
-   - English posts: `https://yoursite.com/en/rss.xml`
+   - Spanish posts: `https://viajesveleta.es/rss.xml`
+   - English posts: `https://viajesveleta.es/en/rss.xml`
 
 4. **Search engines understand:**
    - Proper `hreflang` tags tell Google about translations
