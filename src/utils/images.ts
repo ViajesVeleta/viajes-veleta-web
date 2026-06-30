@@ -19,10 +19,17 @@ export function getDynamicImage(imagePath: string | ImageMetadata | undefined | 
 
   if (!filename) return null;
 
-  // Find matching image in glob result
+  // Normalize the requested path: remove "assets/" prefix and extension if present
+  const searchPath = imagePath
+    .replace(/^assets\//, '')
+    .replace(/\.[^.]+$/, '');
+
+  // Find matching image by full relative path (not just filename)
   const key = Object.keys(images).find((path) => {
-    const pathName = path.split('/').pop()?.split('.')[0];
-    return pathName === filename;
+    const normalizedPath = path
+      .replace(/^\.\.\/assets\//, '')
+      .replace(/\.[^.]+$/, '');
+    return normalizedPath === searchPath;
   });
 
   return key ? images[key].default : null;
