@@ -1,0 +1,10 @@
+---
+/**
+ * GooglePhotosGallery Component (Alias for GooglePhotosAlbum)
+ */
+import GooglePhotosAlbum from "./GooglePhotosAlbum.astro";
+
+type Props = Parameters<typeof GooglePhotosAlbum>[0];
+---
+
+<GooglePhotosAlbum {...Astro.props} />

@@ -1,29 +1,86 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, type CollectionEntry } from "astro:content";
 import { Image } from "astro:assets";
 import { getLangFromUrl } from "../i18n/utils";
 import FormattedDate from "./FormattedDate.astro";
+import { partitionTrips } from "../utils/tripDates";
 
 interface Props {
+    mode?: "upcoming" | "past" | "all";
+    trips?: CollectionEntry<"groups">[];
+    theme?: "blue" | "gold";
+    id?: string;
     showTitle?: boolean;
+    title?: string;
+    subtitle?: string;
+    icon?: string;
+    showBadge?: boolean;
+    badgeText?: string;
+    showPastLink?: boolean;
+    showIfEmpty?: boolean;
 }
 
-const { showTitle = true } = Astro.props;
+const {
+    mode = "upcoming",
+    trips: customTrips,
+    theme,
+    id,
+    showTitle = true,
+    title,
+    subtitle,
+    icon,
+    showBadge = mode === "past",
+    badgeText,
+    showPastLink = mode === "upcoming",
+    showIfEmpty = false,
+} = Astro.props;
 
 const lang = getLangFromUrl(Astro.url);
 const isSpanish = lang === "es";
 
-// Fetch groups
-const groups = await getCollection("groups", ({ id }) => {
+// Fetch groups if not provided
+const allLangGroups = customTrips ?? (await getCollection("groups", ({ id }) => {
     return id.startsWith(`${lang}/`);
-});
+}));
 
-// Sort by date (ascending)
-const sortedGroups = groups.sort(
-    (a, b) => a.data.date.valueOf() - b.data.date.valueOf(),
-);
+const { upcoming, past } = partitionTrips(allLangGroups);
 
-const categories = [
+// Determine which trips to display based on mode
+let displayTrips: CollectionEntry<"groups">[];
+if (customTrips) {
+    displayTrips = customTrips;
+} else if (mode === "past") {
+    displayTrips = past;
+} else if (mode === "all") {
+    displayTrips = [...upcoming, ...past];
+} else {
+    displayTrips = upcoming;
+}
+
+// Resolved settings
+const resolvedTheme = theme ?? (mode === "past" ? "gold" : "blue");
+const sectionId = id ?? (mode === "past" ? "viajes-realizados" : "proximos-viajes");
+const resolvedIcon = icon ?? (mode === "past" ? "fa-solid fa-route" : "fa-solid fa-paper-plane");
+const resolvedBadgeText = badgeText ?? (isSpanish ? "Realizado" : "Completed");
+
+const defaultTitle = mode === "past"
+    ? (isSpanish ? "Viajes realizados" : "Completed Trips")
+    : mode === "all"
+    ? (isSpanish ? "Viajes en grupo" : "Group Trips")
+    : (isSpanish ? "Próximos viajes" : "Upcoming Trips");
+
+const defaultSubtitle = mode === "past"
+    ? (isSpanish
+        ? "Revive las experiencias y momentos únicos de nuestros viajes anteriores."
+        : "Relive the experiences and unique moments from our past journeys.")
+    : (isSpanish
+        ? "Descubre nuestros próximos destinos y únete a aventuras inolvidables en grupo."
+        : "Discover our upcoming destinations and join unforgettable group adventures.");
+
+const sectionTitle = title ?? defaultTitle;
+const sectionSubtitle = subtitle ?? defaultSubtitle;
+
+const allCategories = [
     { id: "all", label: isSpanish ? "TODO" : "ALL" },
     { id: "spain", label: isSpanish ? "ESPAÑA" : "SPAIN" },
     { id: "europe", label: isSpanish ? "EUROPA" : "EUROPE" },
@@ -36,100 +93,144 @@ const categories = [
         label: isSpanish ? "EXPERIENCIA FOTOGRÁFICA" : "PHOTOGRAPHY EXPERIENCE",
     },
 ];
+
+// Strictly exclude categories with 0 posts in this section
+const categories = allCategories.filter((cat) => {
+    if (cat.id === "all") return true;
+    return displayTrips.some(
+        (trip) => trip.data.category && trip.data.category.includes(cat.id as any),
+    );
+});
 ---
 
-<section class="group-trips-section">
-    <div class="container-wide">
-        {showTitle && (
-            <h2 class="section-title text-center text-3xl font-serif">
-                VIAJES EN GRUPO
-            </h2>
+{
+    (displayTrips.length > 0 || showIfEmpty) && (
+        <section class={`group-trips-section theme-${resolvedTheme}`} id={sectionId}>
+            <div class="container-wide">
+                {showTitle && (
+                    <div class="section-header">
+                        <h2 class="section-title text-center text-3xl">
+                            {sectionTitle}
+                        </h2>
 
-            <div class="separator-container">
-                <span class="line"></span>
-                <i class="fas fa-paper-plane icon"></i>
-                <span class="line"></span>
-            </div>
-        )}
+                        <div class="separator-container">
+                            <span class="line" />
+                            <i class={`${resolvedIcon} icon`} />
+                            <span class="line" />
+                        </div>
 
-        <div class="filters-container">
-            {
-                categories.map((cat) => (
-                    <button
-                        class={`filter-btn ${cat.id === "all" ? "active" : ""}`}
-                        data-filter={cat.id}
-                    >
-                        {cat.label}
-                    </button>
-                ))
-            }
-        </div>
-
-        <ul class="trips-grid">
-            {
-                sortedGroups.map((post, index) => (
-                    <li
-                        class="post-item"
-                        data-category={post.data.category.join(" ") || "all"}
-                    >
-                        <a
-                            href={`/viajes-en-grupo/${post.id.split("/").slice(1).join("/")}/`}
-                            data-astro-reload
-                        >
-                            <div class="image-container">
-                                {post.data.image && (
-                                    <Image
-                                        width={720}
-                                        height={480}
-                                        src={post.data.image}
-                                        alt=""
-                                        loading={index === 0 ? "eager" : "lazy"}
-                                    />
-                                )}
-                                <div class="overlay" />
-                            </div>
-                            <div class="content">
-                                <h4 class="title">{post.data.title}</h4>
-                                <p class="date">
-                                    <FormattedDate
-                                        date={post.data.date}
-                                        locale={lang}
-                                    />
-                                </p>
-                            </div>
-                        </a>
-                    </li>
-                ))
-            }
-            {
-                sortedGroups.length === 0 && (
-                    <div
-                        class="no-trips"
-                        style="grid-column: 1 / -1; text-align: center; padding: 2rem;"
-                    >
-                        <p>
-                            {isSpanish
-                                ? "No hay viajes disponibles en este momento."
-                                : "No trips available at the moment."}
+                        <p class="section-subtitle text-center">
+                            {sectionSubtitle}
                         </p>
                     </div>
-                )
-            }
-        </ul>
-    </div>
-</section>
+                )}
+
+                {categories.length > 1 && (
+                    <div class="filters-container">
+                        {categories.map((cat) => (
+                            <button
+                                class={`filter-btn ${cat.id === "all" ? "active" : ""}`}
+                                data-filter={cat.id}
+                            >
+                                {cat.label}
+                            </button>
+                        ))}
+                    </div>
+                )}
+
+                <ul class="trips-grid">
+                    {displayTrips.map((post, index) => (
+                        <li
+                            class="post-item"
+                            data-category={post.data.category.join(" ") || "all"}
+                        >
+                            <a
+                                href={`/viajes-en-grupo/${post.id.split("/").slice(1).join("/")}/`}
+                                data-astro-reload
+                            >
+                                <div class="image-container">
+                                    {post.data.image && (
+                                        <Image
+                                            width={720}
+                                            height={480}
+                                            src={post.data.image}
+                                            alt=""
+                                            loading={index === 0 ? "eager" : "lazy"}
+                                        />
+                                    )}
+                                    <div class="overlay" />
+                                    {showBadge && (
+                                        <span class="trip-status-badge">
+                                            <i class="fa-solid fa-check" />
+                                            <span>{resolvedBadgeText}</span>
+                                        </span>
+                                    )}
+                                </div>
+                                <div class="content">
+                                    <h4 class="title">{post.data.title}</h4>
+                                    <p class="date">
+                                        <FormattedDate
+                                            date={post.data.date}
+                                            locale={lang}
+                                        />
+                                    </p>
+                                </div>
+                            </a>
+                        </li>
+                    ))}
+                    {displayTrips.length === 0 && (
+                        <div
+                            class="no-trips"
+                            style="grid-column: 1 / -1; text-align: center; padding: 3.5rem 1rem;"
+                        >
+                            <p style="font-size: 1.1rem; color: var(--text-muted, #666);">
+                                {mode === "past"
+                                    ? (isSpanish ? "No hay viajes realizados registrados aún." : "No completed trips recorded yet.")
+                                    : (isSpanish ? "No hay próximos viajes disponibles en este momento." : "No upcoming trips available at the moment.")}
+                            </p>
+                        </div>
+                    )}
+                </ul>
+
+                {showPastLink && past.length > 0 && (
+                    <div class="past-trips-cta-container">
+                        <a
+                            href={isSpanish ? "/viajes-en-grupo#viajes-realizados" : "/en/viajes-en-grupo#viajes-realizados"}
+                            class="past-trips-cta-btn"
+                            data-astro-reload
+                        >
+                            <i class="fa-solid fa-history" />
+                            <span>
+                                {isSpanish
+                                    ? `Ver viajes ya realizados (${past.length})`
+                                    : `View completed trips (${past.length})`}
+                            </span>
+                            <i class="fa-solid fa-arrow-right" />
+                        </a>
+                    </div>
+                )}
+            </div>
+        </section>
+    )
+}
 
 <script>
     import { FastAverageColor } from "fast-average-color";
     const fac = new FastAverageColor();
 
-    function initGrid() {
-        runColorExtraction();
-        initFilters();
+    function initAllGroupGrids() {
+        const sections = document.querySelectorAll<HTMLElement>(".group-trips-section");
+        sections.forEach((section) => {
+            initSingleGrid(section);
+        });
     }
 
-    function runColorExtraction() {
-        const items = document.querySelectorAll(".post-item");
+    function initSingleGrid(section: HTMLElement) {
+        if (section.dataset.initialized === "true") return;
+        section.dataset.initialized = "true";
+
+        // 1. Dominant color extraction for card overlays
+        const items = section.querySelectorAll<HTMLElement>(".post-item");
         items.forEach((item) => {
             const img = item.querySelector("img");
             const overlay = item.querySelector(".overlay") as HTMLElement;
@@ -139,59 +240,62 @@ const categories = [
                 fac.getColorAsync(img, { algorithm: "dominant" })
                     .then((color) => {
                         const [r, g, b] = color.value;
-                        overlay.style.backgroundColor = `rgba(${r}, ${g}, ${b}, 0.6)`;
+                        overlay.style.backgroundColor = `rgba(${r}, ${g}, ${b}, 0.65)`;
                     })
                     .catch(() => {
-                        // Fallback
-                        overlay.style.backgroundColor = "rgba(0,0,0,0.6)";
+                        overlay.style.backgroundColor = "rgba(0,0,0,0.65)";
                     });
             }
         });
-    }
 
-    function initFilters() {
-        const buttons = document.querySelectorAll(".filter-btn");
-        const grid = document.querySelector(".trips-grid") as HTMLElement;
-        const allItems = Array.from(
-            document.querySelectorAll(".post-item"),
-        ) as HTMLElement[];
+        // 2. Animated filtering with FLIP transition
+        const buttons = section.querySelectorAll<HTMLButtonElement>(".filter-btn");
+        const grid = section.querySelector<HTMLElement>(".trips-grid");
+        const allItems = Array.from(section.querySelectorAll<HTMLElement>(".post-item"));
 
-        // State to manage animations
+        if (!grid || buttons.length === 0) return;
+
         let activeTimeout: number | undefined;
         let activeFrame: number | undefined;
         let cleanupFn: (() => void) | undefined;
 
-        // Helper: Get Map of rects
-        const getRects = (items: HTMLElement[]) =>
-            new Map(items.map((item) => [item, item.getBoundingClientRect()]));
+        const getRects = (elements: HTMLElement[]) =>
+            new Map(elements.map((el) => [el, el.getBoundingClientRect()]));
 
         buttons.forEach((btn) => {
-            const newBtn = btn.cloneNode(true) as Element;
-            btn.parentNode?.replaceChild(newBtn, btn);
+            btn.onclick = () => {
+                const clickedFilter = btn.getAttribute("data-filter") || "all";
+                const isCurrentlyActive = btn.classList.contains("active");
 
-            newBtn.addEventListener("click", async (e) => {
-                const clickedBtn = e.target as Element;
-                if (clickedBtn.classList.contains("active")) return;
+                // Toggle back to "all" if clicking already active category
+                let targetFilter = clickedFilter;
+                if (isCurrentlyActive && clickedFilter !== "all") {
+                    targetFilter = "all";
+                }
 
-                // 0. Interrupt previous animation if running
+                // If clicking the active "all", do nothing
+                if (isCurrentlyActive && clickedFilter === "all") return;
+
+                // Interrupt previous animation if running
                 if (cleanupFn) {
                     clearTimeout(activeTimeout);
                     cancelAnimationFrame(activeFrame!);
-                    cleanupFn(); // Force immediate cleanup/reset
+                    cleanupFn();
                     cleanupFn = undefined;
-                    // Force a reflow to ensure clean state before measuring again
-                    grid.offsetHeight;
+                    grid.offsetHeight; // Force reflow
                 }
 
-                const filter = clickedBtn.getAttribute("data-filter");
+                // Update button states (mutually exclusive single-select)
+                buttons.forEach((b) => {
+                    const bVal = b.getAttribute("data-filter");
+                    if (bVal === targetFilter) {
+                        b.classList.add("active");
+                    } else {
+                        b.classList.remove("active");
+                    }
+                });
 
-                // 1. Update Buttons
-                document
-                    .querySelectorAll(".filter-btn")
-                    .forEach((b) => b.classList.remove("active"));
-                clickedBtn.classList.add("active");
-
-                // 2. Identify layout groups
+                // Identify layout groups
                 const leaving: HTMLElement[] = [];
                 const entering: HTMLElement[] = [];
                 const staying: HTMLElement[] = [];
@@ -201,23 +305,21 @@ const categories = [
                     const itemCategories = categoryAttr.split(" ");
                     const isVisible = item.style.display !== "none";
                     const willBeVisible =
-                        filter === "all" || itemCategories.includes(filter!);
+                        targetFilter === "all" || itemCategories.includes(targetFilter);
 
                     if (isVisible && !willBeVisible) leaving.push(item);
                     else if (!isVisible && willBeVisible) entering.push(item);
                     else if (isVisible && willBeVisible) staying.push(item);
                 });
 
-                // If nothing changes, return
                 if (leaving.length === 0 && entering.length === 0) return;
 
-                // 3. Record Start State
-                // We lock the leaving items in place so the grid can reflow around them
+                // Record Start State
                 const stateFirst = getRects([...staying, ...leaving]);
                 const gridRect = grid.getBoundingClientRect();
                 const startHeight = gridRect.height;
 
-                // 4. Lock Leaving Items (Absolute)
+                // Lock leaving items absolutely so grid layout collapses smoothly
                 leaving.forEach((item) => {
                     const rect = stateFirst.get(item)!;
                     item.style.position = "absolute";
@@ -226,24 +328,22 @@ const categories = [
                     item.style.width = `${rect.width}px`;
                     item.style.height = `${rect.height}px`;
                     item.style.zIndex = "0";
-                    item.style.margin = "0"; // Ensure no margin affects absolute pos
+                    item.style.margin = "0";
                 });
 
-                // 5. Setup Entering Items (Start State)
+                // Setup entering items
                 entering.forEach((item) => {
-                    item.style.display = "block";
+                    item.style.display = "";
                     item.style.opacity = "0";
-                    item.style.transform = "scale(0.8)";
+                    item.style.transform = "scale(0.85)";
                     item.style.zIndex = "1";
                 });
 
-                // 6. Force Reflow & Measure Final State
-                // Staying items will have moved to fill voids
-                // Entering items will have appeared in their slots
+                // Measure final state
                 const stateLast = getRects([...staying, ...entering]);
                 const endHeight = grid.offsetHeight;
 
-                // 7. Invert: Apply transform to Staying items to visually put them back at start
+                // Invert staying items
                 staying.forEach((item) => {
                     const first = stateFirst.get(item)!;
                     const last = stateLast.get(item)!;
@@ -254,11 +354,10 @@ const categories = [
                     item.style.transform = `translate(${dx}px, ${dy}px)`;
                 });
 
-                // Prepare Grid Height Animation
+                // Prepare grid height transition
                 grid.style.height = `${startHeight}px`;
                 grid.offsetWidth; // Force reflow
 
-                // Define cleanup function to be used at end OR on interruption
                 cleanupFn = () => {
                     grid.style.height = "";
                     grid.style.transition = "";
@@ -274,8 +373,6 @@ const categories = [
                         item.style.opacity = "";
                         item.style.zIndex = "";
                         item.style.margin = "";
-                        // Reset transform (important if interrupted during rotate)
-                        item.style.transform = "";
                     });
 
                     [...staying, ...entering].forEach((item) => {
@@ -286,271 +383,374 @@ const categories = [
                     });
                 };
 
-                // 8. Play Animations
+                // Play Animations
                 activeFrame = requestAnimationFrame(() => {
-                    // Animate Grid Height
-                    grid.style.transition =
-                        "height 0.6s cubic-bezier(0.2, 0, 0.2, 1)";
+                    grid.style.transition = "height 0.45s cubic-bezier(0.2, 0, 0.2, 1)";
                     grid.style.height = `${endHeight}px`;
 
-                    // Staying: Move to natural position
                     staying.forEach((item) => {
-                        item.style.transition =
-                            "transform 0.6s cubic-bezier(0.2, 0, 0.2, 1)";
+                        item.style.transition = "transform 0.45s cubic-bezier(0.2, 0, 0.2, 1)";
                         item.style.transform = "";
                     });
 
-                    // Entering: Fade/Scale In
                     entering.forEach((item) => {
-                        item.style.transition =
-                            "all 0.6s cubic-bezier(0.2, 0, 0.2, 1)";
+                        item.style.transition = "all 0.45s cubic-bezier(0.2, 0, 0.2, 1)";
                         item.style.opacity = "1";
                         item.style.transform = "scale(1)";
                     });
 
-                    // Leaving: Animate out (Reduce size + Face away)
                     leaving.forEach((item) => {
-                        item.style.transition =
-                            "all 0.6s cubic-bezier(0.2, 0, 0.2, 1)";
+                        item.style.transition = "all 0.35s cubic-bezier(0.2, 0, 0.2, 1)";
                         item.style.opacity = "0";
-                        // 3D rotation + scale down
-                        item.style.transform =
-                            "scale(0.5) perspective(500px) rotateY(15deg)";
+                        item.style.transform = "scale(0.85)";
                     });
                 });
 
-                // 9. Schedule Cleanup
-                activeTimeout = setTimeout(() => {
+                // Schedule Cleanup
+                activeTimeout = window.setTimeout(() => {
                     if (cleanupFn) {
                         cleanupFn();
-                        cleanupFn = undefined; // Clear it so we don't double call
+                        cleanupFn = undefined;
                     }
-                }, 600) as unknown as number;
-            });
+                }, 460);
+            };
         });
     }
 
-    // Run on load and after Astro swaps
-    document.addEventListener("astro:page-load", initGrid);
-    document.addEventListener("DOMContentLoaded", initGrid);
+    document.addEventListener("astro:page-load", () => {
+        document.querySelectorAll<HTMLElement>(".group-trips-section").forEach((s) => {
+            delete s.dataset.initialized;
+        });
+        initAllGroupGrids();
+    });
+    document.addEventListener("DOMContentLoaded", initAllGroupGrids);
 </script>
 
 <style>
     .group-trips-section {
-        padding: 4rem 1rem;
-        width: 100%;
-        max-width: 1200px;
+        padding: 5rem 0 4rem 0;
+        position: relative;
+    }
+
+    /* Theming Variables */
+    .group-trips-section.theme-blue {
+        --section-accent: var(--primary, #1976d2);
+        --section-accent-rgb: 25, 118, 210;
+        --section-accent-glow: rgba(25, 118, 210, 0.35);
+        background: transparent;
+    }
+
+    .group-trips-section.theme-gold {
+        --section-accent: var(--quaternary, #cdb083);
+        --section-accent-rgb: 205, 176, 131;
+        --section-accent-glow: rgba(205, 176, 131, 0.35);
+        background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.02) 100%);
+        border-top: 1px solid var(--border-color, rgba(0, 0, 0, 0.06));
+    }
+
+    :global(.dark) .group-trips-section.theme-gold {
+        background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.015) 100%);
+        border-top-color: rgba(255, 255, 255, 0.06);
+    }
+
+    .container-wide {
+        max-width: 1400px;
         margin: 0 auto;
+        padding: 0 1.5rem;
     }
 
-    @media (max-width: 768px) {
-        .group-trips-section {
-            padding-top: 2rem;
-            padding-bottom: 2rem;
-        }
+    .section-header {
+        margin-bottom: 2rem;
     }
 
+    /* Unified typography: match the website font (Lato) */
     .section-title {
         font-family: "Lato", sans-serif;
-        font-weight: 300;
-        font-size: 2.5rem;
-        letter-spacing: 2px;
-        color: var(--on-surface);
-        margin-bottom: 1rem;
-        text-align: center;
+        font-weight: 900;
+        letter-spacing: 0.05em;
         text-transform: uppercase;
+        color: var(--heading-color, #1a1a1a);
     }
 
-    /* Separator Styles */
+    :global(.dark) .section-title {
+        color: #f3f4f6;
+    }
+
+    .section-subtitle {
+        font-family: "Lato", sans-serif;
+        font-size: 1.05rem;
+        color: var(--text-muted, #666);
+        max-width: 680px;
+        margin: 0.75rem auto 0 auto;
+        line-height: 1.5;
+    }
+
+    :global(.dark) .section-subtitle {
+        color: #9ca3af;
+    }
+
+    /* Accent Separator */
     .separator-container {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 1.5rem;
-        margin-bottom: 3rem;
-        color: #7dd3fc;
+        gap: 1rem;
+        margin: 0.75rem 0;
     }
 
-    .line {
+    .separator-container .line {
         height: 2px;
-        background-color: #7dd3fc;
-        width: 10rem;
-        opacity: 0.7;
+        width: 60px;
+        background-color: var(--section-accent);
     }
 
-    .icon {
-        font-size: 1.2rem;
-        transform: rotate(-10deg);
+    .separator-container .icon {
+        color: var(--section-accent);
+        font-size: 1rem;
     }
 
-    /* Filters */
+    /* Accent Category Filters */
     .filters-container {
         display: flex;
         justify-content: center;
-        gap: 3rem;
-        margin-bottom: 2rem;
         flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 2.5rem;
     }
 
     .filter-btn {
-        background: none;
-        border: none;
+        background: transparent;
+        border: 1px solid var(--border-color, rgba(0, 0, 0, 0.12));
+        color: var(--text-color, #4b5563);
+        padding: 0.5rem 1.15rem;
+        border-radius: 9999px;
         font-family: "Lato", sans-serif;
-        font-size: 0.9rem;
-        letter-spacing: 2px;
-        color: var(--on-surface-variant);
+        font-size: 0.825rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
         cursor: pointer;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid transparent;
-        transition: all 0.3s ease;
-        text-transform: uppercase;
+        transition: all 0.25s ease;
+    }
+
+    :global(.dark) .filter-btn {
+        border-color: rgba(255, 255, 255, 0.15);
+        color: #9ca3af;
     }
 
     .filter-btn:hover {
-        color: var(--primary);
+        border-color: var(--section-accent);
+        color: var(--section-accent);
+        transform: translateY(-1px);
     }
 
     .filter-btn.active {
-        color: var(--primary);
-        border-bottom-color: var(--primary);
+        background-color: var(--section-accent);
+        border-color: var(--section-accent);
+        color: #fff;
+        box-shadow: 0 4px 14px var(--section-accent-glow);
     }
 
-    /* GRID STYLES COPIED FROM VIAJES-EN-GRUPO */
-    ul.trips-grid {
+    /* Unified Grid & Card Design */
+    .trips-grid {
+        position: relative;
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-        gap: 4px;
+        grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+        gap: 1.5rem;
         list-style-type: none;
         margin: 0;
         padding: 0;
-        position: relative; /* Essential for absolute positioning of children during animation */
     }
-    li.post-item {
+
+    .post-item {
         position: relative;
         overflow: hidden;
-        aspect-ratio: 4/3;
-        border-radius: 12px;
+        aspect-ratio: 4 / 3;
+        border-radius: 14px;
         isolation: isolate;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
     }
-    li.post-item a {
+
+    .post-item:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.16);
+    }
+
+    .post-item a {
         display: block;
         width: 100%;
         height: 100%;
         color: inherit;
         text-decoration: none;
     }
+
     .image-container {
         width: 100%;
         height: 100%;
         position: relative;
     }
+
     .image-container::after {
         content: "";
         position: absolute;
         inset: 0;
         background: linear-gradient(
             to top,
-            rgba(0, 0, 0, 0.8) 0%,
-            transparent 60%
+            rgba(0, 0, 0, 0.85) 0%,
+            rgba(0, 0, 0, 0.3) 50%,
+            rgba(0, 0, 0, 0.1) 100%
         );
         z-index: 1;
         transition: opacity 0.4s ease;
         pointer-events: none;
     }
-    li.post-item img {
+
+    .post-item img {
         width: 100%;
         height: 100%;
         object-fit: cover;
         transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
     }
+
+    .post-item:hover img {
+        transform: scale(1.06);
+    }
+
     .overlay {
         position: absolute;
         inset: 0;
         background-color: rgba(0, 0, 0, 0.4);
         opacity: 0;
-        transition:
-            opacity 0.4s ease,
-            background-color 0.4s ease;
+        transition: opacity 0.4s ease, background-color 0.4s ease;
         z-index: 1;
     }
+
+    .post-item:hover .overlay {
+        opacity: 1;
+    }
+
+    /* Status badge (for past trips) */
+    .trip-status-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: rgba(0, 0, 0, 0.65);
+        border: 1px solid var(--section-accent);
+        color: var(--section-accent);
+        padding: 0.35rem 0.85rem;
+        border-radius: 9999px;
+        font-family: "Lato", sans-serif;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        z-index: 2;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
     .content {
         position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        padding: 2rem;
+        inset: 0;
         display: flex;
         flex-direction: column;
+        justify-content: center;
         align-items: center;
+        padding: 2rem;
         text-align: center;
         z-index: 2;
         color: white;
-        transform: translateY(0);
-        transition:
-            bottom 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-            transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        transform: translateY(32%);
+        transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
         pointer-events: none;
     }
-    .title {
-        font-size: 1.5rem;
-        font-weight: 700;
-        margin: 0 0 0.5rem 0;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-        line-height: 1.2;
-        color: #fff;
-    }
-    .date {
-        font-size: 0.9rem;
-        margin: 10px 0 0 0;
-        color: rgba(255, 255, 255, 0.9);
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+
+    .post-item:hover .content {
+        transform: translateY(0);
     }
 
-    /* Hover Effects */
-    li.post-item:hover img {
-        transform: scale(1.05);
+    .title {
+        font-family: "Lato", sans-serif;
+        font-size: 1.45rem;
+        font-weight: 700;
+        margin: 0 0 0.5rem 0;
+        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+        line-height: 1.25;
+        color: #fff;
     }
-    li.post-item:hover .image-container::after {
-        opacity: 0;
+
+    .date {
+        font-family: "Lato", sans-serif;
+        font-size: 0.9rem;
+        margin: 0;
+        color: rgba(255, 255, 255, 0.9);
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
     }
-    li.post-item:hover .overlay {
-        opacity: 1;
+
+    /* Past Trips CTA link (Theme Accent) */
+    .past-trips-cta-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 3.5rem;
     }
-    li.post-item:hover .content {
-        bottom: 50%;
-        transform: translateY(50%);
+
+    .past-trips-cta-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.85rem 1.85rem;
+        background: transparent;
+        border: 2px solid var(--section-accent);
+        color: var(--section-accent);
+        border-radius: 9999px;
+        font-family: "Lato", sans-serif;
+        font-size: 0.95rem;
+        font-weight: 600;
+        text-decoration: none;
+        letter-spacing: 0.03em;
+        transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .past-trips-cta-btn:hover {
+        background: var(--section-accent);
+        color: #fff;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px var(--section-accent-glow);
     }
 
     @media (max-width: 768px) {
-        ul.trips-grid {
+        .group-trips-section {
+            padding: 3.5rem 0 3rem 0;
+        }
+
+        .trips-grid {
             grid-template-columns: 1fr;
-            gap: 1rem;
+            gap: 1.25rem;
         }
-        li.post-item {
-            aspect-ratio: 16/10;
-        }
+
         .content {
-            /* Fix visibility */
-            bottom: 0 !important;
-            transform: none !important;
-            padding: 1.5rem;
+            transform: translateY(0);
             justify-content: flex-end;
-            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+            padding: 1.25rem;
         }
-        .overlay {
-            display: none;
-        }
+
         .title {
-            font-size: 1.15rem; /* Smaller title on very small screens */
+            font-size: 1.25rem;
         }
-        .filters-container {
+
+        .past-trips-cta-container {
+            margin-top: 2.5rem;
+        }
+
+        .past-trips-cta-btn {
+            width: 100%;
             justify-content: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            padding: 0 1rem;
-        }
-        .filter-btn {
-            white-space: nowrap;
+            font-size: 0.9rem;
+            padding: 0.8rem 1.25rem;
         }
     }
 </style>

@@ -29,7 +29,9 @@ const translatedPaths = {
 		<Header isOverlay={true} translatedPaths={translatedPaths} />
 		<PageHero title={t("nav.trips")} image="viajes-en-grupo" />
 		
-		<GroupTripsGrid showTitle={false} />
+		<GroupTripsGrid mode="upcoming" showTitle={true} showPastLink={false} />
+		
+		<GroupTripsGrid mode="past" showTitle={true} />
 		
 		<Footer />
 	</body>
