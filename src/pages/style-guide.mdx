@@ -5,6 +5,7 @@ description: 'Full style guide for markdown and travel components'
 import Layout from '../layouts/BlogPost.astro';
 import Timeline from '../components/Timeline.astro';
 import TimelineItem from '../components/TimelineItem.astro';
+import GooglePhotosAlbum from '../components/GooglePhotosAlbum.astro';
 
 <Layout 
   title="Style Guide &components" 
@@ -227,5 +228,20 @@ Perfect for trip itineraries and step-by-step travel guides.
     * **Actividad:** Subida al Reinebringen (si el tiempo lo permite).
   </TimelineItem>
 </Timeline>
+
+## Google Photos Album Component
+
+Permite incrustar álbumes compartidos de Google Photos en viajes y entradas. Si el álbum está vacío (0 imágenes) o no carga fotos, se oculta automáticamente (prop `hideIfEmpty={true}` por defecto).
+
+### Ejemplo de uso
+
+```mdx
+<GooglePhotosAlbum 
+  url="https://photos.app.goo.gl/TU_ENLACE_AQUI" 
+  title="Galería fotográfica del viaje"
+  description="Revive los mejores momentos capturados por nuestros viajeros."
+  hideIfEmpty={true}
+/>
+```
 
 </Layout>

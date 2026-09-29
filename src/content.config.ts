@@ -49,6 +49,7 @@ const commonSchema = ({ image }: SchemaContext) => z.object({
 	title: z.string(),
 	description: z.string(),
 	date: z.coerce.date(),
+	endDate: z.coerce.date().optional(),
 	updatedDate: z.coerce.date().optional(),
 	image: z.string()
 		.transform(resolveImagePath)

@@ -1,0 +1,409 @@
+---
+/**
+ * GooglePhotosAlbum Component
+ * Embeds a public Google Photos shared album as an interactive gallery / carousel.
+ * If the album is empty (0 images) or fails to load, it can automatically hide itself.
+ */
+
+interface Props {
+    url?: string;             // Google Photos shared album URL (e.g., https://photos.app.goo.gl/...)
+    link?: string;            // Alias for url
+    title?: string;           // Optional title displayed above the album
+    description?: string;     // Optional subtitle/description
+    type?: "player" | "carousel"; // "player" (default slideshow) or "carousel"
+    height?: string | number; // Widget height (default: "480px")
+    delay?: number;           // Autoplay delay in seconds (default: 5)
+    hideIfEmpty?: boolean;    // If true, hide component if album has 0 photos (default: true)
+    showExternalLink?: boolean; // Show "Ver en Google Photos" button (default: true)
+    className?: string;       // Custom CSS classes
+}
+
+const {
+    url,
+    link,
+    title,
+    description,
+    type = "player",
+    height = "480px",
+    delay = 5,
+    hideIfEmpty = true,
+    showExternalLink = true,
+    className = "",
+} = Astro.props;
+
+const albumUrl = (url ?? link)?.trim() || "";
+const formattedHeight = typeof height === "number" ? `${height}px` : height;
+const widgetClass = type === "carousel" ? "pa-carousel-widget" : "pa-gallery-player-widget";
+
+// Generate a unique ID for this instance
+const instanceId = `gphotos-${Math.random().toString(36).substring(2, 9)}`;
+---
+
+{
+    albumUrl ? (
+        <div
+            class={`google-photos-embed-wrapper ${className} is-loading`}
+            id={instanceId}
+            data-hide-if-empty={hideIfEmpty ? "true" : "false"}
+            data-album-url={albumUrl}
+        >
+            {title && (
+                <div class="google-photos-header">
+                    <h3 class="google-photos-title">
+                        <i class="fa-solid fa-camera-retro"></i>
+                        <span>{title}</span>
+                    </h3>
+                    {description && (
+                        <p class="google-photos-description">{description}</p>
+                    )}
+                </div>
+            )}
+
+            <div class="google-photos-content" style={`min-height: ${formattedHeight};`}>
+                <!-- Loading placeholder / skeleton -->
+                <div class="google-photos-skeleton" aria-hidden="true">
+                    <div class="skeleton-content">
+                        <i class="fas fa-spinner fa-spin skeleton-icon"></i>
+                        <span class="skeleton-text">Cargando fotos del álbum...</span>
+                    </div>
+                </div>
+
+                <!-- Empty state fallback (only shown when hideIfEmpty is false) -->
+                <div class="google-photos-empty-state" style="display: none;">
+                    <i class="fa-regular fa-image empty-icon"></i>
+                    <p class="empty-title">Álbum sin imágenes disponibles</p>
+                    <p class="empty-subtitle">Este álbum aún no contiene fotografías públicas.</p>
+                </div>
+
+                <!-- PublicAlbum Embed Widget -->
+                <div
+                    class={widgetClass}
+                    style={`width: 100%; height: ${formattedHeight}; display: none;`}
+                    data-link={albumUrl}
+                    data-title={title || ""}
+                    data-delay={delay}
+                >
+                </div>
+            </div>
+
+            {showExternalLink && (
+                <div class="google-photos-footer">
+                    <a
+                        href={albumUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="google-photos-ext-link"
+                    >
+                        <i class="fa-brands fa-google"></i>
+                        <span>Ver álbum completo en Google Photos</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
+                </div>
+            )}
+        </div>
+    ) : null
+}
+
+<script>
+    // Ensure publicalbum embed-ui script is loaded
+    function loadPublicAlbumScript() {
+        const SCRIPT_URL = "https://cdn.jsdelivr.net/npm/publicalbum@latest/embed-ui.min.js";
+        if (!document.querySelector(`script[src="${SCRIPT_URL}"]`)) {
+            const script = document.createElement("script");
+            script.src = SCRIPT_URL;
+            script.async = true;
+            document.head.appendChild(script);
+        }
+    }
+
+    // Inspect widget state and handle empty / loaded logic
+    function initGooglePhotosWidgets() {
+        loadPublicAlbumScript();
+
+        const wrappers = document.querySelectorAll<HTMLElement>(".google-photos-embed-wrapper");
+
+        wrappers.forEach((wrapper) => {
+            if (wrapper.dataset.initialized === "true") return;
+            wrapper.dataset.initialized = "true";
+
+            const widget = wrapper.querySelector<HTMLElement>(".pa-gallery-player-widget, .pa-carousel-widget");
+            const skeleton = wrapper.querySelector<HTMLElement>(".google-photos-skeleton");
+            const emptyState = wrapper.querySelector<HTMLElement>(".google-photos-empty-state");
+            const hideIfEmpty = wrapper.dataset.hideIfEmpty === "true";
+
+            if (!widget) return;
+
+            let checkCount = 0;
+            const maxChecks = 25; // 25 * 200ms = 5 seconds max wait
+            let isResolved = false;
+
+            const checkMedia = () => {
+                // Check if publicalbum has created media elements (images, videos, canvases, jx-imageset)
+                const hasRenderedElements = widget.querySelectorAll("img, video, canvas, .jx-imageset, .jx").length > 0;
+                const isWidgetVisible = window.getComputedStyle(widget).display !== "none";
+
+                return hasRenderedElements && isWidgetVisible;
+            };
+
+            const markSuccess = () => {
+                isResolved = true;
+                wrapper.classList.remove("is-loading");
+                wrapper.classList.add("is-loaded");
+                if (skeleton) skeleton.style.display = "none";
+            };
+
+            const markEmptyOrFailed = () => {
+                isResolved = true;
+                wrapper.classList.remove("is-loading");
+
+                if (hideIfEmpty) {
+                    // Hide the entire container cleanly if 0 photos
+                    wrapper.style.display = "none";
+                    wrapper.setAttribute("aria-hidden", "true");
+
+                    // If inside a group-trip-section and only an H2 exists, hide the parent section as well
+                    const parentSection = wrapper.closest<HTMLElement>(".group-trip-section");
+                    if (parentSection) {
+                        const remainingVisible = Array.from(parentSection.querySelectorAll<HTMLElement>("*")).filter(
+                            (el) =>
+                                el !== wrapper &&
+                                !wrapper.contains(el) &&
+                                el.tagName !== "SECTION" &&
+                                el.tagName !== "DIV" &&
+                                window.getComputedStyle(el).display !== "none",
+                        );
+                        if (
+                            remainingVisible.length <= 1 &&
+                            (remainingVisible.length === 0 || remainingVisible[0].tagName === "H2")
+                        ) {
+                            parentSection.style.display = "none";
+                        }
+                    }
+                } else {
+                    // Show friendly empty message
+                    if (skeleton) skeleton.style.display = "none";
+                    if (emptyState) emptyState.style.display = "flex";
+                }
+            };
+
+            // Use MutationObserver for instant detection when PublicAlbum decorates
+            const observer = new MutationObserver(() => {
+                if (!isResolved && checkMedia()) {
+                    observer.disconnect();
+                    markSuccess();
+                }
+            });
+
+            observer.observe(widget, {
+                childList: true,
+                subtree: true,
+                attributes: true,
+                attributeFilter: ["style", "class"],
+            });
+
+            // Fallback interval check
+            const intervalId = window.setInterval(() => {
+                checkCount++;
+
+                if (checkMedia()) {
+                    window.clearInterval(intervalId);
+                    observer.disconnect();
+                    markSuccess();
+                    return;
+                }
+
+                if (checkCount >= maxChecks) {
+                    window.clearInterval(intervalId);
+                    observer.disconnect();
+                    if (!isResolved) {
+                        markEmptyOrFailed();
+                    }
+                }
+            }, 200);
+        });
+    }
+
+    // Initialize on initial page load and on Astro view transition navigation
+    document.addEventListener("DOMContentLoaded", initGooglePhotosWidgets);
+    document.addEventListener("astro:page-load", initGooglePhotosWidgets);
+</script>
+
+<style>
+    .google-photos-embed-wrapper {
+        margin: 2.5rem 0;
+        padding: 1.5rem;
+        background: var(--surface-secondary, rgba(255, 255, 255, 0.03));
+        border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+        transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    .google-photos-header {
+        margin-bottom: 1.25rem;
+    }
+
+    .google-photos-title {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.35rem;
+        font-weight: 700;
+        margin: 0;
+        color: var(--heading-color, #1a1a1a);
+    }
+
+    :global(.dark) .google-photos-title {
+        color: #f3f4f6;
+    }
+
+    .google-photos-title i {
+        color: var(--color-primary, #c9933f);
+        font-size: 1.2rem;
+    }
+
+    .google-photos-description {
+        margin: 0.35rem 0 0 0;
+        font-size: 0.95rem;
+        color: var(--text-muted, #666);
+    }
+
+    :global(.dark) .google-photos-description {
+        color: #9ca3af;
+    }
+
+    .google-photos-content {
+        position: relative;
+        width: 100%;
+        border-radius: 12px;
+        overflow: hidden;
+        background: rgba(0, 0, 0, 0.05);
+    }
+
+    :global(.dark) .google-photos-content {
+        background: rgba(0, 0, 0, 0.3);
+    }
+
+    /* Loading skeleton */
+    .google-photos-skeleton {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(
+            135deg,
+            rgba(200, 200, 200, 0.08) 25%,
+            rgba(200, 200, 200, 0.15) 50%,
+            rgba(200, 200, 200, 0.08) 75%
+        );
+        background-size: 200% 200%;
+        animation: pulse 2s infinite ease-in-out;
+        z-index: 2;
+    }
+
+    .skeleton-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+        color: #888;
+    }
+
+    .skeleton-icon {
+        font-size: 2rem;
+        color: var(--color-primary, #c9933f);
+    }
+
+    .skeleton-text {
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    /* Empty state */
+    .google-photos-empty-state {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .empty-icon {
+        font-size: 3rem;
+        color: #999;
+        margin-bottom: 0.75rem;
+    }
+
+    .empty-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin: 0;
+        color: var(--heading-color, #222);
+    }
+
+    .empty-subtitle {
+        font-size: 0.9rem;
+        color: var(--text-muted, #777);
+        margin: 0.25rem 0 0 0;
+    }
+
+    /* Footer button */
+    .google-photos-footer {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 1rem;
+    }
+
+    .google-photos-ext-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--color-primary, #c9933f);
+        text-decoration: none;
+        padding: 0.4rem 0.85rem;
+        border-radius: 8px;
+        background: rgba(201, 147, 63, 0.08);
+        border: 1px solid rgba(201, 147, 63, 0.2);
+        transition: all 0.2s ease;
+    }
+
+    .google-photos-ext-link:hover {
+        background: var(--color-primary, #c9933f);
+        color: #fff;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(201, 147, 63, 0.25);
+    }
+
+    @keyframes pulse {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .google-photos-embed-wrapper {
+            padding: 1rem;
+            border-radius: 12px;
+        }
+
+        .google-photos-title {
+            font-size: 1.15rem;
+        }
+
+        .google-photos-footer {
+            justify-content: center;
+        }
+    }
+</style>
