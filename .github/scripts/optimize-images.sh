@@ -46,7 +46,9 @@ format_size() {
 }
 
 # 1. Convert non-webp images to webp
+# public/ is excluded: it holds files that must keep their format and URL (og-default.jpg, favicons)
 find . -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" \) \
+    -not -path "./public/*" \
     -not -path "*/node_modules/*" \
     -not -path "*/dist/*" \
     -not -path "*/.git/*" \

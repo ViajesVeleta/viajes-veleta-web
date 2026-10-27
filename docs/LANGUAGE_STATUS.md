@@ -12,7 +12,10 @@ Para ocultar y desactivar la versión en inglés se siguieron estos pasos:
 2. **Ocultación del componente LanguagePicker en el Header**
    En el archivo `src/components/Header.astro`, se comentaron o eliminaron temporalmente las menciones al componente `<LanguagePicker />` en las áreas de navegación de escritorio y móvil.
 
-3. **Desactivación de los scripts de redirección de idioma**
+3. **Idiomas publicados**
+   `src/i18n/ui.ts` define `publishedLanguages = ['es']`. `BaseHead.astro` solo genera `hreflang` y `og:locale:alternate` para los idiomas de esa lista, así que no se anuncian a Google páginas en inglés que no existen. Las páginas de etiquetas (`src/pages/tags/`) solo se generan en español.
+
+4. **Desactivación de los scripts de redirección de idioma**
    - En `src/components/Header.astro`, se comentó con `{/* ... */}` todo el bloque de `<script>` que contenía la función `setupLanguagePreference()` para evitar redirecciones automáticas por preferencias guardadas en `sessionStorage`.
    - En `src/components/BaseHead.astro`, se comentó con HTML (`<!-- ... -->`) el `<script>` de "Automatic Language Detection" que redirigía automáticamente a un visitante a la versión en inglés dependiendo del idioma principal de su navegador.
 
@@ -32,6 +35,13 @@ Hola IA. Necesito volver a habilitar el soporte multilenguaje y la versión en i
    - En este mismo archivo, busca al principio un bloque de código comentado que dice `{/* Language Preference Redirect Disabled ... */}` que contiene el `<script>` con la función `setupLanguagePreference`. Descoméntalo para que la redirección basada en preferencias vuelva a funcionar.
 
 3. En el archivo `src/components/BaseHead.astro`, busca el bloque comentado de código que dice `<!-- Automatic Language Detection Disabled ... -->` y quita las etiquetas HTML de comentarios para que el `<script is:inline>` encargado de analizar y redirigir según el idioma del navegador vuelva a ejecutarse.
+   ⚠️ Recomendación SEO: no reactivar esta redirección automática. Googlebot rastrea con el navegador en inglés y sin `localStorage`, así que sería redirigido siempre de `/` a `/en/` y la home en español dejaría de indexarse bien. Es preferible mostrar un aviso con enlace a la versión en inglés.
+
+4. En `src/i18n/ui.ts`, añade `'en'` a `publishedLanguages` para que se generen los `hreflang` hacia las páginas en inglés.
+
+5. Revisa `src/pages/en/404.astro`: Astro solo usa `src/pages/404.astro` como página de error, así que esa página no tiene efecto como 404 y redirige por JavaScript; elimínala o conviértela en contenido normal. Si se quieren páginas de etiquetas en inglés, crea `src/pages/en/tags/[tag].astro` (la versión española solo genera etiquetas del contenido `es/`).
+
+6. Los enlaces internos llevan siempre barra final (`/en/`, `/en/contacto/`).
 
 Construye la app para verificar que se generan tanto las versiones de `es` como de `en` y revisa que el selector de idiomas en el menú es completamente funcional.
 ```

@@ -4,7 +4,7 @@ import BaseHead from "../../components/BaseHead.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
 import PageHero from "../../components/PageHero.astro";
-import { SITE_TITLE, SITE_DESCRIPTION } from "../../consts";
+import { SITE_TITLE } from "../../consts";
 import {
     getLangFromUrl,
     useTranslations,
@@ -15,17 +15,10 @@ const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 const translatePath = useTranslatedPath(lang);
 
-const blogPosts = await getCollection("blog", ({ id }) =>
-    id.startsWith(`${lang}/`),
-);
 const groupTrips = await getCollection("groups", ({ id }) =>
     id.startsWith(`${lang}/`),
 );
-const offers = await getCollection("offers", ({ id }) =>
-    id.startsWith(`${lang}/`),
-);
-
-const allContent = [...blogPosts, ...groupTrips, ...offers];
+const allContent = groupTrips;
 const tags = [
     ...new Set(allContent.map((item) => item.data.tags || []).flat()),
 ].sort();
@@ -36,7 +29,8 @@ const tags = [
     <head>
         <BaseHead
             title={`${t("tags.title")} | ${SITE_TITLE}`}
-            description={SITE_DESCRIPTION}
+            description="Explora los viajes en grupo de Viajes Veleta por destino y temática."
+            noindex
         />
         <style>
             main {

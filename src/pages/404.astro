@@ -1,0 +1,52 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import PageHero from "../components/PageHero.astro";
+import Footer from "../components/Footer.astro";
+import Button from "../components/Button.astro";
+import { SITE_TITLE } from "../consts";
+
+const title = "Página no encontrada";
+---
+
+<!doctype html>
+<html lang="es">
+    <head>
+        <BaseHead
+            title={`${title} | ${SITE_TITLE}`}
+            description="La página que buscas no existe o ha cambiado de dirección. Descubre nuestros próximos viajes en grupo desde Guadix."
+            noindex
+        />
+        <style>
+            main {
+                max-width: 720px;
+                margin: 0 auto;
+                padding: 4rem 1.5rem;
+                text-align: center;
+            }
+            .actions {
+                display: flex;
+                gap: 1rem;
+                justify-content: center;
+                flex-wrap: wrap;
+                margin-top: 2rem;
+            }
+        </style>
+    </head>
+    <body>
+        <Header isOverlay={true} />
+        <PageHero title={title} />
+        <main>
+            <p>
+                Lo sentimos, la página que buscas no existe o ha cambiado de
+                dirección.
+            </p>
+            <div class="actions">
+                <Button title="Ver viajes en grupo" link="/viajes-en-grupo/" />
+                <Button title="Contacto" link="/contacto/" />
+                <Button title="Inicio" link="/" />
+            </div>
+        </main>
+        <Footer />
+    </body>
+</html>

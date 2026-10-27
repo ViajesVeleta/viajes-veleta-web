@@ -37,7 +37,7 @@ const formatDate = (date: Date) => {
     <div class="swiper mySwiper">
         <div class="swiper-wrapper">
             {
-                slides.map((slide) => (
+                slides.map((slide, index) => (
                     <div class="swiper-slide">
                         <div class="slide-bg">
                             {slide.data.image && (
@@ -47,7 +47,8 @@ const formatDate = (date: Date) => {
                                     width={1920}
                                     height={1080}
                                     class="bg-image"
-                                    loading="eager"
+                                    loading={index === 0 ? "eager" : "lazy"}
+                                    fetchpriority={index === 0 ? "high" : "auto"}
                                 />
                             )}
                             <div class="overlay" />

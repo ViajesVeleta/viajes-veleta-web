@@ -6,55 +6,35 @@ import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
 import PageHero from "../../components/PageHero.astro";
 import FormattedDate from "../../components/FormattedDate.astro";
-import { SITE_TITLE, SITE_DESCRIPTION } from "../../consts";
+import { SITE_TITLE } from "../../consts";
 import {
-    getLangFromUrl,
     useTranslations,
     useTranslatedPath,
 } from "../../i18n/utils";
-import { languages } from "../../i18n/ui";
+import { defaultLang } from "../../i18n/ui";
 
+// Only Spanish group trips: this route has no language prefix and offers are not published
 export async function getStaticPaths() {
-    const groupTrips = await getCollection("groups");
-    const offers = await getCollection("offers");
+    const groupTrips = await getCollection("groups", ({ id }) =>
+        id.startsWith(`${defaultLang}/`),
+    );
+    const tags = [
+        ...new Set(groupTrips.map((item) => item.data.tags || []).flat()),
+    ];
 
-    const allContent = [...groupTrips, ...offers];
-
-    // Create paths for each tag in each language
-    const paths: Array<{
-        params: { lang: string | undefined; tag: string };
-        props: { tag: string; lang: string };
-    }> = [];
-    Object.keys(languages).forEach((lang) => {
-        const langContent = allContent.filter((item) =>
-            item.id.startsWith(`${lang}/`),
-        );
-        const tags = [
-            ...new Set(langContent.map((item) => item.data.tags || []).flat()),
-        ];
-
-        tags.forEach((tag) => {
-            paths.push({
-                params: { lang: lang === "es" ? undefined : lang, tag },
-                props: { tag, lang },
-            });
-        });
-    });
-
-    return paths;
+    return tags.map((tag) => ({
+        params: { tag },
+        props: { tag },
+    }));
 }
 
-const { tag, lang: propLang } = Astro.props;
-const lang = (propLang || getLangFromUrl(Astro.url)) as keyof typeof languages;
+const { tag } = Astro.props;
+const lang = defaultLang;
 const t = useTranslations(lang);
 const translatePath = useTranslatedPath(lang);
 
 const groupTrips = await getCollection(
     "groups",
-    ({ id, data }) => id.startsWith(`${lang}/`) && data.tags?.includes(tag),
-);
-const offers = await getCollection(
-    "offers",
     ({ id, data }) => id.startsWith(`${lang}/`) && data.tags?.includes(tag),
 );
 
@@ -67,11 +47,6 @@ const allTaggedContent = [
             `/viajes-en-grupo/${p.id.split("/").slice(1).join("/")}/`,
         ),
     })),
-    ...offers.map((p) => ({
-        ...p,
-        type: "offers",
-        url: translatePath(`/ofertas/${p.id.split("/").slice(1).join("/")}/`),
-    })),
 ].sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 
@@ -80,7 +55,8 @@ const allTaggedContent = [
     <head>
         <BaseHead
             title={`${t("tags.intro")} "${tag}" | ${SITE_TITLE}`}
-            description={SITE_DESCRIPTION}
+            description={`Viajes en grupo de Viajes Veleta etiquetados como "${tag}".`}
+            noindex
         />
         <script>
             import { FastAverageColor } from "fast-average-color";

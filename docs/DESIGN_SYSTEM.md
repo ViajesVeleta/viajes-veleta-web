@@ -31,6 +31,7 @@ The design system follows a **modular CSS approach** with clear separation of co
 
 ```
 src/styles/
+├── fonts.css        (3.2 KB) - Self-hosted Lato @font-face (files in public/fonts/lato)
 ├── colors.css       (3.1 KB) - Color tokens & theme variables
 ├── reset.css        (719 B)  - Modern CSS reset & core defaults
 ├── typography.css   (1.7 KB) - Typography styles
@@ -251,6 +252,7 @@ Comprehensive utility classes
 Main entry point that imports all modules
 
 **Imports (in order):**
+0. `fonts.css` - Self-hosted Lato `@font-face`
 1. `colors.css` - Define variables first
 2. `reset.css` - Reset browser defaults
 3. `typography.css` - Base typography
@@ -271,6 +273,7 @@ Main entry point that imports all modules
 The import order in `global.css` is critical:
 
 ```css
+@import "./fonts.css";       /* 0. Self-hosted fonts */
 @import "./colors.css";      /* 1. Variables first */
 @import "./reset.css";       /* 2. Reset defaults */
 @import "./typography.css";  /* 3. Base typography */
