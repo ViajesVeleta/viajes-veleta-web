@@ -4,14 +4,14 @@ The `Timeline` component system consists of two parts: `Timeline` (the container
 
 ## Usage in MDX
 
-These components are available globally in the blog posts. You don't need to import them.
+These components are passed to the MDX of group trips (`src/pages/viajes-en-grupo/[...slug].astro`) and blog posts, so you don't need to import them. Image paths start with `assets/` and have no extension.
 
 ```mdx
 <Timeline>
   <TimelineItem 
     date="8 Feb" 
     title="Destination Name" 
-    image="/assets/blog-placeholder-2"
+    image="assets/blog-placeholder-2"
   >
     Detailed description of the day...
     

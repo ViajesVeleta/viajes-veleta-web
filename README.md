@@ -1,62 +1,53 @@
-# Astro Starter Kit: Blog
+# Viajes Veleta – Web
 
-```sh
-npm create astro@latest -- --template blog
-```
+Web de [viajesveleta.es](https://viajesveleta.es), agencia de viajes en Guadix. Hecha con [Astro](https://astro.build) y desplegada en Cloudflare Workers.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Comandos
 
-Features:
+| Comando | Acción |
+| :-- | :-- |
+| `npm install` | Instala dependencias |
+| `npm run dev -- --port 4329` | Servidor de desarrollo |
+| `npm run build` | `astro check` + build de producción en `./dist/` |
+| `npm run preview` | Previsualiza el build |
+| `npx wrangler dev` | Ejecuta el build con el worker de Cloudflare en local (tras `npm run build`) |
 
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and OpenGraph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
+## Estructura
 
 ```text
-├── public/
+├── .templates/              Plantilla para nuevos viajes en grupo
+├── docs/                    Documentación (SEO, estado de secciones, design system…)
+├── public/                  Ficheros con URL fija: og-default.jpg, favicons, robots.txt, _redirects, fuentes
 ├── src/
-│   ├── components/
-│   ├── content/
-│   ├── layouts/
-│   └── pages/
+│   ├── assets/              Imágenes por continente/país/… (se referencian sin extensión)
+│   ├── components/          Componentes Astro (BaseHead gestiona el SEO)
+│   ├── content/             Colecciones: viajes-en-grupo, blog, ofertas, reviews
+│   ├── layouts/             BlogPost.astro: layout de fichas de viaje y posts
+│   ├── pages/               Rutas (las que empiezan por _ están deshabilitadas)
+│   └── styles/              CSS global
 ├── astro.config.mjs
-├── README.md
-├── package.json
-└── tsconfig.json
+└── wrangler.toml
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Contenido
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+- Viajes en grupo: `src/content/viajes-en-grupo/es/`, a partir de `.templates/plantilla-viaje-en-grupo.mdx`.
+- Reglas para crear contenido e imágenes: [AGENTS.md](AGENTS.md).
+- Varios idiomas: [docs/MULTILANGUAGE_CONTENT_GUIDE.md](docs/MULTILANGUAGE_CONTENT_GUIDE.md).
 
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
+## Secciones deshabilitadas
 
-Any static assets, like images, can be placed in the `public/` directory.
+- Blog: [docs/BLOG_STATUS.md](docs/BLOG_STATUS.md)
+- Ofertas: [docs/OFFERS_STATUS.md](docs/OFFERS_STATUS.md)
+- Inglés: [docs/LANGUAGE_STATUS.md](docs/LANGUAGE_STATUS.md)
+- Modo oscuro: [docs/THEME_STATUS.md](docs/THEME_STATUS.md)
 
-## 🧞 Commands
+## SEO
 
-All commands are run from the root of the project, from a terminal:
+Ver [docs/SEO.md](docs/SEO.md): metadatos, imagen al compartir, sitemap, redirecciones y la configuración necesaria en Cloudflare y Search Console.
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+## CI/CD
 
-## 👀 Want to learn more?
-
-Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
-
-## Credit
-
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+- `deploy-web.yml`: en cada push a `main`, check + build + `wrangler deploy`.
+- `preview-web.yml` / `cleanup-preview-web.yml`: un worker de preview por PR.
+- `pr-image-optimization.yml` / `weekly-image-optimization.yml`: convierten PNG/JPG a WebP y reducen imágenes grandes (excepto `public/`).

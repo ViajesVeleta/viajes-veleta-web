@@ -9,18 +9,21 @@ Para ocultar y desactivar el blog se siguieron los siguientes pasos:
 1. **Renombrar directorios y archivos base**
    Se les añadió un guion bajo `_` como prefijo a las rutas del blog y feed RSS. En Astro, cualquier archivo o directorio que empiece con `_` es ignorado a la hora de procesar las rutas.
    - `src/pages/blog` → `src/pages/_blog`
-   - `src/pages/en/blog` → `src/pages/en/_blog`
+   - `src/pages/_en/blog` → `src/pages/_en/_blog`
    - `src/pages/rss.xml.js` → `src/pages/_rss.xml.js`
-   - `src/pages/en/rss.xml.js` → `src/pages/en/_rss.xml.js`
+   - `src/pages/_en/rss.xml.js` → `src/pages/_en/_rss.xml.js`
 
 2. **Eliminación de la navegación global**
    Se eliminaron explícitamente los enlaces al blog (`nav.blog`) del menú de navegación (tanto en la versión de ordenador como en la de móvil) en el componente `src/components/Header.astro`.
 
 3. **Exclusión en el sistema de etiquetado (Tags)**
-   En `src/pages/tags/[tag].astro`, se impidió que el generador de páginas y la recolección de contenido extrajeran los datos de la colección de *blog*. Específicamente, se eliminó la llamada `await getCollection("blog")` y el mapeo de `blogPosts` hacia el array de contenido `allTaggedContent`, para evitar falsos positivos y errores de ruteo 404 en el listado.
+   `src/pages/tags/[tag].astro` y `src/pages/tags/index.astro` solo usan la colección `groups` (viajes en grupo en español). No se consulta `blog` para no generar etiquetas que enlacen a páginas inexistentes.
 
-4. **Referencias estáticas**
-   Se eliminó una pequeña mención sobre el blog en el texto estático dentro del archivo de inicio de idioma inglés (`src/pages/en/index.astro`).
+4. **Enlace RSS eliminado del `<head>`**
+   `src/components/BaseHead.astro` ya no incluye `<link rel="alternate" type="application/rss+xml">`, porque `/rss.xml` no existe mientras el blog está deshabilitado.
+
+5. **Referencias estáticas**
+   Se eliminó una pequeña mención sobre el blog en el texto estático dentro del archivo de inicio de idioma inglés (`src/pages/_en/index.astro`).
 
 ---
 
@@ -33,19 +36,24 @@ Hola IA. Necesito volver a habilitar el blog en este repositorio, el cual fue de
 
 1. Renombrar las carpetas y archivos con guion bajo `_` para devolverlos a su estado original para que Astro vuelva a compilarlos:
    - `src/pages/_blog` → `src/pages/blog`
-   - `src/pages/en/_blog` → `src/pages/en/blog`
+   - `src/pages/_en/_blog` → `src/pages/_en/blog`
    - `src/pages/_rss.xml.js` → `src/pages/rss.xml.js`
-   - `src/pages/en/_rss.xml.js` → `src/pages/en/rss.xml.js`
+   - `src/pages/_en/_rss.xml.js` → `src/pages/_en/rss.xml.js`
 
 2. Volver a añadir el enlace al blog dentro del Header (`src/components/Header.astro`). 
    - En el bloque de enlaces de escritorio, añade:
-     <HeaderLink href={translatePath("/blog")}>{t("nav.blog")}</HeaderLink>
+     <HeaderLink href={translatePath("/blog/")}>{t("nav.blog")}</HeaderLink>
    - En el bloque de enlaces móviles, añade:
-     <a href={translatePath("/blog")} class="mobile-nav-link">{t("nav.blog")}</a>
+     <a href={translatePath("/blog/")} class="mobile-nav-link">{t("nav.blog")}</a>
+   (Los enlaces internos llevan siempre barra final.)
 
-3. Modificar `src/pages/tags/[tag].astro` para que recupere otra vez los artículos del blog y los adjunte a la página de tags. Deberás añadir la query `getCollection("blog")` tanto en el método estático como en el de recolección local, y volver a introducirlos dentro del array de la constante global `allTaggedContent`.
+3. Modificar `src/pages/tags/[tag].astro` y `src/pages/tags/index.astro` para que incluyan también la colección `blog` (filtrando por idioma `es/`), con URL `/blog/{slug}/` en `allTaggedContent`.
 
-4. (Opcional) Restaurar cualquier referencia estática al blog en `src/pages/en/index.astro`.
+4. En `src/components/BaseHead.astro`, volver a añadir el enlace RSS: `<link rel="alternate" type="application/rss+xml" title={SITE_TITLE} href={new URL("rss.xml", Astro.site)} />`.
+
+5. (Opcional) Restaurar cualquier referencia estática al blog en `src/pages/_en/index.astro`.
+
+Ejecuta `npm run build` y comprueba que `/blog/` y `/rss.xml` aparecen en `dist/` y que las páginas del blog están en el sitemap.
 
 Por favor, actúa sobre los archivos correspondientes y dímelo cuando esté listo o si encuentras algún problema intermedio.
 ```
