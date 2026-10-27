@@ -5,6 +5,9 @@ export const languages = {
 
 export const defaultLang = 'es';
 
+// Languages with pages actually published (English routes are disabled under src/pages/_en)
+export const publishedLanguages: string[] = ['es'];
+
 export const ui = {
     es: {
         nav: {

@@ -11,8 +11,8 @@ const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 
 const translatedPaths = {
-	es: "/viajes-en-grupo",
-	en: "/en/viajes-en-grupo",
+	es: "/viajes-en-grupo/",
+	en: "/en/viajes-en-grupo/",
 };
 ---
 
@@ -20,7 +20,7 @@ const translatedPaths = {
 <html lang={lang}>
 	<head>
 		<BaseHead
-			title={`Viajes en grupo - ${SITE_TITLE}`}
+			title={`Viajes en grupo desde Guadix | ${SITE_TITLE}`}
 			description="Únete a nuestros viajes en grupo con Viajes Veleta. Experiencias fotográficas, rutas culturales divertidas y escapadas exclusivas por España y toda Europa."
 			translatedPaths={translatedPaths}
 		/>

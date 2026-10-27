@@ -13,7 +13,7 @@ import { getLangFromUrl } from "../i18n/utils";
 const lang = getLangFromUrl(Astro.url);
 const translatedPaths = {
 	es: "/",
-	en: "/en",
+	en: "/en/",
 };
 ---
 
@@ -21,7 +21,7 @@ const translatedPaths = {
 <html lang={lang} dir="ltr">
 	<head>
 		<BaseHead
-			title={SITE_TITLE}
+			title={`${SITE_TITLE} | Agencia de viajes en Guadix`}
 			description={SITE_DESCRIPTION}
 			translatedPaths={translatedPaths}
 		/>
@@ -29,6 +29,7 @@ const translatedPaths = {
 	<body>
 		<Header isOverlay={true} translatedPaths={translatedPaths} />
 
+		<h1 class="sr-only">Viajes Veleta, agencia de viajes en Guadix</h1>
 		<HomeSlider />
 
 		<GroupTripsGrid />

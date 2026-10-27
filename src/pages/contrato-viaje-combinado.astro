@@ -4,7 +4,7 @@ import Header from "../components/Header.astro";
 import PageHero from "../components/PageHero.astro";
 import Footer from "../components/Footer.astro";
 import ContentFallback from "../components/ContentFallback.astro";
-import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
+import { SITE_TITLE } from "../consts";
 
 const title = "Contrato de viaje combinado";
 
@@ -17,8 +17,8 @@ const isFallback = urlParams.get("lang") === "en"; // User wants English but vie
 <html lang="es">
     <head>
         <BaseHead
-            title={`${title} - ${SITE_TITLE}`}
-            description={SITE_DESCRIPTION}
+            title={`${title} | ${SITE_TITLE}`}
+            description="Modelo de contrato de viaje combinado de Viajes Veleta, agencia de viajes en Guadix (Granada), conforme a la normativa vigente de viajes combinados."
         />
         <style>
             main {

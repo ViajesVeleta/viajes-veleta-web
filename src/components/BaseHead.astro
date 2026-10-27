@@ -2,40 +2,84 @@
 // Import the global.css file here so that it is included on
 // all pages through the use of the <BaseHead /> component.
 import "../styles/global.css";
-import { getDynamicImage } from "../utils/images";
-const FallbackImage = getDynamicImage("blog-placeholder-1");
-import { SITE_TITLE } from "../consts";
+import { BUSINESS, DEFAULT_OG_IMAGE, SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 import { ClientRouter } from "astro:transitions";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import { getLangFromUrl } from "../i18n/utils";
+import { publishedLanguages } from "../i18n/ui";
+import { toMetaDescription, withTrailingSlash } from "../utils/seo";
 
 interface Props {
 	title: string;
 	description: string;
-	image?: ImageMetadata;
+	image?: ImageMetadata | null;
 	// Language-specific images for social media sharing
 	imageEs?: ImageMetadata;
 	imageEn?: ImageMetadata;
+	imageAlt?: string;
+	type?: "website" | "article";
+	noindex?: boolean;
 	translatedPaths?: Record<string, string>;
+	jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
-
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
 const {
 	title,
 	description,
-	image = FallbackImage,
+	image,
 	imageEs,
 	imageEn,
+	imageAlt,
+	type = "website",
+	noindex = false,
 	translatedPaths,
+	jsonLd,
 } = Astro.props;
 
-// Get current language from URL
-import { getLangFromUrl } from "../i18n/utils";
+const canonicalURL = new URL(withTrailingSlash(Astro.url.pathname), Astro.site);
 const lang = getLangFromUrl(Astro.url);
+const metaDescription = toMetaDescription(description);
 
-// Select language-specific image if available, otherwise use default
-const ogImage =
+const localizedImage =
 	lang === "es" ? imageEs || image : lang === "en" ? imageEn || image : image;
+const ogImage = localizedImage
+	? {
+			src: localizedImage.src,
+			width: localizedImage.width,
+			height: localizedImage.height,
+			type: `image/${localizedImage.format === "jpg" ? "jpeg" : localizedImage.format}`,
+			alt: imageAlt || title,
+		}
+	: DEFAULT_OG_IMAGE;
+const ogImageURL = new URL(ogImage.src, Astro.site);
+
+const alternates = Object.entries(translatedPaths ?? {}).filter(([l]) =>
+	publishedLanguages.includes(l),
+);
+const hasAlternates = alternates.length > 1;
+
+const organization = {
+	"@context": "https://schema.org",
+	"@type": "TravelAgency",
+	"@id": new URL("/#organization", Astro.site).href,
+	name: BUSINESS.name,
+	description: SITE_DESCRIPTION,
+	url: new URL("/", Astro.site).href,
+	logo: new URL("/icon-512.png", Astro.site).href,
+	image: new URL(DEFAULT_OG_IMAGE.src, Astro.site).href,
+	telephone: BUSINESS.telephone,
+	email: BUSINESS.email,
+	address: {
+		"@type": "PostalAddress",
+		streetAddress: BUSINESS.streetAddress,
+		addressLocality: BUSINESS.addressLocality,
+		addressRegion: BUSINESS.addressRegion,
+		postalCode: BUSINESS.postalCode,
+		addressCountry: BUSINESS.addressCountry,
+	},
+	sameAs: BUSINESS.sameAs,
+};
+const structuredData = [organization, ...(jsonLd ? [jsonLd].flat() : [])];
 ---
 
 <ClientRouter />
@@ -103,50 +147,34 @@ const ogImage =
 <!-- Global Metadata -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="icon" href="/favicon.ico" sizes="48x48" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/site.webmanifest" />
+<meta name="theme-color" content="#004466" />
 <link rel="sitemap" href="/sitemap-index.xml" />
-<link
-	rel="alternate"
-	type="application/rss+xml"
-	title={`${SITE_TITLE}${lang === "en" ? " - English" : ""}`}
-	href={new URL(lang === "en" ? "en/rss.xml" : "rss.xml", Astro.site)}
-/>
-<meta name="generator" content={Astro.generator} />
 
-<!-- DNS Prefetch & Preconnect for External Resources -->
-<link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-<link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-<link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
-
-<!-- Lato Font -->
 <link
 	rel="preload"
-	as="style"
-	href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap"
-	onload="this.removeAttribute('onload');this.setAttribute('rel', 'stylesheet')"
+	as="font"
+	type="font/woff2"
+	href="/fonts/lato/lato-400-latin.woff2"
+	crossorigin
 />
-<noscript>
-	<link
-		href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap"
-		rel="stylesheet"
-	/>
-</noscript>
 
 <!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />
+{noindex && <meta name="robots" content="noindex, follow" />}
 
 <!-- Alternate URLs -->
 {
-	translatedPaths && (
+	hasAlternates && (
 		<>
-			{Object.entries(translatedPaths).map(([lang, path]) => (
+			{alternates.map(([l, path]) => (
 				<link
 					rel="alternate"
-					hreflang={lang}
-					href={new URL(path, Astro.site)}
+					hreflang={l}
+					href={new URL(withTrailingSlash(path), Astro.site)}
 				/>
 			))}
 			<link
@@ -154,8 +182,9 @@ const ogImage =
 				hreflang="x-default"
 				href={
 					new URL(
-						translatedPaths.es ||
-							translatedPaths[Object.keys(translatedPaths)[0]],
+						withTrailingSlash(
+							translatedPaths?.es ?? alternates[0][1],
+						),
 						Astro.site,
 					)
 				}
@@ -166,25 +195,26 @@ const ogImage =
 
 <!-- Primary Meta Tags -->
 <title>{title}</title>
-<meta name="title" content={title} />
-<meta name="description" content={description} />
+<meta name="description" content={metaDescription} />
 
 <!-- Open Graph / Facebook -->
-<meta property="og:type" content="website" />
-<meta property="og:url" content={Astro.url} />
+<meta property="og:site_name" content={SITE_TITLE} />
+<meta property="og:type" content={type} />
+<meta property="og:url" content={canonicalURL} />
 <meta property="og:title" content={title} />
-<meta property="og:description" content={description} />
-{
-	ogImage && (
-		<meta property="og:image" content={new URL(ogImage.src, Astro.url)} />
-	)
-}
+<meta property="og:description" content={metaDescription} />
+<meta property="og:image" content={ogImageURL} />
+<meta property="og:image:secure_url" content={ogImageURL} />
+<meta property="og:image:type" content={ogImage.type} />
+<meta property="og:image:width" content={String(ogImage.width)} />
+<meta property="og:image:height" content={String(ogImage.height)} />
+<meta property="og:image:alt" content={ogImage.alt} />
 <meta property="og:locale" content={lang === "es" ? "es_ES" : "en_US"} />
 {
-	translatedPaths &&
-		Object.keys(translatedPaths)
-			.filter((l) => l !== lang)
-			.map((l) => (
+	hasAlternates &&
+		alternates
+			.filter(([l]) => l !== lang)
+			.map(([l]) => (
 				<meta
 					property="og:locale:alternate"
 					content={l === "es" ? "es_ES" : "en_US"}
@@ -193,15 +223,19 @@ const ogImage =
 }
 
 <!-- Twitter -->
-<meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:url" content={Astro.url} />
-<meta property="twitter:title" content={title} />
-<meta property="twitter:description" content={description} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={metaDescription} />
+<meta name="twitter:image" content={ogImageURL} />
+<meta name="twitter:image:alt" content={ogImage.alt} />
+
+<!-- Structured data -->
 {
-	ogImage && (
-		<meta
-			property="twitter:image"
-			content={new URL(ogImage.src, Astro.url)}
+	structuredData.map((data) => (
+		<script
+			type="application/ld+json"
+			is:inline
+			set:html={JSON.stringify(data)}
 		/>
-	)
+	))
 }

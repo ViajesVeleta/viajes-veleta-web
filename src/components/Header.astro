@@ -120,11 +120,11 @@ const translatePath = useTranslatedPath(currentLang);
 	</div>
 	<nav id="main-nav">
 		<div class="header-content">
-			<h2>
+			<div class="site-title">
 				<a href="/">
 					<Image
 						src={logo}
-						alt="Logo"
+						alt=""
 						width={48}
 						height={48}
 						class="logo"
@@ -133,12 +133,12 @@ const translatePath = useTranslatedPath(currentLang);
 					/>
 					{SITE_TITLE}
 				</a>
-			</h2>
+			</div>
 			<div class="internal-links" id="internal-links">
 				<HeaderLink href={translatePath("/")}
 					>{t("nav.home")}</HeaderLink
 				>
-				<HeaderLink href={translatePath("/viajes-en-grupo")}
+				<HeaderLink href={translatePath("/viajes-en-grupo/")}
 					>{t("nav.trips")}</HeaderLink
 				>
 				{
@@ -146,7 +146,7 @@ const translatePath = useTranslatedPath(currentLang);
 					>{t("nav.offers")}</HeaderLink
 				> */
 				}
-				<HeaderLink href={translatePath("/contacto")}
+				<HeaderLink href={translatePath("/contacto/")}
 					>{t("nav.contact")}</HeaderLink
 				>
 			</div>
@@ -188,7 +188,7 @@ const translatePath = useTranslatedPath(currentLang);
 					>{t("nav.home")}</a
 				>
 				<a
-					href={translatePath("/viajes-en-grupo")}
+					href={translatePath("/viajes-en-grupo/")}
 					class="mobile-nav-link" data-astro-reload>{t("nav.trips")}</a
 				>
 				{
@@ -196,7 +196,7 @@ const translatePath = useTranslatedPath(currentLang);
 					>{t("nav.offers")}</a
 				> */
 				}
-				<a href={translatePath("/contacto")} class="mobile-nav-link" data-astro-reload
+				<a href={translatePath("/contacto/")} class="mobile-nav-link" data-astro-reload
 					>{t("nav.contact")}</a
 				>
 
@@ -467,15 +467,16 @@ const translatePath = useTranslatedPath(currentLang);
 			gap: 0.5rem;
 		}
 
-		h2 {
+		.site-title {
 			margin: 0;
 			font-size: 1em;
 			font-weight: normal;
+			line-height: 1.2;
 			flex-shrink: 0;
 		}
 
-		h2 a,
-		h2 a.active {
+		.site-title a,
+		.site-title a.active {
 			text-decoration: none;
 			color: var(--on-bg-nav);
 			display: flex;
