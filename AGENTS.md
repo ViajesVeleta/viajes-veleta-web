@@ -67,6 +67,15 @@ Señales de que se va por mal camino: listeners de `resize`, calcular posiciones
 - Si se cambia el slug de una página publicada, añadir una redirección 301 en `public/_redirects`.
 - No añadir enlaces a páginas en inglés en `translatedPaths` si el idioma no está en `publishedLanguages` (`src/i18n/ui.ts`).
 
+## Recordatorios al usuario
+
+Las tareas de SEO fuera del código (Search Console, caché de Facebook) son manuales y se olvidan. Recuérdalas al terminar la tarea, de forma breve, una sola vez por conversación y sin bloquear el trabajo. Los pasos detallados están en `docs/SEO.md` → "Mantenimiento".
+
+- **Viaje o página nueva publicada**: recordar pedir la indexación de su URL en Search Console.
+- **Cambio de imagen de cabecera, título o descripción de una página ya publicada**: recordar volver a extraerla en el Sharing Debugger de Facebook (también actualiza WhatsApp).
+- **Cambio de slug**: además de la redirección 301 en `public/_redirects`, recordar ambas cosas para la URL nueva.
+- **Revisión mensual**: `docs/SEO.md` guarda la fecha de la última revisión de Search Console. Si han pasado más de 30 días respecto a la fecha actual, recordar al usuario que revise "Rendimiento" y "Páginas". Cuando confirme que lo ha hecho, actualizar esa fecha.
+
 ## Viajes en grupo
 
 ### Estructura
