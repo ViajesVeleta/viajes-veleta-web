@@ -168,9 +168,13 @@ const formatDate = (date: Date) => {
             allowTouchMove: false, // User requested to disable slide changing on click/drag
             loop: true,
             on: {
-                autoplayTimeLeft(_s, _time, progress) {
+                autoplayTimeLeft(s, time, progress) {
                     if (progressBar) {
                         progressBar.style.width = `${(1 - progress) * 100}%`;
+                    }
+                    // Fetch the next slide once the page has settled, not during the initial load
+                    if (time < AUTOPLAY_DELAY / 2) {
+                        s.el.classList.add("preload-next");
                     }
                 },
                 slideChange() {
@@ -278,6 +282,7 @@ const formatDate = (date: Date) => {
     /* Slides sit within the lazy-load margin (side by side before init, stacked by the
        fade effect after), so hide the images of slides that can't be seen yet */
     .swiper:not(.swiper-initialized) .swiper-slide:not(:first-child) .bg-image,
+    .swiper-initialized:not(.preload-next) .swiper-slide-next .bg-image,
     .swiper-initialized
         .swiper-slide:not(
             .swiper-slide-active,
