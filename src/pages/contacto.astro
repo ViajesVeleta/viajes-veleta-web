@@ -301,7 +301,7 @@ const isFallback = urlParams.get("lang") === "en";
 
             <!-- Mapa incrustado clásico (NO requiere API Key) -->
             <iframe 
-                src="https://maps.google.com/maps?hl=es&q=Viajes%20Veleta,%20Calle%20Poetisa%20Hafsa,%203,%20Guadix&ie=UTF8&t=&z=16&iwloc=B&output=embed" 
+                data-src="https://maps.google.com/maps?hl=es&q=Viajes%20Veleta,%20Calle%20Poetisa%20Hafsa,%203,%20Guadix&ie=UTF8&t=&z=16&iwloc=B&output=embed" 
                 class="wide-map-placeholder" 
                 style="border:0;" 
                 allowfullscreen="" 
@@ -313,5 +313,21 @@ const isFallback = urlParams.get("lang") === "en";
         </main>
 
         <Footer />
+
+        <script>
+            // Google Maps loads ~500 KB of JS: only set the src when the map is about to be seen
+            document.addEventListener("astro:page-load", () => {
+                const map = document.querySelector<HTMLIFrameElement>(".wide-map-placeholder");
+                if (!map?.dataset.src) return;
+                new IntersectionObserver(
+                    ([entry], observer) => {
+                        if (!entry.isIntersecting) return;
+                        map.src = map.dataset.src!;
+                        observer.disconnect();
+                    },
+                    { rootMargin: "300px" },
+                ).observe(map);
+            });
+        </script>
     </body>
 </html>
