@@ -1,4 +1,5 @@
 ---
+import Icon from "../components/Icon.astro";
 import { Image } from "astro:assets";
 import BaseHead from "../components/BaseHead.astro";
 import Footer from "../components/Footer.astro";
@@ -453,7 +454,7 @@ const relatedLabel = isEs
 			:global(.dark) .past-trip-indicator-banner {
 				background: rgba(205, 176, 131, 0.12);
 			}
-			.past-trip-indicator-banner i {
+			.past-trip-indicator-banner .icon {
 				color: var(--quaternary, #cdb083);
 				font-size: 1.35rem;
 				margin-top: 0.15rem;
@@ -534,8 +535,7 @@ const relatedLabel = isEs
 					{
 						resolvedImage && (
 							<Image
-								width={1920}
-								height={1080}
+								sizes="(max-width: 768px) 160vw, 100vw"
 								src={resolvedImage}
 								alt={title}
 								loading="eager"
@@ -547,7 +547,7 @@ const relatedLabel = isEs
 						{
 							isGroups && isPast && (
 								<div class="hero-past-badge">
-									<i class="fa-solid fa-check" />
+									<Icon name="fa-solid fa-check" />
 									<span>{isEs ? "Viaje realizado" : "Completed trip"}</span>
 								</div>
 							)
@@ -616,7 +616,7 @@ const relatedLabel = isEs
 					isGroups && isPast && (
 						<div class="past-trip-banner-container">
 							<div class="past-trip-indicator-banner">
-								<i class="fa-solid fa-circle-check" />
+								<Icon name="fa-solid fa-circle-check" />
 								<div>
 									<strong>{isEs ? "Viaje ya realizado" : "Completed trip"}</strong>
 									<p>

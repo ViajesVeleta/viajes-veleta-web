@@ -1,4 +1,5 @@
 ---
+import Icon from "./Icon.astro";
 import { getCollection, type CollectionEntry } from "astro:content";
 import { Image } from "astro:assets";
 import { getLangFromUrl } from "../i18n/utils";
@@ -115,7 +116,7 @@ const categories = allCategories.filter((cat) => {
 
                         <div class="separator-container">
                             <span class="line" />
-                            <i class={`${resolvedIcon} icon`} />
+                            <Icon name={resolvedIcon} class="icon" />
                             <span class="line" />
                         </div>
 
@@ -139,7 +140,7 @@ const categories = allCategories.filter((cat) => {
                 )}
 
                 <ul class="trips-grid">
-                    {displayTrips.map((post, index) => (
+                    {displayTrips.map((post) => (
                         <li
                             class="post-item"
                             data-category={post.data.category.join(" ") || "all"}
@@ -155,13 +156,13 @@ const categories = allCategories.filter((cat) => {
                                             height={480}
                                             src={post.data.image}
                                             alt=""
-                                            loading={index === 0 ? "eager" : "lazy"}
+                                            loading="lazy"
                                         />
                                     )}
                                     <div class="overlay" />
                                     {showBadge && (
                                         <span class="trip-status-badge">
-                                            <i class="fa-solid fa-check" />
+                                            <Icon name="fa-solid fa-check" />
                                             <span>{resolvedBadgeText}</span>
                                         </span>
                                     )}
@@ -199,13 +200,13 @@ const categories = allCategories.filter((cat) => {
                             class="past-trips-cta-btn"
                             data-astro-reload
                         >
-                            <i class="fa-solid fa-history" />
+                            <Icon name="fa-solid fa-history" />
                             <span>
                                 {isSpanish
                                     ? `Ver viajes ya realizados (${past.length})`
                                     : `View completed trips (${past.length})`}
                             </span>
-                            <i class="fa-solid fa-arrow-right" />
+                            <Icon name="fa-solid fa-arrow-right" />
                         </a>
                     </div>
                 )}

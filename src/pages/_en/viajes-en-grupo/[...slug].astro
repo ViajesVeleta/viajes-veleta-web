@@ -16,6 +16,7 @@ import CardGrid from "../../../components/CardGrid.astro";
 import CardItem from "../../../components/CardItem.astro";
 import GooglePhotosAlbum from "../../../components/GooglePhotosAlbum.astro";
 import GooglePhotosGallery from "../../../components/GooglePhotosGallery.astro";
+import Icon from "../../../components/Icon.astro";
 
 
 export async function getStaticPaths() {
@@ -51,6 +52,7 @@ type Props = CollectionEntry<"groups">;
 const post = Astro.props;
 const { Content } = await render(post);
 const components = {
+    Icon,
     Gallery,
     Timeline,
     TimelineItem,

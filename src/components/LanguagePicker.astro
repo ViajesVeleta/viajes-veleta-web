@@ -1,4 +1,5 @@
 ---
+import Icon from "./Icon.astro";
 import { languages } from "../i18n/ui";
 import { getLangFromUrl } from "../i18n/utils";
 
@@ -46,7 +47,7 @@ const otherLanguage = allLanguages.find(([l]) => l !== lang);
                         title={`Switch to ${otherLabel}`}
                         class="lang-link"
                     >
-                        <i class="fa-solid fa-globe" />
+                        <Icon name="fa-solid fa-globe" />
                         <span>{lang.toUpperCase()}</span>
                     </a>
                 );

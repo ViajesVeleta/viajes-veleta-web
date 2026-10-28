@@ -1,4 +1,5 @@
 ---
+import Icon from "./Icon.astro";
 /**
  * GooglePhotosAlbum Component
  * Embeds a public Google Photos shared album as an interactive gallery / carousel.
@@ -50,7 +51,7 @@ const instanceId = `gphotos-${Math.random().toString(36).substring(2, 9)}`;
             {title && (
                 <div class="google-photos-header">
                     <h3 class="google-photos-title">
-                        <i class="fa-solid fa-camera-retro"></i>
+                        <Icon name="fa-solid fa-camera-retro" />
                         <span>{title}</span>
                     </h3>
                     {description && (
@@ -63,14 +64,14 @@ const instanceId = `gphotos-${Math.random().toString(36).substring(2, 9)}`;
                 <!-- Loading placeholder / skeleton -->
                 <div class="google-photos-skeleton" aria-hidden="true">
                     <div class="skeleton-content">
-                        <i class="fas fa-spinner fa-spin skeleton-icon"></i>
+                        <Icon name="fa-solid fa-spinner fa-spin" class="skeleton-icon" />
                         <span class="skeleton-text">Cargando fotos del álbum...</span>
                     </div>
                 </div>
 
                 <!-- Empty state fallback (only shown when hideIfEmpty is false) -->
                 <div class="google-photos-empty-state" style="display: none;">
-                    <i class="fa-regular fa-image empty-icon"></i>
+                    <Icon name="fa-regular fa-image" class="empty-icon" />
                     <p class="empty-title">Álbum sin imágenes disponibles</p>
                     <p class="empty-subtitle">Este álbum aún no contiene fotografías públicas.</p>
                 </div>
@@ -94,9 +95,9 @@ const instanceId = `gphotos-${Math.random().toString(36).substring(2, 9)}`;
                         rel="noopener noreferrer"
                         class="google-photos-ext-link"
                     >
-                        <i class="fa-brands fa-google"></i>
+                        <Icon name="fa-brands fa-google" />
                         <span>Ver álbum completo en Google Photos</span>
-                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        <Icon name="fa-solid fa-arrow-up-right-from-square" />
                     </a>
                 </div>
             )}
@@ -257,7 +258,7 @@ const instanceId = `gphotos-${Math.random().toString(36).substring(2, 9)}`;
         color: #f3f4f6;
     }
 
-    .google-photos-title i {
+    .google-photos-title .icon {
         color: var(--color-primary, #c9933f);
         font-size: 1.2rem;
     }

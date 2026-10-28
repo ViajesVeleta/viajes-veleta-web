@@ -1,4 +1,5 @@
 ---
+import Icon from "./Icon.astro";
 import { Image } from "astro:assets";
 import { getDynamicImage } from "../utils/images";
 
@@ -41,7 +42,7 @@ const affiliates: {
         <h2>AFILIADOS</h2>
         <div class="section-divider">
             <span class="line"></span>
-            <i class="fa-solid fa-paper-plane paper-plane"></i>
+            <Icon name="fa-solid fa-paper-plane" class="paper-plane" />
             <span class="line"></span>
         </div>
 

@@ -1,4 +1,5 @@
 ---
+import Icon from "./Icon.astro";
 import { getCollection, render } from "astro:content";
 import { getLangFromUrl } from "../i18n/utils";
 
@@ -34,7 +35,7 @@ const sortedReviews = reviews.sort(
                                     </div>
                                     <div class="review-author">
                                         <div class="author-avatar">
-                                            <i class="fa-solid fa-user" />
+                                            <Icon name="fa-solid fa-user" />
                                         </div>
                                         <div class="author-info">
                                             <div class="author-name">

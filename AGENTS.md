@@ -13,6 +13,7 @@ Web de Viajes Veleta (Astro + Cloudflare Workers). Estructura, comandos y docume
 - Respetar las convenciones existentes del codebase
 - Enlaces internos siempre con barra final (`/contacto/`, `/viajes-en-grupo/`): el sitio usa `trailingSlash: 'always'`.
 - Las secciones deshabilitadas (blog, ofertas, inglés, modo oscuro) están documentadas en `docs/*_STATUS.md`. No enlazar a ellas mientras estén deshabilitadas.
+- Iconos: `<Icon name="fa-solid fa-phone" />` (también en MDX), que inserta el SVG de Font Awesome en el HTML. No usar `<i class="fa-...">`: la hoja de estilos y la fuente de Font Awesome no se cargan. Si el icono es nuevo, añadirlo a la lista de `src/components/Icon.astro`.
 
 ### Soluciones estándar primero
 

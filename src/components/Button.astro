@@ -1,4 +1,5 @@
 ---
+import Icon from "./Icon.astro";
 interface Props {
   title: string;
   icon?: string;
@@ -44,7 +45,7 @@ const rel = isExternal || isAsset ? 'noopener noreferrer' : undefined;
     target={target}
     rel={rel}
   >
-    {icon && <i class:list={[icon, "btn-icon"]}></i>}
+    {icon && <Icon name={icon} class="btn-icon" />}
     <span class="btn-text">{title}</span>
   </a>
 ) : (
@@ -53,7 +54,7 @@ const rel = isExternal || isAsset ? 'noopener noreferrer' : undefined;
     class:list={["veleta-button", className]}
     style={`--btn-bg: ${color};`}
   >
-    {icon && <i class:list={[icon, "btn-icon"]}></i>}
+    {icon && <Icon name={icon} class="btn-icon" />}
     <span class="btn-text">{title}</span>
   </button>
 )}

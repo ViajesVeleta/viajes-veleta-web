@@ -44,8 +44,7 @@ const formatDate = (date: Date) => {
                                 <Image
                                     src={slide.data.image}
                                     alt={slide.data.title}
-                                    width={1920}
-                                    height={1080}
+                                    sizes="(max-aspect-ratio: 16/9) 178vh, 100vw"
                                     class="bg-image"
                                     loading={index === 0 ? "eager" : "lazy"}
                                     fetchpriority={index === 0 ? "high" : "auto"}
@@ -274,6 +273,19 @@ const formatDate = (date: Date) => {
         height: 100%;
         object-fit: cover;
         animation: zoomEffect 20s infinite alternate; /* Subtle Ken Burns effect */
+    }
+
+    /* Slides sit within the lazy-load margin (side by side before init, stacked by the
+       fade effect after), so hide the images of slides that can't be seen yet */
+    .swiper:not(.swiper-initialized) .swiper-slide:not(:first-child) .bg-image,
+    .swiper-initialized
+        .swiper-slide:not(
+            .swiper-slide-active,
+            .swiper-slide-next,
+            .swiper-slide-prev
+        )
+        .bg-image {
+        display: none;
     }
 
     @keyframes zoomEffect {

@@ -1,10 +1,11 @@
 ---
+import Icon from "./Icon.astro";
 // Apple-style search with overlay panel
 ---
 
 <!-- Search Button (shows only icon in header) -->
 <button class="search-button" id="search-button" aria-label="Search">
-    <i class="fa-solid fa-magnifying-glass"></i>
+    <Icon name="fa-solid fa-magnifying-glass" />
 </button>
 
 <!-- Search Overlay Panel -->
@@ -16,7 +17,7 @@
                 id="search-close-button"
                 aria-label="Close search"
             >
-                <i class="fa-solid fa-xmark"></i>
+                <Icon name="fa-solid fa-xmark" />
             </button>
         </div>
 

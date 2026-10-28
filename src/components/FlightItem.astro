@@ -1,4 +1,5 @@
 ---
+import Icon from "./Icon.astro";
 interface Props {
     date: string;
     origin: string;
@@ -14,9 +15,9 @@ const { date, origin, destination, airline, times, type = 'takeoff' } = Astro.pr
 <div class="flight-item">
     <div class="flight-icon">
         {type === 'takeoff' ? (
-            <i class="fa-solid fa-plane-departure"></i>
+            <Icon name="fa-solid fa-plane-departure" />
         ) : (
-            <i class="fa-solid fa-plane-arrival"></i>
+            <Icon name="fa-solid fa-plane-arrival" />
         )}
     </div>
     <div class="flight-details">

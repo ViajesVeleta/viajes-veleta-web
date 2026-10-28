@@ -1,4 +1,5 @@
 ---
+import Icon from "./Icon.astro";
 import { getCollection } from "astro:content";
 import { Image } from "astro:assets";
 import { getLangFromUrl } from "../i18n/utils";
@@ -41,7 +42,7 @@ if (nextTrips.length === 0) {
 						aria-label="Síguenos en Facebook"
 						class="facebook-link"
 					>
-						<i class="fa-brands fa-facebook-f"></i>
+						<Icon name="fa-brands fa-facebook-f" />
 					</a>
 					<a
 						href="https://instagram.com/viajesveletaguadix"
@@ -50,7 +51,7 @@ if (nextTrips.length === 0) {
 						aria-label="Síguenos en Instagram"
 						class="instagram-link"
 					>
-						<i class="fa-brands fa-instagram"></i>
+						<Icon name="fa-brands fa-instagram" />
 					</a>
 				</div>
 				<p class="cif">CIF: B18802645</p>
@@ -169,7 +170,7 @@ if (nextTrips.length === 0) {
 		opacity: 0.9;
 	}
 
-	.social-links i {
+	.social-links .icon {
 		font-size: 2rem;
 	}
 

@@ -14,8 +14,11 @@ import pagefind from 'astro-pagefind';
 // https://astro.build/config
 export default defineConfig({
     adapter: cloudflare({
-        imageService: 'passthrough',
+        imageService: 'compile',
     }),
+    image: {
+        layout: 'constrained',
+    },
     site: 'https://viajesveleta.es',
     trailingSlash: 'always',
     prefetch: {

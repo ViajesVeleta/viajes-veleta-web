@@ -1,6 +1,14 @@
 ---
+import Icon from "./Icon.astro";
+import { getImage } from "astro:assets";
 import { getDynamicImage } from "../utils/images";
 const background = getDynamicImage("sea");
+const [backgroundLarge, backgroundSmall] = background
+    ? await Promise.all([
+          getImage({ src: background, width: 1920 }),
+          getImage({ src: background, width: 1280 }),
+      ])
+    : [];
 
 interface Props {
     stats?: {
@@ -20,8 +28,9 @@ const {
 
 <section
     class="parallax-section"
-    style={`background-image: url(${background?.src});`}
+    style={`--bg-large: url(${backgroundLarge?.src}); --bg-small: url(${backgroundSmall?.src});`}
 >
+    <div class="background"></div>
     <div class="overlay"></div>
     <div class="content">
         <h2 class="title">
@@ -32,7 +41,7 @@ const {
 
         <div class="separator">
             <span class="line"></span>
-            <i class="fas fa-paper-plane icon"></i>
+            <Icon name="fa-solid fa-paper-plane" class="icon" />
             <span class="line"></span>
         </div>
 
@@ -58,12 +67,19 @@ const {
         align-items: center;
         justify-content: center;
         padding: 6rem 1rem;
+        color: white;
+        text-align: center;
+    }
+
+    /* On a child so content-visibility: auto delays the download until it's near the viewport */
+    .background {
+        position: absolute;
+        inset: 0;
+        background-image: var(--bg-large);
         background-attachment: fixed;
         background-position: center;
         background-repeat: no-repeat;
         background-size: cover;
-        color: white;
-        text-align: center;
     }
 
     .overlay {
@@ -152,8 +168,12 @@ const {
 
     @media (max-width: 768px) {
         .parallax-section {
-            background-attachment: scroll; /* Better for mobile performance */
             min-height: auto;
+        }
+
+        .background {
+            background-image: var(--bg-small);
+            background-attachment: scroll; /* Better for mobile performance */
         }
 
         .title {
