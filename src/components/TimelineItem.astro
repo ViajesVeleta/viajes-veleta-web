@@ -5,11 +5,13 @@
 interface Props {
     date?: string;
     title?: string;
+    titleStrongLastSegment?: boolean;
+    titleStrongAll?: boolean;
     image?: string;
     side?: 'left' | 'right';
 }
 
-const { date, title, image, side } = Astro.props;
+const { date, title, titleStrongLastSegment = false, titleStrongAll = false, image, side } = Astro.props;
 
 import { Image } from "astro:assets";
 import { getDynamicImage } from "../utils/images";
@@ -28,7 +30,7 @@ const dynamicImage = getDynamicImage(image);
     <div class="timeline-card">
         <div class="card-header">
             {date && <span class="card-date">{date}</span>}
-            {title && <h3 class="card-title">{title}</h3>}
+            {title && <h3 class="card-title">{titleStrongAll ? <strong>{title}</strong> : titleStrongLastSegment && title.includes(" - ") ? <>{title.slice(0, title.lastIndexOf(" - "))} - <strong>{title.slice(title.lastIndexOf(" - ") + 3)}</strong></> : title}</h3>}
         </div>
 
         <div class="card-content">
